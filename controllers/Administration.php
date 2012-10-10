@@ -2,29 +2,55 @@
 
 class Administration_Controller extends Controller {
 	public function index($param){
-		$this->setView('index.php');
+		switch($param['nav']){
+			case "admins":
+				$this->setView('admins.php');
+				break;
+			
+			default:
+				$this->setView('index.php');
+		}
 		
 		$is_logged = isset(User_Model::$auth_data);
 		$is_student = $is_logged && isset(User_Model::$auth_data['student_number']);
 		$is_admin = $is_logged && User_Model::$auth_data['admin']=='1';
+		
+		if(!$is_logged)
+			throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
+		if(!$is_admin)
+			throw new ActionException('Page', 'error404');
 		
 		$last_promo = ((int) date('Y')) + 5;
 		if((int) date('m') < 9){
 			$last_promo -= 1;
 		}
 		
-		$this->set(array(
-			'username'			=> User_Model::$auth_data['username'],
-			'is_logged'			=> $is_logged,
-			'is_student'		=> $is_student,
-			'is_admin'			=> $is_admin,
-			'questions'			=> $this->model->getquestions(),
-			'employees'			=> $this->model->getemployees(),
-			'events'			=> $this->model->getevents(),
-			'promo'				=> $last_promo,
-			'date'				=> $this->model->getdate(),
-			'admins'			=> $this->model->getadmin()
-		));
+		switch($param['nav']){
+			case "admins":
+				$this->set(array(
+					'username'			=> User_Model::$auth_data['username'],
+					'is_logged'			=> $is_logged,
+					'is_student'		=> $is_student,
+					'is_admin'			=> $is_admin,
+					'admins'			=> $this->model->getadmin()
+				));
+				break;
+			default:
+				$this->set(array(
+					'username'			=> User_Model::$auth_data['username'],
+					'is_logged'			=> $is_logged,
+					'is_student'		=> $is_student,
+					'is_admin'			=> $is_admin,
+					'questions'			=> $this->model->getquestions(),
+					'employees'			=> $this->model->getemployees(),
+					'events'			=> $this->model->getevents(),
+					'promo'				=> $last_promo,
+					'date'				=> $this->model->getdate(),
+					'admins'			=> $this->model->getadmin()
+				));
+		}
+				
+		/**/
 
 		$this->addJSCode('Admin.init();');
 			

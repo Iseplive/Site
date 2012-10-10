@@ -82,7 +82,7 @@ class Layout_Controller extends Controller {
 		if(File::exists(Config::DIR_APP_STATIC.'js/script.js')){
 			$this->addJSFile(Config::URL_STATIC.'js/script.js?'.filesize(Config::DIR_APP_STATIC.'js/script.js'));
 		}else{
-			$files = glob(Config::DIR_APP_STATIC.'js/[0-9]-*.js');
+			$files = glob(Config::DIR_APP_STATIC.'js/*-*.js');
 			foreach($files as $file)
 				$this->addJSFile(Config::URL_STATIC.'js/'.substr($file, strrpos($file, '/')+1));
 		}
@@ -110,15 +110,18 @@ class Layout_Controller extends Controller {
 		
 		$is_logged = isset(User_Model::$auth_data);
 		$is_student = $is_logged && isset(User_Model::$auth_data['student_number']);
+		$is_admin = $is_logged && User_Model::$auth_data['admin']=='1';
 		$this->set(array(
 			'is_logged'			=> $is_logged,
+			'is_admin'			=> $is_admin,
 			'is_student'		=> $is_student
 		));
 		if($is_student)
 			$this->set('username', User_Model::$auth_data['username']);
-		
+		if($is_admin)
+			$this->addJSCode('Layout.init()');
 		//Date Isep d'or
-		$this->set('round',IsepOr_Controller::verifdate());
+		//$this->set('round',IsepOr_Controller::verifdate());
 		
 
 	}

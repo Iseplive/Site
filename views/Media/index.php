@@ -48,11 +48,11 @@
 							}
 						} ?>
 					<div  id="<?php echo $annee[$i];?>" style="clear:both;">
-						<br/><br/><h2 style="width:1200px;border-bottom:solid #020022 2px;"><?php echo $annee[$i];?></h2><br/>
+						<br/><br/><h2 style="width:100%;border-bottom:solid #020022 2px;"><?php echo $annee[$i];?></h2><br/>
 						<div style="clear:both;position:relative;left:70px">
-						<span style="width:400px;float:left;"><?php echo $bloc;?></span>
-						<span style="width:400px;float:left;"><?php echo $bloc2;?></span>
-						<span style="width:400px;float:left;"><?php echo $bloc3;?></span>
+						<span style="width:33%;min-width:250px;float:left;"><?php echo $bloc;?></span>
+						<span style="width:33%;min-width:250px;float:left;"><?php echo $bloc2;?></span>
+						<span style="width:33%;min-width:250px;float:left;"><?php echo $bloc3;?></span>
 						</div>
 					</div>
 			<?php 

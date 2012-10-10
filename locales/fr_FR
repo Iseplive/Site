@@ -194,7 +194,8 @@ STUDENTS_PROMO4
 	Promo {year} (A2)
 STUDENTS_PROMO5
 	Promo {year} (A3)
-
+STUDENTS_PROMO
+	Promo 
 
 # View: view
 PROFILE_PROMO
@@ -610,18 +611,24 @@ MEDIA_PODCAST
 ADMIN_HELP
 	Pour actualiser la liste des élèves, veuillez faire un zip contenant deux fichiers csv et un dossier contenant les photos des élèves. <br/>
 	Les fichiers csv devront se nommer users.csv et students.csv en référence aux tables concernées.<br/>
-	Le dossier de photos devra se nommer photos_students et chaque photo devra être nommée en fonction du numero d'élève et comporter l'extension .jpg.<br/>
+	Le dossier de photos devra se nommer photos_students et chaque photo devra être nommée en fonction du numero d'élève.<br/>
 	Veuillez consulter le screenshot ci-dessous pour le remplissage des fichiers csv qui seront générés via excel, les éléments de style sont à exclure, seule la partie rose est à conserver.<br/>
 ADMIN_UPDATE
-	Mise à jour
+	Utilisateurs
 ADMIN_ANNUAIRE
-	Annuaire
+	Générer l'annuaire
 ADMIN_ISEPDOR
 	ISEP D'or
-ADMIN_ADMINISTRATEUR
-	Administrateur
 ADMIN_CAMPAGNE
 	Campagne BDE
+ADMIN_TXTENVOIE
+	Veuillez séléctionner le fichier pour l'actualisation:
+ADMIN_ENVOYER
+	Envoyer
+ADMIN_POST_CSVERROR
+	Le ou les fichiers csv n'ont pu être trouvés!
+ADMIN_ADMINISTRATEUR
+	Administrateurs
 ADMIN_TXTENVOIE
 	Veuillez séléctionner le fichier pour l'actualisation:
 ADMIN_ENVOYER

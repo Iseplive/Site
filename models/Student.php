@@ -15,21 +15,24 @@ class Student_Model extends Model {
 		
 		$cache_entry = 'students-promos-'.implode('-', $promos);
 		$students = Cache::read($cache_entry);
-		if($students !== false)
-			return $students;
+		/*if($students !== false)
+			return $students;*/
 		
 		$students = $this->createQuery()
-			->fields('username', 'firstname', 'lastname', 'promo')
+			->fields('username', 'firstname', 'lastname', 'promo','student_number')
 			->where('promo IN ('.implode(',', $promos).')')
 			->order('firstname', 'lastname')
 			->select();
-		
+
 		$students_by_promo = array();
-		
+		for($i=0;$i<count($students);$i++){
+			$students[$i]['avatar_url']=$this->getAvatarURL($students[$i]['student_number'],true);
+		}
 		foreach($students as $student){
 			if(!isset($students_by_promo[(int) $student['promo']]))
 				$students_by_promo[(int) $student['promo']] = array();
 			$students_by_promo[(int) $student['promo']][] = $student;
+			
 		}
 		
 		Cache::write($cache_entry, $students_by_promo, 2*3600);

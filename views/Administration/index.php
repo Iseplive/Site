@@ -1,7 +1,9 @@
 <!--Page ajouté par Philippe !-->
 <?php if($is_logged){ ?>
 	<?php// if($is_admin){ ?>
-		<?php //if($username=="pvaz"){ ?>
+		<?php //if($username=="pvaz"){ 
+		?>
+
 		<div id="headermedia">
 			<nav>
 				<a href="javascript:;" onclick="Admin.navAdminChange(1);"><?php echo __('ADMIN_UPDATE'); ?></a>
@@ -251,22 +253,7 @@
 		
 		<div id="campagne" class="hidden">campagne</div>
 		
-		
-		<div id="admin" class="hidden">
-			<?php foreach($admins as $admin){ ?>
-				<a href="?username=<?php echo $admin['username']; ?>" onclick="if(confirm('<?php echo __('ADMIN_ISEPDOR_CONFIRM');?>')){}">
-					<img alt="" src="<?php echo Config::URL_STATIC."images/icons/delete.png";?>"/>
-				</a>
-				<?php echo $admin['firstname'].' '. $admin['lastname'].'<br/>';?>
-			<?php } ?>
-			<br/>
-			<form action="?" method="post" enctype="multipart/form-data">
-				<label for="admin_edit_add_admin"><?php echo __('GROUP_EDIT_FORM_ADD_MEMBER'); ?></label>
-				<input type="text" name="" id="admin_edit_add_admin" value="" />
-				<input type="hidden" name="" id="admin_edit_add_admin_url" value="<?php echo Config::URL_ROOT.Routes::getPage('autocompletion_student_name'); ?>" />
-				<input type="submit" value="<?php echo __('ADMIN_ENVOYER'); ?>"/>
-			</form>
-		</div>
+	
 		<?php //} ?>
 	<?php //} ?>
 <?php } ?>

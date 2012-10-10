@@ -51,11 +51,16 @@ foreach($cssFiles as $cssFile){
 				
 				<nav>
 					<?php if($is_logged){ ?>
-						<?php //if($is_admin){ ?>
-							<?php //if($username=="pvaz"){ ?>
-								<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> 0)); ?>"><?php echo __('NAV_ADMIN'); ?></a>
-							<?php //} ?>
-						<?php //} ?>
+						<?php if($is_admin){ ?>
+								<a  id="adminNav"><?php echo __('NAV_ADMIN'); ?></a>
+								<div id="adminMenu" class="hidden" >
+									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> 0)); ?>"><?php echo __('ADMIN_UPDATE'); ?></a>
+									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> 1)); ?>"><?php echo __('ADMIN_ANNUAIRE'); ?></a>
+									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> 2)); ?>"><?php echo __('ADMIN_ISEPDOR'); ?></a>
+									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> 3)); ?>"><?php echo __('ADMIN_CAMPAGNE'); ?></a>
+									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> "admins")); ?>"><?php echo __('ADMIN_ADMINISTRATEUR'); ?></a>
+								</div>
+						<?php } ?>
 					<?php } ?>
 					<a href="<?php echo Config::URL_ROOT.Routes::getPage('home'); ?>"><?php echo __('NAV_PUBLICATIONS'); ?></a>
 					<?php if($is_logged){ ?>
@@ -69,15 +74,16 @@ foreach($cssFiles as $cssFile){
 					<?php } ?>
 					<?php if($is_logged){ ?>
 						<?php if($is_student){ ?>
-					<a href="<?php echo Config::URL_ROOT.Routes::getPage('student', array('username' => $username)); ?>"><?php echo __('NAV_PROFILE'); ?></a>
+							<a href="<?php echo Config::URL_ROOT.Routes::getPage('student', array('username' => $username)); ?>"><?php echo __('NAV_PROFILE'); ?></a>
+							<?php if(Config::ISEP_OR_STATE== 1 || Config::ISEP_OR_STATE==2){ ?>
+									<a href="<?php echo Config::URL_ROOT.Routes::getPage('isep_or_'.Config::ISEP_OR_STATE); ?>"><?php echo __('NAV_ISEP_OR'); ?></a>
+							<?php } 
+						} ?>
 
-                    <?php if($round== 1 || $round==2){ ?>
-							<a href="<?php echo Config::URL_ROOT.Routes::getPage('isep_or_'.$round); ?>"><?php echo __('NAV_ISEP_OR'); ?></a>
-                    <?php } } ?>
-
-					<a href="<?php echo Config::URL_ROOT.Routes::getPage('logout', array('redirect', '/')); ?>"><?php echo __('NAV_LOGOUT'); ?></a>
-					<?php }else{ ?>
-					<a href="<?php echo Config::URL_ROOT.Routes::getPage('signin'); ?>"><?php echo __('NAV_SIGNIN'); ?></a>
+						<a href="<?php echo Config::URL_ROOT.Routes::getPage('logout', array('redirect', '/')); ?>"><?php echo __('NAV_LOGOUT'); ?></a>
+					<?php }
+					else{ ?>
+						<a href="<?php echo Config::URL_ROOT.Routes::getPage('signin'); ?>"><?php echo __('NAV_SIGNIN'); ?></a>
 					<?php } ?>
 			
 					<form action="<?php echo Config::URL_ROOT.Routes::getPage('search'); ?>" method="get" id="search-box">
@@ -85,6 +91,7 @@ foreach($cssFiles as $cssFile){
 						<input type="hidden" value="<?php echo Config::URL_ROOT.Routes::getPage('autocomplete'); ?>" id="search-ajax-url" />
 					</form>
 				</nav>
+				
 			</header>
 			
 			<div id="main">
@@ -98,10 +105,11 @@ foreach($cssFiles as $cssFile){
 				Site développé par <a href="http://godefroy.me">Godefroy</a> et <a href="http://github.com/Godefroy/iseplive">libéré sur Github</a>
 			</footer>
 		</div>
-
-<?php foreach($jsFiles as $jsFile){ ?>
-		<script type="text/javascript" src="<?php echo $jsFile; ?>"></script>
-<?php } ?>
+		
+		<?php foreach($jsFiles as $jsFile){ ?>
+				<script type="text/javascript" src="<?php echo $jsFile; ?>"></script>
+		<?php } ?>
+		
 		<script type="text/javascript">
 		//<![CDATA[
 		
@@ -132,7 +140,9 @@ foreach($cssFiles as $cssFile){
 					'POST_DELETE_CONFIRM',
 					'POST_COMMENT_DELETE_CONFIRM',
 					'GROUP_EDIT_FORM_CREATION_DATE_FORMAT_PARSE',
-					'USER_EDIT_FORM_BIRTHDAY_FORMAT_PARSE'
+					'USER_EDIT_FORM_BIRTHDAY_FORMAT_PARSE',
+					'PROFILE_STUDENT_NUMBER',
+					'PROFILE_PROMO'
 				);
 				foreach($js_translations as $i => $js_translation){
 					if($i != 0)

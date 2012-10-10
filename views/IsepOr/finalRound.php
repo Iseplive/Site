@@ -22,7 +22,21 @@
         <p style="width: 500px;  margin-bottom: 20px;">
             <?php echo __('ISEPOR_TEXT_EXTRA'); ?>
         </p>
-   
+    <?php foreach($questionsExtra as $questionExtra): ?>
+        <div id="question-<?php echo $questionExtra['id'] ?>">
+            <h2><label for="question-<?php echo $questionExtra['id'] ?>-input"><?php echo htmlspecialchars($questionExtra['questions']) ?> :</label></h2>
+            <p itemid="<?php echo $questionExtra['id'] ?>">
+                <input type="hidden" value="<?php echo htmlspecialchars($questionExtra['type']); ?>" id="question-<?php echo $questionExtra['id'] ?>-type" />
+                <input type="hidden" value="extra" id="question-<?php echo $questionExtra['id'] ?>-has-extra" />
+                <input type="hidden" value="<?php echo htmlspecialchars($questionExtra['extra']); ?>" id="question-<?php echo $questionExtra['id'] ?>-extra" />
+                <input type="text" id="question-<?php echo $questionExtra['id']; ?>-input" class="autocomplete" style="margin: 5px;"/>
+                <span id="question-<?php echo $questionExtra['id'] ?>-error-com" class="error hidden" ><?php echo __('ISEPOR_ERROR_AUTOCOMPLETE'); ?></span>
+                <span id="question-<?php echo $questionExtra['id'] ?>-error-nan" class="error hidden" ><?php echo __('ISEPOR_ERROR_NOT_EXIST'); ?></span>
+                <span id="question-<?php echo $questionExtra['id'] ?>-error-emp" class="error hidden" ><?php echo __('ISEPOR_ERROR_EMPTY'); ?></span>
+                <input class="valid" type="hidden" name="valid-<?php echo htmlspecialchars($questionExtra['type']); ?>-<?php echo $questionExtra['id'] ?>-extra" id="question-<?php echo $questionExtra['id'] ?>-valid" value="" />
+            </p>
+        </div>
+    <?php endforeach; ?>
         <div class="submit">
             <input type="submit" value="Envoyer !"/>
         </div>

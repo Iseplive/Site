@@ -233,6 +233,11 @@ final class Routes extends RoutesAbstract {
 			'vars'		=> 'controller=Student&action=index',
 			'url'		=> 'students'
 		),
+		'students_promo' =>array(
+			'regexp'	=> '^ajax/students_promo/([0-9]+)(?=\?|$)',
+			'vars'		=> 'controller=Student&action=oldPromo&index=$1&mode=raw',
+			'url'		=> 'ajax/students_promo'
+		),
 		
 		// Group's page
 		'group'	=> array(
@@ -324,11 +329,6 @@ final class Routes extends RoutesAbstract {
 			'vars'		=> 'controller=Student&action=autocomplete&mode=json',
 			'url'		=> 'ajax/autocomplete/student/name'
 		),
-		'autocomplete'	=> array(
-			'regexp'	=> '^ajax/autocomplete(?=\?|$)',
-			'vars'		=> 'controller=Search&action=autocomplete&mode=json',
-			'url'		=> 'ajax/autocomplete'
-		),
 
         // Extra : Isep D'OR
         'isep_or_1'	=> array(
@@ -359,7 +359,7 @@ final class Routes extends RoutesAbstract {
 		),
 		//Administration
 		'admin'	=> array(
-			'regexp'	=> '^administration/([0-9]+)(?=\?|$)',
+			'regexp'	=> '^administration/([a-z]+)(?=\?|$)',
 			'vars'		=> 'controller=Administration&action=index&nav=$1',
 			'url'		=> 'administration/{nav}'
 		),
