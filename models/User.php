@@ -40,7 +40,10 @@ class User_Model extends Model {
 				$ldap_conn = ldap_connect(Config::$LDAP['host'], Config::$LDAP['port']);
 				$result = ldap_bind($ldap_conn, 'uid='.$username.','.Config::$LDAP['basedn'], $password);
 				
-			}else{
+			} elseif(Config::AUTHENTICATION_MODE == 'ldaps'){
+                                $ldap_conn = ldap_connect('ldaps://'.Config::$LDAP['host']);
+                                $result = ldap_bind($ldap_conn, 'uid='.$username.','.Config::$LDAP['basedn'], $password);
+			} else{
 				$curl = curl_init();
 				curl_setopt_array($curl, array(
 						CURLOPT_POST => 1,

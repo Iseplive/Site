@@ -27,13 +27,13 @@ final class Config extends ConfigAbstract {
 
 	// LDAP
 	public static $LDAP = array (
-		'host'		=> 'hera.isep.fr',
-		'port'		=> 389,
+		'host'		=> 'ldap.isep.fr',
+		'port'		=> 636,
 		'basedn'	=> 'ou=People,dc=isep.fr'
 	);
 
-	// Authentication mode: 'ldap' (ISEP's LDAP) or 'form' (using https://gcma.isep.fr/ form over https)
-	const AUTHENTICATION_MODE	= 'form';
+	// Authentication mode: 'ldap' (ISEP's LDAP, deprecated) or 'ldaps' (ISEP's LDAPS) or 'form' (using https://gcma.isep.fr/ form over https)
+	const AUTHENTICATION_MODE	= 'ldaps';
 
 	// Encryption secret key (for Encryption class)
 	const ENCRYPTION_KEY	= 'OyFDrRd3db';
