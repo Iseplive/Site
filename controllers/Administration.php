@@ -4,7 +4,7 @@ class Administration_Controller extends Controller {
 	public function index($param){
 		switch($param['nav']){
 			case "admins":
-				$this->setView('admins.php');
+				$this->adminPage($param);
 				break;
 			
 			default:
@@ -27,13 +27,7 @@ class Administration_Controller extends Controller {
 		
 		switch($param['nav']){
 			case "admins":
-				$this->set(array(
-					'username'			=> User_Model::$auth_data['username'],
-					'is_logged'			=> $is_logged,
-					'is_student'		=> $is_student,
-					'is_admin'			=> $is_admin,
-					'admins'			=> $this->model->getadmin()
-				));
+				$s=0;
 				break;
 			default:
 				$this->set(array(
@@ -51,24 +45,32 @@ class Administration_Controller extends Controller {
 		}
 				
 		/**/
-
-		$this->addJSCode('Admin.init();');
+		switch($param['nav']){
+			case "admins":
+				$s=0;
+				break;
 			
-		if(isset($param['nav']) && $param['nav']==1){
-			$this->addJSCode('Admin.navAdminChange(3);');
+			default:
+				$this->addJSCode('Admin.init();');
+			
+				if(isset($param['nav']) && $param['nav']==1){
+					$this->addJSCode('Admin.navAdminChange(3);');
+				}
+				if(isset($param['nav']) && $param['nav']==2){
+					$this->addJSCode('Admin.navAdminChange(3);Admin.isepdornav(2);');
+				}
+				if(isset($param['nav']) && $param['nav']==3){
+					$this->addJSCode('Admin.navAdminChange(3);Admin.isepdornav(3);');
+				}
+				if(isset($param['nav']) && $param['nav']==4){
+					$this->addJSCode('Admin.navAdminChange(3);Admin.isepdornav(4);');
+				}
+				if(isset($param['nav']) && $param['nav']==5){
+					$this->addJSCode('Admin.navAdminChange(5);');
+				}
+				
 		}
-		if(isset($param['nav']) && $param['nav']==2){
-			$this->addJSCode('Admin.navAdminChange(3);Admin.isepdornav(2);');
-		}
-		if(isset($param['nav']) && $param['nav']==3){
-			$this->addJSCode('Admin.navAdminChange(3);Admin.isepdornav(3);');
-		}
-		if(isset($param['nav']) && $param['nav']==4){
-			$this->addJSCode('Admin.navAdminChange(3);Admin.isepdornav(4);');
-		}
-		if(isset($param['nav']) && $param['nav']==5){
-			$this->addJSCode('Admin.navAdminChange(5);');
-		}
+		
 	
 		/*Code qui met à jour l'annuaire dans mysql et ajoute les avatars
 		*
@@ -390,17 +392,44 @@ class Administration_Controller extends Controller {
 			}
 			
 				
-			/*Permet de supprimer un admin
-			*
-			*/
-			if(isset($_GET['username'])){
-				$this->model->deleteadmin($param['username']);
-				header('Location: '.Config::URL_ROOT.Routes::getPage("admin",array("nav"=> 5)));
-			}
+			
 		
 	}
+	public function adminPage($param){
+		$this->setView('admins.php');
+		
+		$is_logged = isset(User_Model::$auth_data);
+		$is_student = $is_logged && isset(User_Model::$auth_data['student_number']);
+		$is_admin = $is_logged && User_Model::$auth_data['admin']=='1';
+		
+		if(!$is_logged)
+			throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
+		if(!$is_admin)
+			throw new ActionException('Page', 'error404');
+			
+		/* Permet de supprimer un admin */
+		if(isset($_GET['del']) && $_GET["del"]!=""){
+			$this->model->deleteadmin($_GET['del']);
+			header('Location: '.Config::URL_ROOT.Routes::getPage("admin",array("nav"=> "admins")));
+		}
+		/* Permet d'ajouter un admin	*/
+		if(isset($_POST['valid-students']) && $_POST["valid-students"]!=""){
+			$this->model->addadmin($_POST['valid-students']);
+			header('Location: '.Config::URL_ROOT.Routes::getPage("admin",array("nav"=> "admins")));
+		}
+			
+		$this->set(array(
+			'username'			=> User_Model::$auth_data['username'],
+			'is_logged'			=> $is_logged,
+			'is_student'		=> $is_student,
+			'is_admin'			=> $is_admin,
+			'admins'			=> $this->model->getadmin()
+		));
+		
+		$this->addJSCode('Admin.adminsInit();');
+	}
 	
-	//Function qui formate nom et prénom pou en faire un username
+	//Fonction qui formate nom et prénom pou en faire un username
 	public function makeusername($last,$first){
 		$name1=str_split(strtolower($last),7);
 		$name2=str_split(strtolower($first),1);

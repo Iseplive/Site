@@ -1134,23 +1134,41 @@ var Admin= {
             draggable : false
         });
 		
+		
+    },
+	adminsInit:function(){
 		//autocomplétion pour ajout d'admin
+		var type=$('type').get('value');
 		new Meio.Autocomplete('admin_edit_add_admin', $('admin_edit_add_admin_url').value, {
             delay: 200,
             minChars: 1,
             cacheLength: 100,
             maxVisibleItems: 10,
-			
             onSelect: function(elements, data){
-                var i = $('admin_edit_add_admin').set('value', '');
-                i.blur();
-                setTimeout(function(){
-                    i.focus();
-                }, 0);
+				$('admin_edit_add_admin').addClass('form-ok');
+				$('admin_edit_add_admin').removeClass('form-error');
+				$('error-com').addClass('hidden');
+				$('valid').set('value', data.valid);
             },
+			onDeselect: function(elements){
+				$('valid').set('value', '');
+				$('admin_edit_add_admin').addClass('form-error');
+				$('admin_edit_add_admin').addClass('form-ok');
+				$('error-nan').addClass('hidden');
+			},
 			
+			onNoItemToList: function(elements){
+			   $('valid').set('value', '');
+			   $('admin_edit_add_admin').addClass('form-error');
+			   $('error-nan').removeClass('hidden');
+			}, 
+				
             urlOptions: { 
                 queryVarName: 'q',
+				extraParams: [{
+						name: 'type',
+						value: type
+				}],
                 max: 10
             },
             filter: {
@@ -1158,57 +1176,41 @@ var Admin= {
                     return true;
                 },
                 formatMatch: function(text, data, i){
-                    return data.value;
+                    return data.shows;
                 },
                 formatItem: function(text, data){
-                    return data.value;
+                    return data.shows;
                 }
             },
-			 listOptions: {
-                    width: 'field', // you can pass any other value settable by set('width') to the list container
+			listOptions: {
+				width: 'field', // you can pass any other value settable by set('width') to the list container
 
-                    classes: {
-                        container: 'ma-container',
-                        hover: 'ma-hover', // applied to the focused options
-                        odd: 'ma-odd', // applied to the odd li's
-                        even: 'ma-even' // applied to the even li's
-                    }
-                },
-                requestOptions: {
-                    formatResponse: function(jsonResponse){ // this function should return the array of autocomplete data from your jsonResponse
-                        return jsonResponse;
-                    }
-                }
-			
-			
+				classes: {
+					container: 'ma-container',
+					hover: 'ma-hover', // applied to the focused options
+					odd: 'ma-odd', // applied to the odd li's
+					even: 'ma-even' // applied to the even li's
+				}
+			},
+			requestOptions: {
+				formatResponse: function(jsonResponse){ // this function should return the array of autocomplete data from your jsonResponse
+					return jsonResponse;
+				}
+			}
         });
-    },
-	//change les liens
-	navAdminChange: function(type){
-		if(type==1){
-			$("updatestudent").removeClass('hidden');
-			$("isepdor").addClass('hidden');
-			$("campagne").addClass('hidden');
-			$("admin").addClass('hidden');
-		}
-		if(type==3){
-			$("updatestudent").addClass('hidden');
-			$("isepdor").removeClass('hidden');
-			$("campagne").addClass('hidden');
-			$("admin").addClass('hidden');
-		}
-		if(type==4){
-			$("updatestudent").addClass('hidden');
-			$("isepdor").addClass('hidden');
-			$("campagne").removeClass('hidden');
-			$("admin").addClass('hidden');
-		}
-		if(type==5){
-			$("updatestudent").addClass('hidden');
-			$("isepdor").addClass('hidden');
-			$("campagne").addClass('hidden');
-			$("admin").removeClass('hidden');
-		}
+		
+		//bind de l'envoie des données (suppression et ajout);
+		jQuery("#admins img").each(function(i,elem){
+			jQuery(elem).bind('click',function(){
+				if(confirm(__("ADMIN_DELETE_CONFIRM"))){
+					window.location.href =jQuery("#form_admins").attr("action")+"?del="+jQuery(this).attr("id");
+				}
+			});
+		});
+		jQuery("#form_admins").submit(function(){
+			if(jQuery("#form_admins :input[name='valid-students']").val()=="")
+				return false;
+		});
 	},
 	
 	//permet d'afficher la page de modif des isep d'or

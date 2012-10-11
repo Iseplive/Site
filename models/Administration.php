@@ -369,13 +369,28 @@ class Administration_Model extends Model {
 	 * @param $username
 	 */
 	 public function deleteadmin($username){
-		DB::createQuery('users')
-			->set(array(
-				'admin'			=>0
-			))
-			->where(array('username' => $username))
-			->update();
-	 
+		if($this->checkuser($username,1)){
+			DB::createQuery('users')
+				->set(array(
+					'admin'			=>0
+				))
+				->where(array('username' => $username))
+				->update();
+		}
+	 }
+	 /*ajouteun admin
+	 *
+	 * @param $username
+	 */
+	 public function addadmin($username){
+		if($this->checkuser($username,1)){
+			DB::createQuery('users')
+				->set(array(
+					'admin'			=>1
+				))
+				->where(array('username' => $username))
+				->update();
+		}
 	 }
 }
 ?>

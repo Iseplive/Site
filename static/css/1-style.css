@@ -760,6 +760,12 @@ h1, h1 a, h1 a:hover, h1 a:visited, h1 a:active, h1 a:focus {
 	margin-left: 17px;
 }
 
+/* Admin */
+.image_icon{
+	cursor:pointer;
+	position:relative;
+	top:3px;
+}
 
 /* Others */
 

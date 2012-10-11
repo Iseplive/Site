@@ -629,6 +629,8 @@ ADMIN_POST_CSVERROR
 	Le ou les fichiers csv n'ont pu être trouvés!
 ADMIN_ADMINISTRATEUR
 	Administrateurs
+ADMIN_DELETE_CONFIRM
+	Êtes-vous sur de vouloir supprimer cet administrateur.
 ADMIN_TXTENVOIE
 	Veuillez séléctionner le fichier pour l'actualisation:
 ADMIN_ENVOYER
