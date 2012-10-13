@@ -143,7 +143,8 @@ foreach($cssFiles as $cssFile){
 					'USER_EDIT_FORM_BIRTHDAY_FORMAT_PARSE',
 					'PROFILE_STUDENT_NUMBER',
 					'PROFILE_PROMO',
-					'ADMIN_DELETE_CONFIRM'
+					'ADMIN_DELETE_CONFIRM',
+					'ADMIN_CONFIRM_DELETE'
 				);
 				foreach($js_translations as $i => $js_translation){
 					if($i != 0)

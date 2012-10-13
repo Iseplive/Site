@@ -861,6 +861,7 @@ input[type=text]:focus, input[type=password]:focus, textarea:focus {
 	background: no-repeat url("../images/icons/close2.png");	
 	display:inline-block;
 	position:relative;
+	z-index:100000;
 	top:-88px;
 	left:-105px;
 }

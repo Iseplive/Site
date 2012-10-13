@@ -461,21 +461,32 @@ class Post_Model extends Model {
 	 *
 	 * @param int $post_id		Attachment's id
 	 */
-	public function deleteattachment($post_id){
+	public function deleteattachment($id,$post_id){
 		// Delete attachments
 		$attachment = DB::createQuery('attachments')
 			->fields('id', 'ext')
-			->where(array('id' => $post_id))
+			->where(array('id' => $id,'post_id'=>$post_id))
 			->select();
+
+		if(count($attachment[0])>0){
+			File::delete(self::getAttachedFilePath((int) $attachment[0]['id'], $attachment[0]['ext']));
+			File::delete(self::getAttachedFilePath((int) $attachment[0]['id'], 'jpg', 'thumb'));
 		
-			File::delete(self::getAttachedFilePath((int) $attachment['id'], $attachment['ext']));
-			File::delete(self::getAttachedFilePath((int) $attachment['id'], 'jpg', 'thumb'));
-		
-		
-		// Delete the attachment
-		 DB::createQuery('attachments')
-			->where(array('id' => $post_id))
-			->delete();
+			// Delete the attachment
+			 DB::createQuery('attachments')
+				->where(array('id' => $id,'post_id'=>$post_id))
+				->delete();
+				
+			PostComment_Model::attachmentDelete($id,$post_id);
+			PostCommentLike_Model::attachmentDelete($id,$post_id);
+			PostLike_Model::attachmentDelete($id,$post_id);
+			
+			self::clearCache();
+			return true;
+		}
+		else{
+			return false;
+		}
 		
 	}
 	

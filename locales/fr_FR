@@ -631,6 +631,10 @@ ADMIN_ADMINISTRATEUR
 	Administrateurs
 ADMIN_DELETE_CONFIRM
 	Êtes-vous sur de vouloir supprimer cet administrateur.
+ADD_ATTACHMENT_PHOTO
+	Ajouter des photos
+ADMIN_RECONFIRM
+	Confirmation du compte
 ADMIN_TXTENVOIE
 	Veuillez séléctionner le fichier pour l'actualisation:
 ADMIN_ENVOYER
@@ -667,8 +671,8 @@ ADMIN_ISEPDOR_NAV3
 	Table administration
 ADMIN_ISEPDOR_NAV3
 	Administration
-ADMIN_ISEPDOR_CONFIRM
-	Etes-vous sur de vouloir supprimer cet élément.
+ADMIN_CONFIRM_DELETE
+	Êtes-vous sur de vouloir supprimer cet élément.
 ADMIN_ISEPDOR_EXPORT
 	Exporter la base de donnée
 ADMIN_ISEPDOR_FIRST

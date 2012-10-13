@@ -293,6 +293,29 @@ var Post = {
         .set("href", "javascript:;");
     },
 	
+	photoDelete :function(){
+		jQuery(".photos .photo-delete").each(function(i,elem){
+			jQuery(elem).bind('click',function(e){
+				domElem=jQuery(this);
+				if(confirm(__("ADMIN_CONFIRM_DELETE"))){
+					jQuery.ajax({
+							  url: domElem.attr('href'),
+							  dataType: 'json',			  
+							  type: "GET",
+							  async:false,
+							  success:function(data) {
+									if(data.success){
+										domElem.parent().fadeOut('slow', function() {
+											jQuery(this).remove();
+										});
+									}
+							  }
+					  }); 
+				}
+				return false;
+			});
+		});
+	},	
 	
     formEnable : true,
 	

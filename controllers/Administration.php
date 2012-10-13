@@ -2,15 +2,6 @@
 
 class Administration_Controller extends Controller {
 	public function index($param){
-		switch($param['nav']){
-			case "admins":
-				$this->adminPage($param);
-				break;
-			
-			default:
-				$this->setView('index.php');
-		}
-		
 		$is_logged = isset(User_Model::$auth_data);
 		$is_student = $is_logged && isset(User_Model::$auth_data['student_number']);
 		$is_admin = $is_logged && User_Model::$auth_data['admin']=='1';
@@ -19,6 +10,52 @@ class Administration_Controller extends Controller {
 			throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
 		if(!$is_admin)
 			throw new ActionException('Page', 'error404');
+		
+		//revérifie le compte admin
+		$user_model = new User_Model();
+		if(isset($_POST['reconfpassword']) ){
+			$username = User_Model::$auth_data['username'];
+			$password = $_POST['reconfpassword'];
+			try {
+				if(!preg_match('#^[a-z0-9-]+$#', $username))
+					throw new Exception('Invalid username');
+				if($user_model->authenticate($username, $password)){
+					User_Model::$auth_status = User_Model::AUTH_STATUS_LOGGED;
+					// Write session and cookie to remember sign-in
+					Cookie::write('login', Encryption::encode($username.':'.$password), 60*24*3600);
+					Session::write('username', $username);
+					
+				}else{
+					throw new Exception('Bad username or password');
+				}
+				
+			}catch(Exception $e){
+				User_Model::$auth_status = User_Model::AUTH_STATUS_BAD_USERNAME_OR_PASSWORD;
+				Cookie::delete('login');
+				Session::delete('username');
+				throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
+			}
+		}
+		if(($auth_admin = Cache::read('auth_admin')) && $is_admin ){
+			$this->setView('reconfirm.php');
+			$this->set(array(
+							'user'=>User_Model::$auth_data['firstname']." ".User_Model::$auth_data['lastname'],
+							'url'=>$param['nav']
+			));
+			return;
+		}
+		else{
+			throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
+		}
+		
+		switch($param['nav']){
+			case "admins":
+				$this->adminPage($param);
+				break;
+			
+			default:
+				$this->setView('index.php');
+		}
 		
 		$last_promo = ((int) date('Y')) + 5;
 		if((int) date('m') < 9){
@@ -397,16 +434,7 @@ class Administration_Controller extends Controller {
 	}
 	public function adminPage($param){
 		$this->setView('admins.php');
-		
-		$is_logged = isset(User_Model::$auth_data);
-		$is_student = $is_logged && isset(User_Model::$auth_data['student_number']);
-		$is_admin = $is_logged && User_Model::$auth_data['admin']=='1';
-		
-		if(!$is_logged)
-			throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
-		if(!$is_admin)
-			throw new ActionException('Page', 'error404');
-			
+
 		/* Permet de supprimer un admin */
 		if(isset($_GET['del']) && $_GET["del"]!=""){
 			$this->model->deleteadmin($_GET['del']);

@@ -187,7 +187,7 @@ class Post_Controller extends Controller {
 						'url'	=> $attachment['url']
 					);
 			}
-			$this->addJSCode('Post.photos = '.json_encode($photos).';');
+			$this->addJSCode('Post.photos = '.json_encode($photos).';Post.photoDelete();');
 		}
 		
 	}
@@ -622,14 +622,88 @@ class Post_Controller extends Controller {
 			$is_logged = isset(User_Model::$auth_data);
 			$is_admin = $is_logged && User_Model::$auth_data['admin']=='1';
 			
-			if( $is_admin){	
-				$this->model->deleteattachment((int) $params['id']);
-				$this->set('success', true);
-				
+			if( $is_admin && $this->model->deleteattachment((int) $params['id'],(int) $params['post_id'])){	
+				$this->set('success', true);		
 			}else{
 				$this->set('success', false);
 			}
 
+	}
+	/* Add one or many attachment to a photo post */
+	public function addAttachment($param){
+		$this->setView('iframe_add.php');
+		$is_logged = isset(User_Model::$auth_data);
+		$is_admin = $is_logged && User_Model::$auth_data['admin']=='1';
+		@set_time_limit(0);
+		
+		$uploaded_files = array();
+		$attachments = array();
+		try {
+			if($is_admin && isset($param['id']) && isset($_FILES['attachment_photo']) && is_array($_FILES['attachment_photo']['name']) ){
+				foreach($_FILES['attachment_photo']['size'] as $size){
+					if($size > Config::UPLOAD_MAX_SIZE_PHOTO)
+						throw new Exception(__('POST_ADD_ERROR_PHOTO_SIZE', array('size' => File::humanReadableSize(Config::UPLOAD_MAX_SIZE_PHOTO))));
+				}
+				if($filepaths = File::upload('attachment_photo')){
+					foreach($filepaths as $filepath)
+						$uploaded_files[] = $filepath;
+					foreach($filepaths as $i => $filepath){
+						$name = isset($_FILES['attachment_photo']['name'][$i]) ? $_FILES['attachment_photo']['name'][$i] : '';
+						try {
+							$img = new Image();
+							$img->load($filepath);
+							$type = $img->getType();
+							if($type==IMAGETYPE_JPEG)
+								$ext = 'jpg';
+							else if($type==IMAGETYPE_GIF)
+								$ext = 'gif';
+							else if($type==IMAGETYPE_PNG)
+								$ext = 'png';
+							else
+								throw new Exception();
+							
+							if($img->getWidth() > 800)
+								$img->setWidth(800, true);
+							$img->save($filepath);
+							
+							// Thumb
+							$thumbpath = $filepath.'.thumb';
+							$img->thumb(Config::$THUMBS_SIZES[0], Config::$THUMBS_SIZES[1]);
+							$img->setType(IMAGETYPE_JPEG);
+							$img->save($thumbpath);
+							
+							unset($img);
+							$attachments[] = array($filepath, $name, $thumbpath);
+							$uploaded_files[] = $thumbpath;
+							
+						}catch(Exception $e){
+							throw new Exception(__('POST_ADD_ERROR_PHOTO_FORMAT'));
+						}
+					}
+				}
+				
+				// Attach files
+				foreach($attachments as $attachment)
+					$this->model->attachFile($param['id'], $attachment[0], $attachment[1], isset($attachment[2]) ? $attachment[2] : null);
+				
+			
+				$this->addJSCode('
+						parent.location = "'. Config::URL_ROOT.Routes::getPage('post',array('id'=>$param['id'])).'";
+					');
+			}
+			Post_Model::clearCache();
+		}catch(Exception $e){
+			// Delete all uploading files in tmp
+			foreach($uploaded_files as $uploaded_file)
+				File::delete($uploaded_file);
+			
+			$this->addJSCode('
+				with(parent){
+					Post.errorForm('.json_encode($e->getMessage()).');
+				}
+			');
+		}
+		
 	}
 	
 }

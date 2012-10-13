@@ -1,5 +1,3 @@
-<!--Page ajouté par Philippe !-->
-<?php if($is_logged){ ?>
 	<div id="liste">
 		<div id="headermedia">
 			<nav>
@@ -215,4 +213,3 @@
 				} ?>
 		</div>
 	</div>
-<?php } ?>

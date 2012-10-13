@@ -8,11 +8,9 @@ class Media_Controller extends Controller {
 		$is_student = $is_logged && isset(User_Model::$auth_data['student_number']);
 		$is_admin = $is_logged && User_Model::$auth_data['admin']=='1';
 		
-		$this->set(array(
-			'is_logged'			=> $is_logged,
-			'is_student'		=> $is_student,
-			'is_admin'			=> $is_admin
-		));
+		if (!$is_student)
+            throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
+			
 		//Pour tout les média
 		$medias=$this->model->getMedias();
 		$annee=array();

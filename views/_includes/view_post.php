@@ -137,7 +137,21 @@
         if (!isset($post['attachments']))
             $post['attachments'] = array();
         $nb_photos = 0;
-
+		if ($is_admin && isset($post['attachments'][0]['ext']) && ($post['attachments'][0]['ext']=='jpg' ||$post['attachments'][0]['ext']=='gif' ||$post['attachments'][0]['ext']=='png' ) && isset($post['attachments'][0]['thumb'])  ){ 
+			?>	
+				<br/><br/><br/>
+				<form id="publish-form" action="<?php echo Config::URL_ROOT.Routes::getPage('attachment_add',array('id'=>$post['id'])); ?>" method="post" enctype="multipart/form-data" target="publish_iframe" onsubmit="return Post.submitForm();">
+					<fieldset id="publish-stock-attachment-photo" class="publish-attachment">
+						<legend><img src="<?php echo Config::URL_STATIC; ?>images/icons/attachment_photo.png" alt="" class="icon" /> <?php echo __('ADD_ATTACHMENT_PHOTO'); ?></legend>
+						<?php echo __('PUBLISH_ATTACHMENT_SEND'); ?> <input type="file" name="attachment_photo[]" multiple /><br />
+						<span class="publish-attachment-info"><?php echo __('PUBLISH_ATTACHMENT_PHOTO_INFO', array('size' => File::humanReadableSize(Config::UPLOAD_MAX_SIZE_PHOTO))); ?></span>
+						<input type="submit" id="publish-submit" value="<?php echo __('PUBLISH_SUBMIT'); ?>" />
+					</fieldset>
+				</form>
+				<div id="publish-error" class="hidden"></div>
+				<iframe name="publish_iframe" class="hidden"></iframe>
+			<?php
+		}
         foreach ($post['attachments'] as $attachment) {
             switch ($attachment['ext']) {
 
@@ -157,9 +171,8 @@
                         <a href="<?php echo Config::URL_ROOT . Routes::getPage('post', array('id' => $post['id'])) . '#photo-' . $attachment['id']; ?>">
 							<img src="<?php echo $attachment['thumb']; ?>" alt="" />
 							<?php if ($is_admin){ ?>
-									<a href="<?php echo Config::URL_ROOT . Routes::getPage('attachment_delete', array('id' => $attachment['id'],'post_id'=>$post['id'])); ?>" class="photo-delete">.</a>
+								<span href="<?php echo Config::URL_ROOT . Routes::getPage('attachment_delete', array('id' => $attachment['id'],'post_id'=>$post['id'])); ?>" class="photo-delete">.</span>
 							<?php } ?>
-							
 						</a>
                        
 						<?php
