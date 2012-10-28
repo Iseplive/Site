@@ -12,7 +12,7 @@ class Administration_Controller extends Controller {
 			throw new ActionException('Page', 'error404');
 		
 		//revérifie le compte admin
-		$user_model = new User_Model();
+		/*$user_model = new User_Model();
 		if(isset($_POST['reconfpassword']) ){
 			$username = User_Model::$auth_data['username'];
 			$password = $_POST['reconfpassword'];
@@ -46,13 +46,18 @@ class Administration_Controller extends Controller {
 		}
 		else{
 			throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
-		}
+		}*/
 		
 		switch($param['nav']){
 			case "admins":
 				$this->adminPage($param);
 				break;
-			
+			case "users":
+				$this->usersPage($param);
+				break;
+			case "bde":
+				$this->bdePage($param);
+				break;
 			default:
 				$this->setView('index.php');
 		}
@@ -64,7 +69,7 @@ class Administration_Controller extends Controller {
 		
 		switch($param['nav']){
 			case "admins":
-				$s=0;
+				$s=0;//fallait mettre qqch
 				break;
 			default:
 				$this->set(array(
@@ -108,187 +113,6 @@ class Administration_Controller extends Controller {
 				
 		}
 		
-	
-		/*Code qui met à jour l'annuaire dans mysql et ajoute les avatars
-		*
-		*/
-			if(isset($_FILES['uploadzip']) && $_FILES['uploadzip']['name']!=null ){
-				if($_FILES['uploadzip']['size'] > Config::UPLOAD_MAX_SIZE_FILE)
-						throw new Exception(__('POST_ADD_ERROR_FILE_SIZE', array('size' => File::humanReadableSize(Config::UPLOAD_MAX_SIZE_FILE))));
-				 
-				//On déplace le fichier zipper vers le serveur
-				if($filepaths = File::upload('uploadzip')){
-						if(!preg_match('#\.zip$#', $filepaths))
-							throw new Exception(__('POST_ADD_ERROR_FILE_FORMAT'));
-						$name = $filepaths;
-				}
-				$path=DATA_DIR.Config::DIR_DATA_TMP.'annuaire/';
-				// On dézip celui-ci
-				if(FILE::exists($path)){
-					FILE::delete($path);
-				}
-				File::makeDir($path);
-				$zip = new ZipArchive;
-				 $res = $zip->open($name);
-				 if ($res === TRUE) {
-					$zip->extractTo($path);
-					$zip->close();
-					unlink($name);
-				 }
-				 else{
-					throw new Exception(__('ADMIN_POST_ZIPERROR'));
-				}
-				if(File::delete(DATA_DIR.Config::DIR_DATA_TMP.$name)){
-					// On aplique le chmod a tous les dossiers et fichiers du zip
-						FILE::chmodDirectory($path,0);
-					// on traite les fichiers students.csv et users.csv
-													
-						if (file_exists($path.'users.csv')){
-							$fp = fopen($path.'users.csv', "r"); 
-						}
-						else{											
-							throw new Exception(__('ADMIN_POST_CSVERROR1'));
-						}
-
-						$i=0;
-							 while (!feof($fp)) {
-									$i = $i+1;
-										// Tant qu'on n'atteint pas la fin du fichier 
-										$ligne = fgets($fp,4096); /* On lit une ligne */
-										// On récupère les champs séparés par ; dans liste
-										$liste = explode( ";",$ligne);   
-										// On assigne les variables
-										if(strlen($liste[0])>1){
-											if (isset($liste[0])){ 
-												$username = $liste[0];
-											}
-											if (isset($liste[1])){ 
-												$admin = $liste[1];
-											}
-											 if (isset($liste[2])){ 
-												$mail = $liste[2];
-											}
-											if (isset($liste[3])){ 
-												$msn = $liste[3];
-											}
-											if (isset($liste[4])){ 
-												$jabber = $liste[4];
-											}
-											if (isset($liste[5])){ 
-												$address = $liste[5];
-											}
-											if (isset($liste[6])){ 
-												$zipcode = $liste[6];
-											}
-											if (isset($liste[7])){ 
-												$city = $liste[7];
-											}
-											if (isset($liste[8])){ 
-												$cellphone = $liste[8];
-											}
-											if (isset($liste[9])){ 
-												$phone = $liste[9];
-											}
-											if (isset($liste[10])){ 
-												$birthday = $liste[10];
-											}
-											
-											if(!$this->model->checkuser($username,1)){
-												$this->model->insertUsers(trim($username),trim($admin),trim($mail),trim($msn),trim($jabber),trim($address),trim($zipcode),trim($city),trim($cellphone),trim($phone),trim($birthday));	
-											}
-											
-										}							
-								}
-								fclose($fp);
-								
-						if (file_exists($path.'students.csv')){
-							$fp = fopen($path.'students.csv', "r"); 
-						}
-						else{											
-							throw new Exception(__('ADMIN_POST_CSVERROR2'));
-						}
-
-						$i=0;
-							 while (!feof($fp)) {
-									$i = $i+1;
-										// Tant qu'on n'atteint pas la fin du fichier 
-										$ligne = fgets($fp,4096); /* On lit une ligne */
-										// On récupère les champs séparés par ; dans liste
-										$liste = explode( ";",$ligne);   
-										// On assigne les variables
-										if(strlen($liste[0])>1){
-											if (isset($liste[0])){ 
-												$username = $liste[0];
-											}
-											if (isset($liste[1])){ 
-												$lastname = $liste[1];
-											}
-											 if (isset($liste[2])){ 
-												$firstname = $liste[2];
-											}
-											if (isset($liste[3])){ 
-												$student_number = $liste[3];
-											}
-											if (isset($liste[4])){ 
-												$promo = $liste[4];
-											}
-											if (isset($liste[5])){ 
-												$cesure = $liste[5];
-											}
-											
-											if(!$this->model->checkuser($username,2)){
-												$this->model->insertStudents(trim($username),trim($lastname),trim($firstname),trim($student_number),trim($promo),trim($cesure));
-											}
-																		
-										// On déplace et formate les photos dans le dossier avatars
-											
-										$avatarpath = $path.'photos_students/'.$student_number.'.jpg';
-										if(File::exists($avatarpath)){
-											$img = new Image();
-											$img->load($avatarpath);
-											$type = $img->getType();
-											if($type==IMAGETYPE_JPEG)
-												$ext = 'jpg';
-											else if($type==IMAGETYPE_GIF)
-												$ext = 'gif';
-											else if($type==IMAGETYPE_PNG)
-												$ext = 'png';
-											else
-												throw new Exception();
-											
-											if($img->getWidth() > 800)
-												$img->setWidth(800, true);
-											$img->setType(IMAGETYPE_JPEG);
-											$img->save($avatarpath);
-											
-											// Thumb
-											$avatarthumbpath = $path.'photos_students/'.$student_number.'_thumb.jpg';
-											$img->thumb(Config::$AVATARS_THUMBS_SIZES[0], Config::$AVATARS_THUMBS_SIZES[1]);
-											$img->setType(IMAGETYPE_JPEG);
-											$img->save($avatarthumbpath);
-											
-											if(FILE::exists(DATA_DIR.Config::DIR_DATA_STORAGE.'avatars/'.substr($student_number, 0, -2).'/')){
-												FILE::move($avatarthumbpath,DATA_DIR.Config::DIR_DATA_STORAGE.'avatars/'.substr($student_number, 0, -2).'/');
-												FILE::move($avatarpath,DATA_DIR.Config::DIR_DATA_STORAGE.'avatars/'.substr($student_number, 0, -2).'/');
-											}
-											else{
-												FILE::makeDir(DATA_DIR.Config::DIR_DATA_STORAGE.'avatars/'.substr($student_number, 0, -2).'/');
-												FILE::move($avatarthumbpath,DATA_DIR.Config::DIR_DATA_STORAGE.'avatars/'.substr($student_number, 0, -2).'/');
-												FILE::move($avatarpath,DATA_DIR.Config::DIR_DATA_STORAGE.'avatars/'.substr($student_number, 0, -2).'/');
-											}
-											unset($img);	
-										}
-									}			
-														
-								}
-								fclose($fp);
-								// On supprime le tout du dossier temp
-								 FILE::delete($path);
-										
-				}
-				$this->addJSCode('Admin.success();');
-			}
-
 			
 			/* Code qui met à jour le questionnaire pour les ISEP D'or
 			*
@@ -432,6 +256,7 @@ class Administration_Controller extends Controller {
 			
 		
 	}
+	
 	public function adminPage($param){
 		$this->setView('admins.php');
 
@@ -447,14 +272,222 @@ class Administration_Controller extends Controller {
 		}
 			
 		$this->set(array(
-			'username'			=> User_Model::$auth_data['username'],
-			'is_logged'			=> $is_logged,
-			'is_student'		=> $is_student,
-			'is_admin'			=> $is_admin,
 			'admins'			=> $this->model->getadmin()
 		));
 		
 		$this->addJSCode('Admin.adminsInit();');
+	}
+	
+	public function usersPage($param){
+		$this->setView('users.php');
+		
+		/*
+		* Enregistrement du post dans la table users	
+		*/
+		if(isset($_FILES['uploadxml1']) && $_FILES['uploadxml1']['name']!=null ){
+			if($_FILES['uploadxml1']['size'] > Config::UPLOAD_MAX_SIZE_FILE)
+					throw new Exception(__('POST_ADD_ERROR_FILE_SIZE', array('size' => File::humanReadableSize(Config::UPLOAD_MAX_SIZE_FILE))));
+			 
+			//On déplace le fichier vers le serveur
+			if($filepaths = File::upload('uploadxml1')){
+					if(!preg_match('#\.xml$#', $filepaths))
+						throw new Exception(__('POST_ADD_ERROR_FILE_FORMAT'));
+					$name = $filepaths;
+			}
+			$student=array();
+			$path=DATA_DIR.Config::DIR_DATA_TMP.$_FILES['uploadxml1']['name'];
+			if (file_exists($path)){
+				$data = simplexml_load_file($path); 
+				foreach ($data->data as $data) {  
+					if(isset($data->username) && isset($data->admin) && isset($data->mail) && isset($data->msn) && isset($data->jabber) && isset($data->address) 
+						&& isset($data->address) && isset($data->zipcode) && isset($data->city) && isset($data->cellphone) &&isset($data->phone) &&isset($data->birthday)){
+						$username=$data->username;
+						$admin=$data->admin;
+						$mail=$data->mail;
+						$msn=$data->msn;
+						$jabber=$data->jabber;
+						$address=$data->address;
+						$zipcode=$data->zipcode;
+						$city=$data->city;
+						$cellphone=$data->cellphone;
+						$phone=$data->phone;
+						$birthday=$data->birthday;
+						
+						if(!$this->model->checkuser($username,1)){
+							$this->model->insertUsers($username,$admin,utf8_decode($mail),utf8_decode($msn),utf8_decode($jabber),utf8_decode($address),$zipcode,$city,$cellphone,$phone,$birthday);	
+						}
+						else{
+							array_push($student,$username);
+						}
+					}
+					else{
+						throw new Exception(__('ADMIN_UPLOAD_ERROR2'));
+					}
+				}				
+			}
+			else{											
+				throw new Exception(__('ADMIN_UPLOAD_ERROR'));
+			}
+			FILE::delete($path);
+			$this->set('fail', $student);
+		}
+		
+		/*
+		* Enregistrement du post dans la table students
+		*/
+		if(isset($_FILES['uploadxml2']) && $_FILES['uploadxml2']['name']!=null ){
+			if($_FILES['uploadxml2']['size'] > Config::UPLOAD_MAX_SIZE_FILE)
+					throw new Exception(__('POST_ADD_ERROR_FILE_SIZE', array('size' => File::humanReadableSize(Config::UPLOAD_MAX_SIZE_FILE))));
+			 
+			if($filepaths = File::upload('uploadxml2')){
+					if(!preg_match('#\.xml$#', $filepaths))
+						throw new Exception(__('POST_ADD_ERROR_FILE_FORMAT'));
+					$name = $filepaths;
+			}
+			$student=array();
+			$path=DATA_DIR.Config::DIR_DATA_TMP.$_FILES['uploadxml2']['name'];
+			if (file_exists($path)){
+				$data = simplexml_load_file($path); 
+				foreach ($data->data as $data) {  
+					if(isset($data->username) && isset($data->lastname) && isset($data->firstname) && isset($data->student_number) && isset($data->promo) && isset($data->cesure)){
+						$username=$data->username;
+						$lastname=$data->lastname;
+						$firstname=$data->firstname;
+						$student_number=$data->student_number;
+						$promo=$data->promo;
+						$cesure=$data->cesure;
+						
+						if(!$this->model->checkuser($username,2)){
+							$this->model->insertStudents($username,utf8_decode($lastname),utf8_decode($firstname),$student_number,$promo,$cesure);	
+						}
+						else{
+							array_push($student,$username);
+						}
+					}
+					else{
+						throw new Exception(__('ADMIN_UPLOAD_ERROR2'));
+					}
+				}				
+			}
+			else{											
+				throw new Exception(__('ADMIN_UPLOAD_ERROR'));
+			}
+			FILE::delete($path);
+			
+			$this->set('fail', $student);
+		}
+		/*
+		* Enregistrement des avatars
+		*/
+		if(isset($_FILES['avatar_photo']) && is_array($_FILES['avatar_photo']['name'])){
+			foreach($_FILES['avatar_photo']['size'] as $size){
+				if($size > Config::UPLOAD_MAX_SIZE_PHOTO)
+					throw new Exception(__('POST_ADD_ERROR_PHOTO_SIZE', array('size' => File::humanReadableSize(Config::UPLOAD_MAX_SIZE_PHOTO))));
+			}
+			$student=array();
+			if($avatarpaths = File::upload('avatar_photo')){
+				foreach($avatarpaths as $avatarpath)
+					$uploaded_files[] = $avatarpath;
+				foreach($avatarpaths as $i => $avatarpath){
+					$name = $_FILES['avatar_photo']['name'][$i];
+					try {
+						$img = new Image();
+						$img->load($avatarpath);
+						$type = $img->getType();
+						if($type==IMAGETYPE_JPEG)
+							$ext = 'jpg';
+						else if($type==IMAGETYPE_GIF)
+							$ext = 'gif';
+						else if($type==IMAGETYPE_PNG)
+							$ext = 'png';
+						else
+							throw new Exception();
+						
+						if($img->getWidth() > 800)
+							$img->setWidth(800, true);
+						$img->setType(IMAGETYPE_JPEG);
+						$img->save($avatarpath);
+						
+						// Thumb
+						$avatarthumbpath = $avatarpath.'.thumb';
+						$img->thumb(Config::$AVATARS_THUMBS_SIZES[0], Config::$AVATARS_THUMBS_SIZES[1]);
+						$img->setType(IMAGETYPE_JPEG);
+						$img->save($avatarthumbpath);
+						
+						unset($img);
+						$uploaded_files[] = $avatarthumbpath;
+						
+						$student_data['avatar_path'] = $avatarthumbpath;
+						$student_data['avatar_big_path'] = $avatarpath;
+						$student_data['student_number']=preg_replace( '/\.[a-z0-9]+$/i' , '' , $name );
+						if(isset($student_data['avatar_path']) && isset($student_data['student_number']) && File::exists($student_data['avatar_path'])){
+							$avatar_path = Student_Model::getAvatarPath((int) $student_data['student_number'], true);
+							$avatar_dir = File::getPath($avatar_path);
+							if(!is_dir($avatar_dir))
+								File::makeDir($avatar_dir, 0777, true);
+							File::rename($student_data['avatar_path'], $avatar_path);
+						}
+						if(isset($student_data['avatar_big_path']) && isset($student_data['student_number']) && File::exists($student_data['avatar_big_path'])){
+							$avatar_path = Student_Model::getAvatarPath((int) $student_data['student_number'], false);
+							$avatar_dir = File::getPath($avatar_path);
+							if(!is_dir($avatar_dir))
+								File::makeDir($avatar_dir, 0777, true);
+							File::rename($student_data['avatar_big_path'], $avatar_path);
+						}
+						
+					}catch(Exception $e){
+						array_push($student,$name);
+					}	
+				}
+				$this->set('fail2', $student);
+				foreach($uploaded_files as $uploaded_file)
+					File::delete($uploaded_file);
+			}
+		}
+	}
+	
+	public function bdePage($param){
+		$this->setView('bde.php');
+		
+		if(isset($_FILES['logo']) && !is_array($_FILES['logo']['name'])){
+			if($_FILES['logo']['size'] > Config::UPLOAD_MAX_SIZE_PHOTO)
+				throw new FormException('logo');
+			if($avatarpath = File::upload('logo')){
+				$uploaded_files[] = $avatarpath;
+				try {
+					$img = new Image();
+					$img->load($avatarpath);
+					$type = $img->getType();
+					if($type==IMAGETYPE_JPEG)
+						$ext = 'jpg';
+					else if($type==IMAGETYPE_GIF)
+						$ext = 'gif';
+					else if($type==IMAGETYPE_PNG)
+						$ext = 'png';
+					else
+						throw new Exception();
+					
+					if($img->getHeight() > 80)
+						$img->setHeight(80, true);	
+						
+					$img->setType($type);
+					$img->save($avatarpath);
+					
+					unset($img);
+					if(isset($avatarpath) && File::exists($avatarpath)){
+						$avatar_path = APP_DIR.Config::DIR_APP_STATIC."images/header/logo_bde.png";
+						$avatar_dir = File::getPath($avatar_path)."/logo_bde.png";
+						File::rename($avatarpath, $avatar_dir);
+					}
+				}catch(Exception $e){
+					throw new FormException('avatar');
+				}
+				
+				foreach($uploaded_files as $uploaded_file)
+					File::delete($uploaded_file);
+			}
+			Post_Model::clearCache();
+		}
 	}
 	
 	//Fonction qui formate nom et prénom pou en faire un username

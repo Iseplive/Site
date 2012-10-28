@@ -54,10 +54,10 @@ foreach($cssFiles as $cssFile){
 						<?php if($is_admin){ ?>
 								<a  id="adminNav"><?php echo __('NAV_ADMIN'); ?></a>
 								<div id="adminMenu" class="hidden" >
-									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> 0)); ?>"><?php echo __('ADMIN_UPDATE'); ?></a>
+									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> "users")); ?>"><?php echo __('ADMIN_UPDATE'); ?></a>
 									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> 1)); ?>"><?php echo __('ADMIN_ANNUAIRE'); ?></a>
 									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> 2)); ?>"><?php echo __('ADMIN_ISEPDOR'); ?></a>
-									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> 3)); ?>"><?php echo __('ADMIN_CAMPAGNE'); ?></a>
+									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> "bde")); ?>"><?php echo __('ADMIN_BDE'); ?></a>
 									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> "admins")); ?>"><?php echo __('ADMIN_ADMINISTRATEUR'); ?></a>
 								</div>
 						<?php } ?>

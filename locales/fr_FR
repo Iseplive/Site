@@ -619,14 +619,10 @@ ADMIN_ANNUAIRE
 	Générer l'annuaire
 ADMIN_ISEPDOR
 	ISEP D'or
-ADMIN_CAMPAGNE
-	Campagne BDE
-ADMIN_TXTENVOIE
-	Veuillez séléctionner le fichier pour l'actualisation:
+ADMIN_BDE
+	BDE
 ADMIN_ENVOYER
 	Envoyer
-ADMIN_POST_CSVERROR
-	Le ou les fichiers csv n'ont pu être trouvés!
 ADMIN_ADMINISTRATEUR
 	Administrateurs
 ADMIN_DELETE_CONFIRM
@@ -636,15 +632,27 @@ ADD_ATTACHMENT_PHOTO
 ADMIN_RECONFIRM
 	Confirmation du compte
 ADMIN_TXTENVOIE
-	Veuillez séléctionner le fichier pour l'actualisation:
+	Fichier xml:
+ADMIN_TEMPLATE_USERS
+	Template pour la table users
+ADMIN_TEMPLATE_STUDENTS
+	Template pour la table students
+ADMIN_USERS_TABLE
+	Table Users
+ADMIN_STUDENTS_TABLE
+	Table Students
+ADMIN_UPLOAD_ERROR
+	Le fichier n'a pas été uploadé vers le serveur
+ADMIN_UPLOAD_ERROR2
+	Le fichier xml ne contient pas les informations necéssaires
+ADMIN_ERROR_EXIST
+	Les étudiants suivant n'ont pas été ajouté car ils existent déjà!
+ADMIN_ERROR_AVATAR
+	Les photos suivantes n'ont put être ajouté!
+ADMIN_LOGOBDE
+	Changer le logo Bde
 ADMIN_ENVOYER
 	Envoyer
-ADMIN_POST_ZIPERROR
-	Le fichier n'a pu être dézippé!
-ADMIN_POST_CSVERROR1
-	Le fichier users.csv est manquant ou ne comporte pas un nom correct!
-ADMIN_POST_CSVERROR2
-	Le fichier students.csv est manquant ou ne comporte pas un nom correct!
 ADMIN_ISEPDOR_CATEGORIE
 	Catégorie
 ADMIN_ISEPDOR_MODIFIER

@@ -1349,22 +1349,7 @@ var Admin= {
 				}
        }).get();
 		
-	},
-	
-	//supprimer un admin
-	deleteadmin: function (username){
-		var URL_ROOT = $('header-title').getProperty('href');
-		new Request({
-            url: URL_ROOT+'admindelete2/'+username,
-       }).get();
-	},
-	
-	success: function(){
-		$('success').removeClass('hidden');
-	}
-
-	
-	
+	},	
 };
 
 //Média navigation bar
