@@ -56,7 +56,7 @@ foreach($cssFiles as $cssFile){
 								<div id="adminMenu" class="hidden" >
 									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> "users")); ?>"><?php echo __('ADMIN_UPDATE'); ?></a>
 									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> 1)); ?>"><?php echo __('ADMIN_ANNUAIRE'); ?></a>
-									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> 2)); ?>"><?php echo __('ADMIN_ISEPDOR'); ?></a>
+									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> "isepdor")); ?>"><?php echo __('ADMIN_ISEPDOR'); ?></a>
 									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> "bde")); ?>"><?php echo __('ADMIN_BDE'); ?></a>
 									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> "admins")); ?>"><?php echo __('ADMIN_ADMINISTRATEUR'); ?></a>
 								</div>
@@ -75,8 +75,8 @@ foreach($cssFiles as $cssFile){
 					<?php if($is_logged){ ?>
 						<?php if($is_student){ ?>
 							<a href="<?php echo Config::URL_ROOT.Routes::getPage('student', array('username' => $username)); ?>"><?php echo __('NAV_PROFILE'); ?></a>
-							<?php if(Config::ISEP_OR_STATE== 1 || Config::ISEP_OR_STATE==2){ ?>
-									<a href="<?php echo Config::URL_ROOT.Routes::getPage('isep_or_'.Config::ISEP_OR_STATE); ?>"><?php echo __('NAV_ISEP_OR'); ?></a>
+							<?php if($round== 1 || $round::ISEP_OR_STATE==2){ ?>
+									<a href="<?php echo Config::URL_ROOT.Routes::getPage('isep_or_'.$round); ?>"><?php echo __('NAV_ISEP_OR'); ?></a>
 							<?php } 
 						} ?>
 
@@ -144,7 +144,22 @@ foreach($cssFiles as $cssFile){
 					'PROFILE_STUDENT_NUMBER',
 					'PROFILE_PROMO',
 					'ADMIN_DELETE_CONFIRM',
-					'ADMIN_CONFIRM_DELETE'
+					'ADMIN_CONFIRM_DELETE',
+					'ADMIN_POSITION',
+					'ADMIN_QUESTIONS',
+					'ADMIN_PARAM',
+					'ADMIN_ELEVES',
+					'ADMIN_ASSOC',
+					'ADMIN_EVENT',
+					'ADMIN_EMPLOYEES',
+					'ADMIN_ISEPDOR_SOIREE',
+					'ADMIN_ID',
+					'ADMIN_ISEPDOR_EMPTY_QUESTION',
+					'ADMIN_ISEPDOR_EMPTYORDER_QUESTION',
+					'ADMIN_ISEPDOR_FIRSTNAME',
+					'ADMIN_ISEPDOR_LASTNAME',
+					'ADMIN_ISEPDOR_USERNAME',
+					'ADMIN_ISEPDOR_ERRORDATE',
 				);
 				foreach($js_translations as $i => $js_translation){
 					if($i != 0)

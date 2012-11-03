@@ -23,8 +23,14 @@ class Student_Controller extends Controller {
 			'students'		=> $students,
 			'last_promo'	=> $last_promo
 		));
-		
-		$this->addJSCode('Student.slider();');
+				
+		$this->addJSCode('
+			Admin.loadjscssfile("'.Config::URL_STATIC.'css/jqx.base.css","css");
+			Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxcore.js","js");
+			Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxbuttons.js","js");
+			Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxslider.js","js");
+			Student.slider();
+		');
 		
 	}
 	

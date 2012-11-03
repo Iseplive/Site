@@ -650,42 +650,78 @@ ADMIN_ERROR_EXIST
 ADMIN_ERROR_AVATAR
 	Les photos suivantes n'ont put être ajouté!
 ADMIN_LOGOBDE
+	Logo header
+ADMIN_CHANGE_LOGOBDE
 	Changer le logo Bde
+ADMIN_POSITION
+	Position
+ADMIN_QUESTIONS
+	Questions
+ADMIN_PARAM
+	Paramètres
+ADMIN_ELEVES
+	Elèves
+ADMIN_ASSOC
+	Association
+ADMIN_EVENT
+	Evènement
+ADMIN_ID
+	ID
+ADMIN_EMPLOYEES
+	Employés
 ADMIN_ENVOYER
 	Envoyer
-ADMIN_ISEPDOR_CATEGORIE
-	Catégorie
-ADMIN_ISEPDOR_MODIFIER
-	Modifier
-ADMIN_ISEPDOR_AJOUTER
-	Ajouter une catégorie
-ADMIN_ISEPDOR_TEXT1
-	élèves
-ADMIN_ISEPDOR_TEXT2
-	évènements
-ADMIN_ISEPDOR_TEXT3
-	associations
-ADMIN_ISEPDOR_TEXT4
-	administration
-ADMIN_ISEPDOR_TEXT5
+ADMIN_ISEPDOR_SOIREE
 	soirée
-ADMIN_ISEPDOR_DELETE
-	Supprimer une catégorie
+ADMIN_ISEPDOR_EMPTY_QUESTION
+	Le contenu d'une ou plusieurs question(s) est vide
+ADMIN_ISEPDOR_EMPTYORDER_QUESTION
+	Une questions n'a pas été sélectionné pour le reordonnement: 
+ADMIN_ISEPDOR_ADDROW
+	Ajouter une ligne
+ADMIN_ISEPDOR_DELROW
+	Supprimer une ligne
+ADMIN_ISEPDOR_SAVEORDER
+	Enregistrer (ordre tableau de droite)
+ADMIN_ISEPDOR_SAVENOORDER
+	Enregistrer (ordre tableau de gauche)
+ADMIN_ISEPDOR_USERNAME
+	Username
+ADMIN_ISEPDOR_FIRSTNAME
+	Prénom
+ADMIN_ISEPDOR_LASTNAME
+	Nom
+ADMIN_ISEPDOR_BORN
+	Date de naissance
+ADMIN_ISEPDOR_GETDIPLOME
+	Générer les diplomes
 ADMIN_ISEPDOR_NAV1
-	Catégories
+	Table questions
 ADMIN_ISEPDOR_NAV2
 	Table évènements
 ADMIN_ISEPDOR_NAV3
-	Table administration
-ADMIN_ISEPDOR_NAV3
+	Table employées
+ADMIN_ISEPDOR_NAV4
 	Administration
 ADMIN_CONFIRM_DELETE
 	Êtes-vous sur de vouloir supprimer cet élément.
 ADMIN_ISEPDOR_EXPORT
-	Exporter la base de donnée
+	Voir les réponses des utilisateurs
 ADMIN_ISEPDOR_FIRST
 	Premier tour
 ADMIN_ISEPDOR_SECOND
 	Second tour
+ADMIN_ISEPDOR_THIRD
+	Résultats
+ADMIN_ISEPDOR_ERRORDATE
+	Les dates sont contradictoires
+ADMIN_CHANGE_DIPLOME
+	Changer l'image du diplome (1122x794)
+ADMIN_ISEPDOR_TOLARGE
+	La taille de l'image doit être de 1122px par 794px
+ADMIN_ISEPDOR_DIPLOME
+	Diplome ISEP D'Or
+ADMIN_ISEPDOR_GESTION
+	Gestion de l'évènement
 ADMIN_ISEPDOR_RESET
 	Réinitialiser les résultats

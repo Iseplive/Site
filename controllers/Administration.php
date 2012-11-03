@@ -58,203 +58,12 @@ class Administration_Controller extends Controller {
 			case "bde":
 				$this->bdePage($param);
 				break;
+			case "isepdor":
+				$this->isepdorPage($param);
+				break;
 			default:
 				$this->setView('index.php');
 		}
-		
-		$last_promo = ((int) date('Y')) + 5;
-		if((int) date('m') < 9){
-			$last_promo -= 1;
-		}
-		
-		switch($param['nav']){
-			case "admins":
-				$s=0;//fallait mettre qqch
-				break;
-			default:
-				$this->set(array(
-					'username'			=> User_Model::$auth_data['username'],
-					'is_logged'			=> $is_logged,
-					'is_student'		=> $is_student,
-					'is_admin'			=> $is_admin,
-					'questions'			=> $this->model->getquestions(),
-					'employees'			=> $this->model->getemployees(),
-					'events'			=> $this->model->getevents(),
-					'promo'				=> $last_promo,
-					'date'				=> $this->model->getdate(),
-					'admins'			=> $this->model->getadmin()
-				));
-		}
-				
-		/**/
-		switch($param['nav']){
-			case "admins":
-				$s=0;
-				break;
-			
-			default:
-				$this->addJSCode('Admin.init();');
-			
-				if(isset($param['nav']) && $param['nav']==1){
-					$this->addJSCode('Admin.navAdminChange(3);');
-				}
-				if(isset($param['nav']) && $param['nav']==2){
-					$this->addJSCode('Admin.navAdminChange(3);Admin.isepdornav(2);');
-				}
-				if(isset($param['nav']) && $param['nav']==3){
-					$this->addJSCode('Admin.navAdminChange(3);Admin.isepdornav(3);');
-				}
-				if(isset($param['nav']) && $param['nav']==4){
-					$this->addJSCode('Admin.navAdminChange(3);Admin.isepdornav(4);');
-				}
-				if(isset($param['nav']) && $param['nav']==5){
-					$this->addJSCode('Admin.navAdminChange(5);');
-				}
-				
-		}
-		
-			
-			/* Code qui met à jour le questionnaire pour les ISEP D'or
-			*
-			*/
-			if(isset($_POST['nbquestion'])){
-				for($i=0;$i<$_POST['nbquestion'];$i++){
-					$type="";
-					if(isset($_POST['students'.$i])){
-						$type.="students";
-					}
-					if(isset($_POST['events'.$i])){
-						if($type==""){
-							$type.="events";
-						}
-						else{
-							$type.=",events";
-						}
-					
-					}
-					if(isset($_POST['associations'.$i])){
-						if($type==""){
-							$type.="associations";
-						}
-						else{
-							$type.=",associations";
-						}
-					
-					}
-					if(isset($_POST['employees'.$i])){
-						if($type==""){
-							$type.="employees";
-						}
-						else{
-							$type.=",employees";
-						}
-					}
-					if( isset($_POST['quest'.$i]) && isset($_POST['id'.$i])){
-						$this->model->updateisepdor($type,$_POST['extra'.$i],$_POST['quest'.$i],$_POST['id'.$i],$_POST['position'.$i]);
-					}
-					elseif(isset($_POST['quest'.$i])){
-						$this->model->insertisepdor($type,$_POST['extra'.$i],$_POST['quest'.$i],$_POST['position'.$i]);
-					}
-				}
-				header('Location: '.Config::URL_ROOT.Routes::getPage("admin",array("nav"=> 1)));
-			}
-			
-			/*Code qui met à jour la table isepdor_employees
-			*
-			*/
-			if(isset($_POST['nbchamps'])){
-				for($i=0;$i<$_POST['nbchamps'];$i++){
-					if(isset($_POST['lastname'.$i]) && isset($_POST['id'.$i])){
-						$username=$this->makeusername($_POST['lastname'.$i],$_POST['firstname'.$i]);
-						$this->model->updateemployees($_POST['lastname'.$i],$_POST['firstname'.$i],$_POST['id'.$i],$username);
-					}
-					elseif(isset($_POST['lastname'.$i])){
-						$username=$this->makeusername($_POST['lastname'.$i],$_POST['firstname'.$i]);
-						$this->model->insertemployees($_POST['lastname'.$i],$_POST['firstname'.$i],$username);
-					}
-				}
-				header('Location: '.Config::URL_ROOT.Routes::getPage("admin",array("nav"=> 3)));
-			}	
-
-			/*Code qui met à jour la table isepdor_event
-			*
-			*/
-			if(isset($_POST['nbevent'])){
-				for($i=0;$i<$_POST['nbevent'];$i++){
-					$soiree="";
-					if(isset($_POST['soiree'.$i])){
-						$soiree="soiree";
-					}
-					if(isset($_POST['id'.$i]) && isset($_POST['name'.$i])){
-						$this->model->updateevent($_POST['name'.$i],$_POST['id'.$i],$soiree);
-					}
-					elseif(isset($_POST['name'.$i])){
-						$this->model->insertevent($_POST['name'.$i],$soiree);
-					}
-				
-				}
-				header('Location: '.Config::URL_ROOT.Routes::getPage("admin",array("nav"=> 2)));
-			}
-			
-			/*Code qui met à jour les date de vote des isep d'or
-			*
-			*/
-			if(isset($_POST['first1']) && isset($_POST['first2']) && isset($_POST['second1']) && isset($_POST['second1'])){
-				$this->model->insertdate($_POST['first1'],$_POST['first2'],$_POST['second1'],$_POST['second2']);
-				header('Location: '.Config::URL_ROOT.Routes::getPage("admin",array("nav"=> 4)));
-			}
-			
-			/*Code qui export les résultats des isep d'or
-			*
-			*/
-				if(isset($_GET['export'])){
-					if($_GET['type']==1){
-						$db=$this->model->getresult1();
-						
-					}
-					if($_GET['type']==2){
-						$db=$this->model->getresult2();
-					}
-				 header('Content-Type: application/vnd.ms-excel');
-				 header('Content-Disposition: filename='.'Résultats_Isepdor'.'.xls');
-				 header('Pragma: no-cache');
-				 header('Expires: 0');
-				 
-				 print '<table border=1 >
-						<!-- impression des titres de colonnes -->
-							<TR>
-								<TD bgcolor="#3366CC">Nom du votant</TD>
-								<TD bgcolor="#3366CC">Catégorie</TD>
-								<TD bgcolor="#3366CC">Réponse(student)</TD>
-								<TD bgcolor="#3366CC">Réponse(admin)</TD>
-								<TD bgcolor="#3366CC">Réponse(assoce)</TD>
-								<TD bgcolor="#3366CC">Réponse(event)</TD>						
-							</TR>
-							';
-					foreach ($db as $champs){
-						print '<TR>';
-							print '<TD>'.$champs['username'].'</TD>';
-							print '<TD>'.$champs['questions'].'</TD>';
-							print '<TD>'.$champs['student_username'].'</TD>';
-							print '<TD>'.$champs['admin'].'</TD>';
-							print '<TD>'.$champs['assoce'].'</TD>';
-							print '<TD>'.$champs['name'].'</TD>';	
-						print  '</TR>';
-					}
-						print '</table>';
-						exit();
-				}
-				
-			/*Code qui met supprime les champs de la table résultat des isep d'or
-			*
-			*/
-			if(isset($_GET['delete_result'])){
-				$this->model->deleteresult();
-			}
-			
-				
-			
-		
 	}
 	
 	public function adminPage($param){
@@ -488,7 +297,366 @@ class Administration_Controller extends Controller {
 			}
 			Post_Model::clearCache();
 		}
-	}
+	}	
+	public function isepdorPage($param){
+			$this->setView('isepdor.php');
+			
+			$questions=$this->model->getquestions();
+			for($i=0;$i<count($questions) ;$i++){
+				$type=explode(',',$questions[$i]["type"]);
+				$tab=array("students","associations","employees","events");
+				$result=array_intersect($type,$tab);
+				if(in_array("students",$result)){
+					$questions[$i]["students"]=1;
+				}
+				else{
+					$questions[$i]["students"]=0;
+				}
+				if(in_array("events",$result)){
+					$questions[$i]["events"]=1;
+				}
+				else{
+					$questions[$i]["events"]=0;
+				}
+				if(in_array("associations",$result)){
+					$questions[$i]["associations"]=1;
+				}
+				else{
+					$questions[$i]["associations"]=0;
+				}
+				if(in_array("employees",$result)){
+					$questions[$i]["employees"]=1;
+				}
+				else{
+					$questions[$i]["employees"]=0;
+				}
+				
+				if($questions[$i]["extra"]==null){
+					$questions[$i]["extra"]=" ";
+				}
+			}
+			
+			$events=$this->model->getevents();
+			for($i=0;$i<count($events) ;$i++){
+				if($events[$i]['extra']=="soiree"){
+					$events[$i]['extra']=1;
+				}
+				else{
+					$events[$i]['extra']=0;
+				}
+			}
+			
+			$myFile=DATA_DIR.Config::DIR_DATA_STORAGE.Config::DIR_DATA_ADMIN."/diplome.json";
+			$file = fopen($myFile, 'r');
+			$positions = fread($file,filesize($myFile));
+			fclose($file);
+			
+			$this->addJSCode('
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxcore.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxdata.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxbuttons.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxscrollbar.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxmenu.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxgrid.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxgrid.edit.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxgrid.selection.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxgrid.sort.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxgrid.filter.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxgrid.columnsresize.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxlistbox.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxdropdownlist.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxcheckbox.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxcombobox.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxgrid.pager.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxdragdrop.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxcalendar.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxtooltip.js","js");				
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxdatetimeinput.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jquery.global.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jquery.glob.fr-FR.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxtabs.js","js");
+				
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/crop/jquery.Jcrop.min.js","js");
+				Admin.loadjscssfile("'.Config::URL_STATIC.'js/crop/jquery.color.js","js");
+				
+				jQuery(document).ready(function () {
+					 diplomeData=new Array();
+					Admin.loadTab();
+					Admin.loadCrop();
+					Admin.loadCatGrid('.json_encode($questions).');
+					Admin.loadEventGrid('.json_encode($events).');
+					Admin.loadEmployGrid('.json_encode($this->model->getemployees()).');
+					Admin.loadDate('.json_encode($this->model->getDate()).');
+					Admin.loadDiplome('.$positions.');
+					jQuery("#adminIsepdorTab").removeClass("hidden");
+				});
+			');
+			
+			/* Code qui met à jour le questionnaire pour les ISEP D'or
+			*
+			*/
+			if(isset($_POST['categories'])){
+				$id=array();
+				$post=json_decode($_POST['categories'],true);
+				for($i=0;$i<count($post);$i++){
+					if(is_numeric($post[$i]['id'])){
+						array_push ($id,$post[$i]['id']);
+					}
+				}
+				$toDelete=$this->model->checkIsepdorQuestions($id);
+				if(count($toDelete)>0){
+					for($i=0;$i<count($toDelete);$i++){
+						$this->model->deleteQuestions($toDelete[$i]);
+					}
+				}
+				for($i=0;$i<count($post);$i++){
+					if($post[$i]['extra']==""){
+						$post[$i]['extra']=NULL;
+					}
+					if($post[$i]['id']!=""){
+						$this->model->updateisepdor($post[$i]['type'],$post[$i]['extra'],$post[$i]['questions'],$post[$i]['id'],$post[$i]['position']);
+					}
+					elseif($post[$i]['id']==""){
+						$this->model->insertisepdor($post[$i]['type'],$post[$i]['extra'],$post[$i]['questions'],$post[$i]['position']);
+					}
+				}				
+			}
+			
+			
+			/*Code qui met à jour la table isepdor_employees
+			*
+			*/
+			if(isset($_POST['employees'])){
+				$id=array();
+				$post=json_decode($_POST['employees'],true);
+				for($i=0;$i<count($post);$i++){
+					if(is_numeric($post[$i]['id'])){
+						array_push ($id,$post[$i]['id']);
+					}
+				}
+				$toDelete=$this->model->checkIsepdorEmployees($id);
+				if(count($toDelete)>0){
+					for($i=0;$i<count($toDelete);$i++){
+						$this->model->deleteEmployees($toDelete[$i]);
+					}
+				}
+				
+				for($i=0;$i<count($post);$i++){
+					$username=$this->makeusername($post[$i]['lastname'],$post[$i]['firstname']);
+					if($post[$i]['id']!=""){
+						$this->model->updateEmployees($post[$i]['lastname'],$post[$i]['firstname'],$post[$i]['id'],$username);
+					}
+					elseif($post[$i]['id']==""){
+						$this->model->insertemployees($post[$i]['lastname'],$post[$i]['firstname'],$username);
+					}
+				}					
+			}			
+
+			/*Code qui met à jour la table isepdor_event
+			*
+			*/
+			if(isset($_POST['events'])){
+				$id=array();
+				$post=json_decode($_POST['events'],true);
+				for($i=0;$i<count($post);$i++){
+					if(is_numeric($post[$i]['id'])){
+						array_push ($id,$post[$i]['id']);
+					}
+				}
+				$toDelete=$this->model->checkIsepdorEvents($id);
+				if(count($toDelete)>0){
+					for($i=0;$i<count($toDelete);$i++){
+						$this->model->deleteEvents($toDelete[$i]);
+					}
+				}
+				
+				for($i=0;$i<count($post);$i++){
+					if($post[$i]['extra']==1){
+						$post[$i]['extra']="soiree";
+					}
+					else{
+						$post[$i]['extra']=NULL;
+					}
+					if($post[$i]['id']!=""){
+						$this->model->updateEvent($post[$i]['name'],$post[$i]['id'],$post[$i]['extra']);
+					}
+					elseif($post[$i]['id']==""){
+						$this->model->insertEvent($post[$i]['name'],$post[$i]['extra']);
+					}
+				}					
+			}
+			
+			/*Code qui met à jour les date de vote des isep d'or
+			*
+			*/
+			if(isset($_POST['dates'])){
+				$post=json_decode($_POST['dates'],true);
+				$this->model->insertDate($post[0][0],$post[0][1],$post[1][0],$post[1][1],$post[2][0],$post[2][1]);
+			}
+			/*
+			* Change l'image diplome
+			*/
+			if(isset($_FILES['diplome']) && !is_array($_FILES['diplome']['name'])){
+				if($_FILES['diplome']['size'] > Config::UPLOAD_MAX_SIZE_PHOTO)
+					throw new FormException('size');
+				if($avatarpath = File::upload('diplome')){
+					$uploaded_files[] = $avatarpath;
+					try {
+						$img = new Image();
+						$img->load($avatarpath);
+						$type = $img->getType();
+						if($type==IMAGETYPE_JPEG)
+							$ext = 'jpg';
+						else if($type==IMAGETYPE_GIF)
+							$ext = 'gif';
+						else if($type==IMAGETYPE_PNG)
+							$ext = 'png';
+						else
+							throw new Exception();
+						
+						if($img->getHeight() !=794 || $img->getWidth() !=1122){
+							throw new FormException('width');
+						}
+						$img->setType($type);
+						$img->save($avatarpath);
+						
+						unset($img);
+						if(isset($avatarpath) && File::exists($avatarpath)){
+							$avatar_path = DATA_DIR.Config::DIR_DATA_STORAGE.Config::DIR_DATA_ADMIN."diplomeIsepDOr9652.png";
+							$avatar_dir = File::getPath($avatar_path)."/diplomeIsepDOr9652.png";
+							File::rename($avatarpath, $avatar_dir);
+						}
+					}catch(FormException $e){
+						$this->set('form_error', $e->getError());
+					}
+					
+					foreach($uploaded_files as $uploaded_file)
+						File::delete($uploaded_file);
+				}
+				Post_Model::clearCache();
+			}
+			/*
+			* Enregistre les coordonnées
+			*/
+			if(isset($_POST['diplomeData'])){
+				$post=$_POST['diplomeData'];
+				$file = fopen($myFile, 'w');
+				fwrite($file,$post);
+				fclose($file);
+			}
+			/*
+			* Envoie les diplomes
+			*/
+			if(isset($_GET['getDiplome'])){
+				$template=DATA_DIR.Config::DIR_DATA_STORAGE.Config::DIR_DATA_ADMIN."diplomeIsepDOr9652.png";
+				$font = DATA_DIR.Config::DIR_DATA_STORAGE.Config::DIR_DATA_ADMIN."arial.ttf";  
+				$files=Array();
+				$positions=json_decode($positions,true);//récupere les coordonnées précédament demandées
+				for($i=0;$i<count($positions);$i++){
+					$coord[$positions[$i]['index']]=$positions[$i];
+				}
+				$questions = IsepOr_Model::fetchQuestions();
+				foreach ($questions as $value) {
+					if (strpos($value['type'], ',')) {
+						$data = array();
+						foreach (explode(',', $value['type']) as $type) {
+							$data = IsepOr_Controller::__array_rePad($data, IsepOr_Model::fetchFinals($value['id'], $type, 2));
+						}
+						$finalList[$value['id']] = array_slice(IsepOr_Controller::__array_orderby($data, 'cmpt', SORT_DESC), 0, 3);
+					} else
+						$finalList[$value['id']] = IsepOr_Model::fetchFinals($value['id'], $value['type'], 2);
+				}
+				for($i=0;$i<count($questions);$i++){
+					for($j=0;$j<count($finalList[$questions[$i]['id']]);$j++){
+						File::copy($template, DATA_DIR.Config::DIR_DATA_TMP."diplome".$i.$j.".png");
+						array_push($files,DATA_DIR.Config::DIR_DATA_TMP."diplome".$i.$j.".png");
+						$im = ImageCreateFromPng(DATA_DIR.Config::DIR_DATA_TMP."diplome".$i.$j.".png"); // Path Images 
+						$color = ImageColorAllocate($im, 0, 0, 0); // Text Color 
+						$champs[0]=$questions[$i]['questions'];
+						$champs[1]=$finalList[$questions[$i]['id']][$j]["name"];
+						$champs[2]="";
+						if(!is_numeric($finalList[$questions[$i]['id']][$j]["valid"])){
+							$champs[2]=$this->model->getBirthDay($finalList[$questions[$i]['id']][$j]["valid"]);
+						}
+						for($a=0;$a<3;$a++){
+							$pxX = round($coord[$a]['x1']); // X  
+							$pxY = round($coord[$a]['y2']); // Y  
+							ImagettfText($im, round($coord[$a]['h']), 0, $pxX, $pxY, $color,$font, $champs[$a]);  
+						}
+						imagePng($im,DATA_DIR.Config::DIR_DATA_TMP."diplome".$i.$j.".png",9);  
+						ImageDestroy($im); 
+						if($finalList[$questions[$i]['id']][$j]['cmpt']!=$finalList[$questions[$i]['id']][$j+1]['cmpt']){
+							break;
+						}
+					}
+				}
+
+				if(self::create_zip($files,DATA_DIR.Config::DIR_DATA_TMP."diplomesIsepDor.zip",true)){
+					foreach($files as $file){
+						File::delete($file);
+					}
+					header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
+					header("Cache-Control: public"); // needed for i.e.
+					header("Content-Type: application/zip");
+					header("Content-Transfer-Encoding: Binary");
+					header("Content-Length:".filesize(DATA_DIR.Config::DIR_DATA_TMP."diplomesIsepDor.zip"));
+					header("Content-Disposition: attachment; filename=diplomesIsepDor.zip");
+					readfile(DATA_DIR.Config::DIR_DATA_TMP."diplomesIsepDor.zip");
+					File::delete(DATA_DIR.Config::DIR_DATA_TMP."diplomesIsepDor.zip");
+					die();      
+				} 	
+				foreach($files as $file){
+					File::delete($file);
+				}
+			}
+			/*Code qui export les résultats des isep d'or
+			*
+			*/
+				if(isset($_GET['export'])){
+					$db=$this->model->getResult();
+
+				 header('Content-Type: application/vnd.ms-excel');
+				 header('Content-Disposition: filename='.'Résultats_Isepdor'.'.xls');
+				 header('Pragma: no-cache');
+				 header('Expires: 0');
+				 
+				 print '<table border=1 >
+						<!-- impression des titres de colonnes -->
+							<TR>
+								<TD bgcolor="#3366CC">Tour</TD>
+								<TD bgcolor="#3366CC">Nom du votant</TD>
+								<TD bgcolor="#3366CC">Catégorie</TD>
+								<TD bgcolor="#3366CC">Réponse(student)</TD>
+								<TD bgcolor="#3366CC">Réponse(admin)</TD>
+								<TD bgcolor="#3366CC">Réponse(assoce)</TD>
+								<TD bgcolor="#3366CC">Réponse(event)</TD>						
+							</TR>
+							';
+					foreach ($db as $champs){
+						print '<TR>';
+							print '<TD>'.$champs['round'].'</TD>';
+							print '<TD>'.$champs['username'].'</TD>';
+							print '<TD>'.utf8_decode($champs['questions']).'</TD>';
+							print '<TD>'.$champs['student_username'].'</TD>';
+							print '<TD>'.utf8_decode($champs['admin']).'</TD>';
+							print '<TD>'.utf8_decode($champs['assoce']).'</TD>';
+							print '<TD>'.utf8_decode($champs['name']).'</TD>';	
+						print  '</TR>';
+					}
+						print '</table>';
+						exit();
+					
+				}
+				
+			/*Code qui met supprime les champs de la table résultat des isep d'or
+			*
+			*/
+			if(isset($_GET['delete_result'])){
+				$this->model->deleteresult();
+				header("Location: ".Config::URL_ROOT.Routes::getPage('admin',array("nav"=> "isepdor")));
+			}
+		}
+	
 	
 	//Fonction qui formate nom et prénom pou en faire un username
 	public function makeusername($last,$first){
@@ -500,7 +668,7 @@ class Administration_Controller extends Controller {
 	//Fonction qui supprime des champs des DB isepdor event, employees,questions
 	public function delete($params){
 		if($params['type']==1){
-			$this->model->deletequestions($params['id']);
+			$this->model->deleteQuestions($params['id']);
 		}
 		if($params['type']==2){
 			$this->model->deleteemployees($params['id']);
@@ -509,41 +677,43 @@ class Administration_Controller extends Controller {
 			$this->model->deleteevent($params['id']);
 		}
 	}
-	// Function qui exporte les résultats des isep d'or
-	public function exportDB($params){
-		if($params['type']==1){
-			$db=$this->model->getresult1();
-			
-		}
-		if($params['type']==2){
-			$db=$this->model->getresult2();
-		}
-		 header('Content-Type: application/vnd.ms-excel');
-		 header('Content-Disposition: attachment; filename='.'Résultats_Isepdor'.'.xls');
-		 header('Pragma: no-cache');
-		 header('Expires: 0');
-		 
-		 print '<table border=1 >
-				<!-- impression des titres de colonnes -->
-					<TR>';
-					// while($nomcol=mysql_fetch_field($db)){
-						// print '<TD bgcolor="#3366CC">'. $nomcol->name .'</TD>';
-					// }	
-			print  '</TR>
-					<TR>';
-			foreach ($db as $champs){
-				print '<TD>'.$champs['voting_user_id'].'</TD>';
-				print '<TD>'.$champs['isepdor_questions_id'].'</TD>';
-				print '<TD>'.$champs['student_username'].'</TD>';
-				print '<TD>'.$champs['isepdor_employees_id'].'</TD>';
-				print '<TD>'.$champs['isepdor_associations_id'].'</TD>';
-				print '<TD>'.$champs['isepdor_event_id'].'</TD>';	
+	public function create_zip($files = array(),$destination = '',$overwrite = false) {
+	  //if the zip file already exists and overwrite is false, return false
+	  if(file_exists($destination) && !$overwrite) { return false; }
+	  //vars
+	  $valid_files = array();
+		  //if files were passed in...
+		  if(is_array($files)) {
+			//cycle through each file
+			foreach($files as $file) {
+			  //make sure the file exists
+			  if(file_exists($file)) {
+				$valid_files[] = $file;
+			  }
 			}
-			print  '</TR>
-				</table>';
-				// return $db;
-		
+		  }
+	  //if we have good files...
+		if(count($valid_files)) {
+			//create the archive
+			$zip = new ZipArchive();
+			if($zip->open($destination,$overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
+			  return false;
+			}
+			//add the files
+			foreach($valid_files as $file) {
+			  $zip->addFile($file,basename($file));
+			}
+			//debug
+			//echo 'The zip archive contains ',$zip->numFiles,' files with a status of ',$zip->status;
 			
+			//close the zip -- done!
+			$zip->close();
+			
+			//check to make sure the file exists
+			return file_exists($destination);
+		}else{
+			return false;
+		}
 	}
 
 	

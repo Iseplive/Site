@@ -120,8 +120,14 @@ class Layout_Controller extends Controller {
 			$this->set('username', User_Model::$auth_data['username']);
 		if($is_admin)
 			$this->addJSCode('Layout.init()');
+		
 		//Date Isep d'or
-		//$this->set('round',IsepOr_Controller::verifdate());
+		if(!($round = Cache::read('IsepOrRound'))){
+            $round = IsepOr_Model::verifDate();
+			echo "jkb";
+            Cache::write('IsepOrRound', $round, 11250);
+        }
+		$this->set('round',$round);
 		
 
 	}
