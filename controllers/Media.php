@@ -19,7 +19,7 @@ class Media_Controller extends Controller {
 			$date=date('Y',$media['time']); 
 			$ok=0;
 			for($i=0;$i<=count($annee);$i++){
-				if($date==$annee[$i]){
+				if(isset($annee[$i]) && $date==$annee[$i]){
 					$ok=1;
 				}
 			}
@@ -46,7 +46,7 @@ class Media_Controller extends Controller {
 			$date=date('Y',$photo['time']); 
 			$ok=0;
 			for($i=0;$i<=count($annee1);$i++){
-				if($date==$annee1[$i]){
+				if(isset($annee1[$i]) && $date==$annee1[$i]){
 					$ok=1;
 				}
 			}
@@ -71,7 +71,7 @@ class Media_Controller extends Controller {
 			$date=date('Y',$video['time']); 
 			$ok=0;
 			for($i=0;$i<=count($annee2);$i++){
-				if($date==$annee2[$i]){
+				if(isset($annee2[$i]) && $date==$annee2[$i]){
 					$ok=1;
 				}
 			}
@@ -96,7 +96,7 @@ class Media_Controller extends Controller {
 			$date=date('Y',$journal['time']); 
 			$ok=0;
 			for($i=0;$i<=count($annee3);$i++){
-				if($date==$annee3[$i]){
+				if(isset($annee3[$i]) && $date==$annee3[$i]){
 					$ok=1;
 				}
 			}
@@ -121,7 +121,7 @@ class Media_Controller extends Controller {
 			$date=date('Y',$podcast['time']); 
 			$ok=0;
 			for($i=0;$i<=count($annee4);$i++){
-				if($date==$annee4[$i]){
+				if(isset($annee4[$i]) && $date==$annee4[$i]){
 					$ok=1;
 				}
 			}

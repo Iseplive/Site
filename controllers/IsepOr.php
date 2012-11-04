@@ -8,7 +8,7 @@ class IsepOr_Controller extends Controller {
             throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
         if (!isset(User_Model::$auth_data['student_number']))
             throw new Exception('You must be a student to see this');
-        if(Config::ISEP_OR_STATE !== 1 && User_Model::$auth_data['admin'] != '1')
+        if(Cache::read('IsepOrRound') !== 1 && User_Model::$auth_data['admin'] != '1')
             throw new Exception('It\'s not ready for Prime Time');
         if($this->model->checkVote(User_Model::$auth_data['id'], 1) > 0){
             $this->set('empty_post', false);
@@ -44,7 +44,7 @@ class IsepOr_Controller extends Controller {
             throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
         if (!isset(User_Model::$auth_data['student_number']))
             throw new Exception('You must be a student to see this');
-        if(Config::ISEP_OR_STATE !== 2 && User_Model::$auth_data['admin'] != '1')
+        if(Cache::read('IsepOrRound') !== 2 && User_Model::$auth_data['admin'] != '1')
             throw new Exception('It\'s not ready for Prime Time');
         if($this->model->checkVote(User_Model::$auth_data['id'], 2) > 0){
             $this->set('empty_post', false);
@@ -67,11 +67,11 @@ class IsepOr_Controller extends Controller {
                         if(strpos($value['type'], ',')){
                             $data = array();
                             foreach(explode(',', $value['type']) as $type){
-                               $data = self::__array_rePad($data, $this->model->fetchFinals($value['id'], $type, 1));
+                               $data = self::__array_rePad($data, $this->model->fetchFinals($value['id'], $type, 1,true));
                             }
                             $finalList[$value['id']] = array_slice(self::__array_orderby($data, 'cmpt', SORT_DESC), 0, 3);
                         } else 
-                            $finalList[$value['id']] = $this->model->fetchFinals($value['id'], $value['type'], 1);
+                            $finalList[$value['id']] = $this->model->fetchFinals($value['id'], $value['type'], 1,true);
                     }
                     Cache::write('IsepOrFinals', $finalList, 11250);
                 }
@@ -94,8 +94,9 @@ class IsepOr_Controller extends Controller {
         if (!isset(User_Model::$auth_data))
             throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
         if (!isset(User_Model::$auth_data['student_number']))
-            throw new Exception('You must be a student to see this');
-        if(Config::ISEP_OR_STATE !== 3 && User_Model::$auth_data['admin'] != '1')
+            throw new Exception('You must be a student to see this');		
+		
+        if(Cache::read('IsepOrRound') !== 3 && User_Model::$auth_data['admin'] != '1')
             throw new Exception('It\'s not ready for Prime Time');
 		
 		$this->setView('result.php');

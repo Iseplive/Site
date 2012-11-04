@@ -349,7 +349,7 @@ class Administration_Model extends Model {
 	 * @param $id
 	 */
 	 public function deleteresult(){
-		DB::createQuery('isepdor_round1')
+		DB::createQuery('isepdor_round')
 		->force()
 		->delete();
 	 }

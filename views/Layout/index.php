@@ -75,7 +75,7 @@ foreach($cssFiles as $cssFile){
 					<?php if($is_logged){ ?>
 						<?php if($is_student){ ?>
 							<a href="<?php echo Config::URL_ROOT.Routes::getPage('student', array('username' => $username)); ?>"><?php echo __('NAV_PROFILE'); ?></a>
-							<?php if($round== 1 || $round::ISEP_OR_STATE==2){ ?>
+							<?php if($round== 1 || $round==2 || $round==3){ ?>
 									<a href="<?php echo Config::URL_ROOT.Routes::getPage('isep_or_'.$round); ?>"><?php echo __('NAV_ISEP_OR'); ?></a>
 							<?php } 
 						} ?>

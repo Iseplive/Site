@@ -181,13 +181,25 @@ class Post_Controller extends Controller {
 		if($post['attachments_nb_photos'] != 0){
 			$photos = array();
 			foreach($post['attachments'] as $attachment){
-				if(in_array($attachment['ext'], array('jpg', 'png', 'gif')))
+				if(in_array($attachment['ext'], array('jpg', 'png', 'gif'))){
 					$photos[] = array(
 						'id'	=> (int) $attachment['id'],
 						'url'	=> $attachment['url']
 					);
+					if($post['category_id']==1){	
+						$galleria[] = array(
+							'thumb'	=> $attachment['thumb'],
+							'image'	=> $attachment['url'],
+							'id'	=> (int) $attachment['id'],
+						);
+					}
+				}	
 			}
 			$this->addJSCode('Post.photos = '.json_encode($photos).';Post.photoDelete();');
+							
+			if($post['category_id']==1){		
+				$this->addJSCode('Post.initGalleria('.json_encode($galleria).');');
+			}
 		}
 		
 	}

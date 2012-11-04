@@ -128,12 +128,10 @@ var Post = {
 	
     // Viewing a photo gallery
     initPhoto : function(){
-		
         window.addEvent('hashchange', function(hash){
             var photos = $$('.photos');
             if(photos.length == 0)
                 return;
-			
             var m = hash.match(/^photo-([0-9]+)$/);
             if(m){
                 photos[0].addClass('hidden');
@@ -149,7 +147,6 @@ var Post = {
                 if(i == -1){
                     location.hash = '';
                 }else{
-					
                     Post.currentPhoto = i;
                     var photo = Post.photos[i],
                     img = $("attachment-photo-img");
@@ -202,7 +199,7 @@ var Post = {
                 $("attachment-photo").addClass('hidden');
 				
                 Post.currentPhoto = -1;
-		$$(".post-like").each(function(l){
+				$$(".post-like").each(function(l){
                         if(l.hasClass("post-like-attachment-0"))
                             l.removeClass("hidden");
                         else
@@ -464,7 +461,124 @@ var Post = {
     errorForm : function(errMsg){
         $("publish-error").set("html", errMsg).removeClass("hidden");
         this.enableForm();
-    }
+    },
+	initGalleria:function(data){
+		Galleria.loadTheme('../static/js/galleria/themes/classic/galleria.classic.js');
+		index=0;
+		if((photo=location.hash.match(/^#photo-([0-9]+)$/))){
+			for(var j=0; j < data.length; j++){
+				if(data[j].id==photo[1]){
+					index=j;
+				}
+			}
+		}
+		Galleria.run('#galleria', {
+			dataSource: data,
+			imageCrop:false,
+			show: index,
+		});
+		Galleria.ready(function(){
+			this.bind("image", function(e) {
+				Post.galleriaComLike("photo-"+this.getData(e.index).id);
+			});
+		});
+		jQuery("#adminView").click(function(){
+			jQuery("#galleria").toggle();
+			if(jQuery(".photos").hasClass('hidden')){
+				jQuery(".photos").removeClass('hidden');
+			}
+			else{
+				jQuery(".photos").addClass('hidden');
+			}
+			jQuery("#addAdmin").toggle();
+		});
+	},
+	galleriaComLike:function(photoHash){
+		//gestion des comment et like
+            var photos = $$('.photos');
+            if(photos.length == 0)
+                return;
+            var m = photoHash.match(/^photo-([0-9]+)$/);
+            if(m){
+                photos[0].addClass('hidden');		
+                var i = -1;
+                for(var j=0; j < Post.photos.length; j++){
+                    if(Post.photos[j].id == m[1]){
+                        i = j;
+                        break;
+                    }
+                }
+                if(i == -1){
+                    location.hash = '';
+                }else{
+                    Post.currentPhoto = i;
+                    var photo = Post.photos[i];
+                    // Cas de base : On a jamais aimé    
+                    $$('.like-link').removeClass('hidden');
+                    $$('.unlike-link').addClass('hidden');
+                    // Pour chaques Likes :
+                    $$(".post-like").each(function(l){
+                        // Cas ou quelqu'un a deja aimé && c'est la photo affiché.
+                        if(l.hasClass("post-like-attachment-"+photo.id)){
+                            // On affiche la "Like Box"
+                            l.removeClass("hidden");
+                            // Cas ou on a personnellement aimé
+                            if($('like-it-'+photo.id) === null){
+                                // On affiche "Je n'aime plus !"
+                                $$('.like-link').removeClass('hidden');
+                                $$('.unlike-link').addClass('hidden');
+                            } else {
+                                // On affiche "J'aime"
+                                $$('.like-link').addClass('hidden');
+                                $$('.unlike-link').removeClass('hidden');
+                            }
+                        } else {
+                            // C'est pas la bonne photo, on cache la "Like Box"
+                            l.addClass("hidden");
+                        }
+                    });
+                    $$(".post-comment").each(function(e){
+                        if(e.hasClass("post-comment-attachment"+photo.id))
+                            e.removeClass("hidden");
+                        else
+                            e.addClass("hidden");
+                    });
+                    $$(".post-delete").addClass("hidden");
+                }
+				
+            }else if(photos[0].hasClass('hidden')){
+                photos[0].removeClass('hidden');
+				
+                Post.currentPhoto = -1;
+				$$(".post-like").each(function(l){
+                        if(l.hasClass("post-like-attachment-0"))
+                            l.removeClass("hidden");
+                        else
+                            l.addClass("hidden");
+                });		
+                $$(".post-comment").each(function(e){
+                    if(e.hasClass("post-comment-attachment0"))
+                        e.removeClass("hidden");
+                    else
+                        e.addClass("hidden");
+                });
+            }
+        if(location.hash.indexOf('#') == 0)
+            window.fireEvent('hashchange', location.hash.substr(1));
+		
+        var prev = function(){
+            var i = Post.currentPhoto-1;
+            if(i < 0)
+                i = Post.photos.length-1;
+            location.hash = '#photo-'+Post.photos[i].id;
+        };
+        var next = function(){
+            var i = Post.currentPhoto+1;
+            if(i >= Post.photos.length)
+                i = 0;
+            location.hash = '#photo-'+Post.photos[i].id;
+        };
+	}
 };
 
 var Like = {
@@ -1737,7 +1851,7 @@ var Admin= {
 	},
 	loadTab:function(){
 		var index = jQuery.jqx.cookie.cookie("jqxTabs_jqxWidget");
-        if (undefined == index) index = 0;
+        if (undefined == index) index = 3;
 		jQuery('#adminIsepdorTab').jqxTabs({ 
 			selectedItem: index,
 			width: '98%',  
@@ -1802,28 +1916,29 @@ var Admin= {
 		color[0]="blue";
 		color[1]="red";
 		color[2]="green";
-		try {
-			json = jQuery.parseJSON(data);
-			for(i=0;i<data.length;i++){
-				x1=data[i].x1;
-				y1=data[i].y1;
-				x2=data[i].x2;
-				y2=data[i].y2;
-				w=data[i].w;
-				h=data[i].h;
-				jQuery("#"+div[i]).html('<strong>X1:</strong>'+Math.round(x1)+'<br/>'+
-										'<strong>Y1:</strong>'+Math.round(y1)+'<br/>'+
-										'<strong>X2:</strong>'+Math.round(x2)+'<br/>'+
-										'<strong>Y2:</strong>'+Math.round(y2)+'<br/>'+
-										'<strong>Width:</strong>'+Math.round(w)+'<br/>'+
-										'<strong>Height:</strong>'+Math.round(h)+'<br/>'+
-										'<strong style="color:'+color[data[i].index]+'">Color</strong>'
-				);
-				shower='<div class="cropShower'+data[i].index+'" style="position:absolute;top:'+(y1*0.7)+'px;left:'+(x1*0.7)+'px;width:'+(w*0.7)+'px;height:'+(h*0.7)+'px;z-index:1000;border:solid 1px '+color[data[i].index]+';"></div>';
-				jQuery(".jcrop-holder").prepend(shower);
-			}
-		} catch (e) {}
-		
+		jQuery('#diplomeTab').ready(function(){ 
+			try {
+				json = jQuery.parseJSON(data);
+				for(i=0;i<data.length;i++){
+					x1=data[i].x1;
+					y1=data[i].y1;
+					x2=data[i].x2;
+					y2=data[i].y2;
+					w=data[i].w;
+					h=data[i].h;
+					jQuery("#"+div[i]).html('<strong>X1:</strong>'+Math.round(x1)+'<br/>'+
+											'<strong>Y1:</strong>'+Math.round(y1)+'<br/>'+
+											'<strong>X2:</strong>'+Math.round(x2)+'<br/>'+
+											'<strong>Y2:</strong>'+Math.round(y2)+'<br/>'+
+											'<strong>Width:</strong>'+Math.round(w)+'<br/>'+
+											'<strong>Height:</strong>'+Math.round(h)+'<br/>'+
+											'<strong style="color:'+color[data[i].index]+'">Color</strong>'
+					);
+					shower='<div class="cropShower'+data[i].index+'" style="position:absolute;top:'+(y1*0.7)+'px;left:'+(x1*0.7)+'px;width:'+(w*0.7)+'px;height:'+(h*0.7)+'px;z-index:1000;border:solid 1px '+color[data[i].index]+';"></div>';
+					jQuery(".jcrop-holder").prepend(shower);
+				}
+			} catch (e) {}
+		});
 		jQuery("#saveDiplome").bind('click', function () {
 			jQuery.ajax({
 				  url: jQuery("#pageUrl").val(),

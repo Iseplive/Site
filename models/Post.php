@@ -54,7 +54,7 @@ class Post_Model extends Model {
 			$where[] = 'p.id = '.$params['id'];
 		$posts = DB::select('
 			SELECT
-				p.id, p.message, p.time, p.private, p.official,
+				p.id, p.message, p.time, p.private, p.official,p.category_id,
 				a.id AS group_id, a.name AS group_name, a.url_name AS group_url,
 				u.username,
 				s.student_number, s.firstname, s.lastname

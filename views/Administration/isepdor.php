@@ -70,7 +70,7 @@
 		<h2 style="width:100%;border-bottom:solid #020022 2px;"><?php echo __('ADMIN_ISEPDOR_GESTION')?></h2><br/>
 		<span style="float:right;">
 			<a href="?export=1" ><img alt="" src="<?php echo Config::URL_STATIC."images/filetypes/db.png";?>"/> <?php echo __('ADMIN_ISEPDOR_EXPORT');?></a><BR/><BR/>
-			<a href="?delete_result=1"> <strong><?php echo __('ADMIN_ISEPDOR_RESET')?></strong></a><br/><br/>
+			<a href="?delete_result=1" onclick="if(!confirm('<?php echo __("ADMIN_ISEPDOR_DELETERESULTS");?>')){return false;}"> <strong><?php echo __('ADMIN_ISEPDOR_RESET')?></strong></a><br/><br/>
 			<a href="?getDiplome=1"> <strong><?php echo __('ADMIN_ISEPDOR_GETDIPLOME')?></strong></a>
 		</span>
 		<span >
@@ -114,6 +114,14 @@
 				</fieldset>
 			</form>	
 			<br/>
+			<form id="" action="?" method="post" enctype="multipart/form-data"  >
+				<fieldset id="publish-stock-attachment-photo" class="publish-attachment">
+					<legend><img src="<?php echo Config::URL_STATIC; ?>images/icons/attachment_photo.png" alt="" class="icon" /> <?php echo __('ADMIN_CHANGE_FONT'); ?></legend>
+					<?php echo __('PUBLISH_ATTACHMENT_SEND'); ?> <input type="file" name="font"  /><br />
+					<input type="submit" id="publish-submit" value="<?php echo __('PUBLISH_SUBMIT'); ?>" />
+				</fieldset>
+			</form>	
+			<br/>
 			<div id='diplomeTab' >
 				<ul>
 					<li style="margin-left: 5px;"><?php echo __('ADMIN_QUESTIONS'); ?></li>
@@ -124,7 +132,7 @@
 				<div id="diplomeName"> </div>
 				<div id="diplomeBirth"> </div>
 			</div>
-			<a id="saveDiplome" style="cursor:pointer;margin-right:10px,float:right" >
+			<a id="saveDiplome" style="cursor:pointer;margin-right:10px,right:5px" >
 				<img alt="" style="position:relative;top:3px;"src="<?php echo Config::URL_STATIC."images/icons/post.png";?>"/>
 				<?php echo __('USER_EDIT_FORM_SUBMIT')?> 
 			</a><br/>

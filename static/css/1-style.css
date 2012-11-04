@@ -504,7 +504,11 @@ h1, h1 a, h1 a:hover, h1 a:visited, h1 a:active, h1 a:focus {
 	margin-top: 5px;
 	cursor: pointer;
 }
-
+#galleria{ 
+	width: 100%; 
+	height: 600px; 
+	background: #fffff 
+}
 
 /* Avatar */
 .avatar img {

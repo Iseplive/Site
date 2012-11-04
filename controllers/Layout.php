@@ -124,7 +124,6 @@ class Layout_Controller extends Controller {
 		//Date Isep d'or
 		if(!($round = Cache::read('IsepOrRound'))){
             $round = IsepOr_Model::verifDate();
-			echo "jkb";
             Cache::write('IsepOrRound', $round, 11250);
         }
 		$this->set('round',$round);

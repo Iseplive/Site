@@ -18,6 +18,9 @@
             </p>
         </div>
     <?php endforeach; ?>
+		<div class="submit">
+            <input type="submit" value="Envoyer !"/>
+        </div>
     </form>
 </div>
 <?php else : ?>

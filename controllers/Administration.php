@@ -380,7 +380,7 @@ class Administration_Controller extends Controller {
 				Admin.loadjscssfile("'.Config::URL_STATIC.'js/crop/jquery.color.js","js");
 				
 				jQuery(document).ready(function () {
-					 diplomeData=new Array();
+					diplomeData=new Array();
 					Admin.loadTab();
 					Admin.loadCrop();
 					Admin.loadCatGrid('.json_encode($questions).');
@@ -549,7 +549,7 @@ class Administration_Controller extends Controller {
 			*/
 			if(isset($_GET['getDiplome'])){
 				$template=DATA_DIR.Config::DIR_DATA_STORAGE.Config::DIR_DATA_ADMIN."diplomeIsepDOr9652.png";
-				$font = DATA_DIR.Config::DIR_DATA_STORAGE.Config::DIR_DATA_ADMIN."arial.ttf";  
+				$font = DATA_DIR.Config::DIR_DATA_STORAGE.Config::DIR_DATA_ADMIN."font2354.ttf";  
 				$files=Array();
 				$positions=json_decode($positions,true);//récupere les coordonnées précédament demandées
 				for($i=0;$i<count($positions);$i++){
@@ -647,7 +647,25 @@ class Administration_Controller extends Controller {
 						exit();
 					
 				}
-				
+			/*
+			* Ajout de la police
+			*/
+			if(isset($_FILES['font']) && $_FILES['font']['name']!=null ){
+				if($_FILES['font']['size'] > Config::UPLOAD_MAX_SIZE_FILE)
+						throw new Exception(__('POST_ADD_ERROR_FILE_SIZE', array('size' => File::humanReadableSize(Config::UPLOAD_MAX_SIZE_FILE))));
+				 
+				if($filepaths = File::upload('font')){
+					if(!preg_match('#\.ttf$#i', $filepaths))
+						throw new Exception(__('POST_ADD_ERROR_FILE_FORMAT'));
+						
+					$avatar_path = DATA_DIR.Config::DIR_DATA_STORAGE.Config::DIR_DATA_ADMIN."font2354.ttf";
+					$avatar_dir = File::getPath($avatar_path)."/font2354.ttf";
+					File::rename($filepaths, $avatar_dir);
+				}
+				else{											
+					throw new Exception(__('ADMIN_UPLOAD_ERROR'));
+				}
+			}
 			/*Code qui met supprime les champs de la table résultat des isep d'or
 			*
 			*/

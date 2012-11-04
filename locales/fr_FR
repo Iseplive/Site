@@ -705,8 +705,14 @@ ADMIN_ISEPDOR_NAV4
 	Administration
 ADMIN_CONFIRM_DELETE
 	Êtes-vous sur de vouloir supprimer cet élément.
+ADMIN_ISEPDOR_DELETERESULTS
+	Êtes-vous sur de vouloir supprimer tout les résultats.
 ADMIN_ISEPDOR_EXPORT
 	Voir les réponses des utilisateurs
+ADMIN_CHANGE_FONT
+	Changer la police
+ADMIN_POST_PHOTO
+	Gestion des photos
 ADMIN_ISEPDOR_FIRST
 	Premier tour
 ADMIN_ISEPDOR_SECOND
