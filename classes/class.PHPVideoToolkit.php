@@ -761,9 +761,9 @@
 			
 // 			execute the ffmpeg lookup
 // 			exec(PHPVIDEOTOOLKIT_FFMPEG_BINARY.' -i '.$file.' &> '.$info_file); 
-			exec(PHPVIDEOTOOLKIT_FFMPEG_BINARY.' -i '.$file.' 2>&1', $buffer);
+			exec('ffprobe -show_streams '.$file.' 2>&1', $buffer);
+			$buffer2=$buffer;
 			$buffer = implode("\r\n", $buffer);
-			
 // 			$data = false;
 // 			try to open the file
 // 			$handle = fopen($info_file, 'r');
@@ -805,12 +805,12 @@
 // 					print_r($dimensions_matches);
 					$dimensions_value = $dimensions_matches[0];
 					$data['video']['dimensions'] 	= array(
-						'width' 					=> floatval($dimensions_matches[1]),
+						'width' 					=> floatval(str_replace ("width=","",$buffer2[49])),
 						'height' 					=> floatval($dimensions_matches[2])
 					);
 // 					get the framerate
 					preg_match('/([0-9\.]+) (fps|tb)\(r\)/', $matches[0], $fps_matches);
-					$data['video']['frame_rate'] 	= floatval($fps_matches[1]);
+					$data['video']['frame_rate'] 	= floatval((int) str_replace ("avg_frame_rate=","",$buffer2[61]) );
 					$fps_value = $fps_matches[0];
 // 					get the ratios
 					preg_match('/\[PAR ([0-9\:\.]+) DAR ([0-9\:\.]+)\]/', $matches[0], $ratio_matches);
@@ -823,7 +823,7 @@
 					if(isset($data['duration']) && isset($data['video']))
 					{
 // 						set the total frame count for the video
-						$data['video']['frame_count'] 						= ceil($data['duration']['seconds'] * $data['video']['frame_rate']);
+						$data['video']['frame_count'] 						= ceil(str_replace ("nb_frames=","",$buffer2[22]));
 // 						set the framecode
 						$frames												= ceil($data['video']['frame_rate']*($data['duration']['timecode']['seconds']['excess']/10));
 						$data['duration']['timecode']['frames'] 			= array();

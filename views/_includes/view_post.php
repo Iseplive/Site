@@ -221,7 +221,21 @@
                 <?php
                 break;
 
-
+			case 'mp4':
+				?>
+					<br/><br/>
+				<video width="800" height="600" poster="<?php echo $attachment['thumb']; ?>" controls="controls" preload="none" class="video">
+					<source type="video/mp4" src="<?php echo $attachment['url']; ?>" />
+					<!-- Fallback flash player for no-HTML5 browsers with JavaScript turned off -->
+					<object class="video" width="800" height="600"  type="application/x-shockwave-flash" data="<?php echo Config::URL_STATIC; ?>players/flashmediaelement.swf"> 		
+						<param name="movie" value="<?php echo Config::URL_STATIC; ?>players/flashmediaelement.swf" /> 
+						<param name="allowfullscreen" value="true" />
+						<param name="flashvars" value="controls=true&amp;file=<?php echo urlencode($attachment['url']); ?>" /> 		
+						<img src="<?php echo $attachment['thumb']; ?>" width="100%" height="100%" />
+					</object> 	
+				</video>
+				<?php
+				break;
 
 
             // Audio
