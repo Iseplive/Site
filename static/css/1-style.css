@@ -544,10 +544,52 @@ h1, h1 a, h1 a:hover, h1 a:visited, h1 a:active, h1 a:focus {
 	overflow: hidden;
 }
 #groups-list .group-profile {
-	float: left;
+	position:relative;
 	width: 30.3%;
-	margin: 0 1.5% 20px 1.5%;
+	margin: auto;
 }
+
+#carrousel{
+	width:100%;
+	height:120px;
+	margin-bottom: 50px;
+}
+
+#carrousel ul,ul li {
+	margin: 0;
+	padding: 0;
+	display: block;
+	list-style-type: none;
+}
+ .ui-jcoverflip {
+	position: relative;
+}
+      
+.ui-jcoverflip--item {
+	position: absolute;
+	display: block;
+	cursor: pointer;
+	box-shadow: 1px 1px 12px #555;
+}
+          
+.ui-jcoverflip--title {
+	position: absolute;
+	bottom: -30px;
+	width: 100%;
+	text-align: center;
+	color: #555;
+}
+
+#carrousel img {
+	display: block;
+	border: 0;
+	outline: none;
+}
+
+#carrousel a {
+	outline: none;
+}
+
 
 /* Groups' and users' profiles */
 

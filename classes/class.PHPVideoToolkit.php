@@ -71,6 +71,13 @@
 		define('PHPVIDEOTOOLKIT_FFMPEG_BINARY', '/usr/local/bin/ffmpeg');
 	}
 	/**
+	 * Set the ffprobe binary path
+	 */
+	if(!defined('PHPVIDEOTOOLKIT_FFPROBE_BINARY'))
+	{
+		define('PHPVIDEOTOOLKIT_FFPROBE_BINARY', '/usr/local/bin/ffprobe');
+	}
+	/**
 	 * Set the flvtool2 binary path
 	 */
 	if(!defined('PHPVIDEOTOOLKIT_FLVTOOLS_BINARY'))
@@ -761,7 +768,7 @@
 			
 // 			execute the ffmpeg lookup
 // 			exec(PHPVIDEOTOOLKIT_FFMPEG_BINARY.' -i '.$file.' &> '.$info_file); 
-			exec('ffprobe -show_streams '.$file.' 2>&1', $buffer);
+			exec(PHPVIDEOTOOLKIT_FFPROBE_BINARY.' -show_streams '.$file.' 2>&1', $buffer);
 			$buffer2=$buffer;
 			$buffer = implode("\r\n", $buffer);
 // 			$data = false;

@@ -27,16 +27,16 @@ final class Config extends ConfigAbstract {
 
 	// LDAP
 	public static $LDAP = array (
-		'host'		=> 'hera.isep.fr',
-		'port'		=> 389,
+		'host'		=> 'ldap.isep.fr',
+		'port'		=> 636,
 		'basedn'	=> 'ou=People,dc=isep.fr'
 	);
 
 	// Authentication mode: 'ldap' (ISEP's LDAP) or 'form' (using https://gcma.isep.fr/ form over https)
-	const AUTHENTICATION_MODE	= 'form';
+	const AUTHENTICATION_MODE	= 'ldap';
 
 	// Encryption secret key (for Encryption class)
-	const ENCRYPTION_KEY	= 'OyFDrRd3db';
+	const ENCRYPTION_KEY	= 'XrDy2H8Ob8';
 
 	// Directories
 	// relative to "app" dir
@@ -45,6 +45,7 @@ final class Config extends ConfigAbstract {
 	const DIR_DATA_LOGS		= 'logs/';		// Logs²
 	const DIR_DATA_STORAGE	= 'storage/';	// Storage
 	const DIR_DATA_TMP		= 'tmp/';		// Temporary files
+	const DIR_DATA_ADMIN	= 'admin/';		// Admin functions files
 
 	// Name of the session
 	const SESS_ID		= 'PHPSESSID';
@@ -112,11 +113,12 @@ final class Config extends ConfigAbstract {
 	const DEBUG			= true;
 
     // Etat des ISEP d'OR
-    const ISEP_OR_STATE = 3; // 0 -> Rien, 1-> Etape 1, 2-> Round 2, 3-> Resultat
+    const ISEP_OR_STATE = 1; // 0 -> Rien, 1-> Etape 1, 2-> Round 2, 3-> Resultat
 }
 
 
 // PHPVideoToolkit constants
 define('PHPVIDEOTOOLKIT_TEMP_DIRECTORY', '/tmp/');
-define('PHPVIDEOTOOLKIT_FFMPEG_BINARY', '/usr/bin/ffmpeg');
+define('PHPVIDEOTOOLKIT_FFMPEG_BINARY', 'ffmpeg');
+define('PHPVIDEOTOOLKIT_FFPROBE_BINARY', 'ffprobe');
 define('PHPVIDEOTOOLKIT_FLVTOOLS_BINARY', '/usr/bin/flvtool2');
