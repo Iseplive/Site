@@ -18,12 +18,7 @@
             </p>
         </div>
     <?php endforeach; ?>
-        <h2 style="margin: 30px 0 10px 0;"><?php echo __('ISEPOR_EXTRA_SEPARATEUR'); ?></h2>
-        <p style="width: 500px;  margin-bottom: 20px;">
-            <?php echo __('ISEPOR_TEXT_EXTRA'); ?>
-        </p>
-   
-        <div class="submit">
+		<div class="submit">
             <input type="submit" value="Envoyer !"/>
         </div>
     </form>

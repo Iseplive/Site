@@ -8,7 +8,7 @@ class IsepOr_Controller extends Controller {
             throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
         if (!isset(User_Model::$auth_data['student_number']))
             throw new Exception('You must be a student to see this');
-        if(IsepOr_Controller::verifdate() !== 1 && User_Model::$auth_data['admin'] != '1')
+        if(Cache::read('IsepOrRound') !== 1 && User_Model::$auth_data['admin'] != '1')
             throw new Exception('It\'s not ready for Prime Time');
         if($this->model->checkVote(User_Model::$auth_data['id'], 1) > 0){
             $this->set('empty_post', false);
@@ -44,7 +44,7 @@ class IsepOr_Controller extends Controller {
             throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
         if (!isset(User_Model::$auth_data['student_number']))
             throw new Exception('You must be a student to see this');
-        if(IsepOr_Controller::verifdate() !== 2 && User_Model::$auth_data['admin'] != '1')
+        if(Cache::read('IsepOrRound') !== 2 && User_Model::$auth_data['admin'] != '1')
             throw new Exception('It\'s not ready for Prime Time');
         if($this->model->checkVote(User_Model::$auth_data['id'], 2) > 0){
             $this->set('empty_post', false);
@@ -56,26 +56,22 @@ class IsepOr_Controller extends Controller {
                 if(User_Model::$auth_data['admin'] == '1'){
                     Cache::delete('IsepOrFinals');
                     Cache::delete('IsepOrQuestions');
-                    //Cache::delete('IsepOrQuestionsExtra');
                 }
                 if(!($questions = Cache::read('IsepOrQuestions'))){
                     $questions = $this->model->fetchQuestions();
                     Cache::write('IsepOrQuestions', $questions, 11250);
                 }
-                // if(!($questions_extra = Cache::read('IsepOrQuestionsExtra'))){
-                    // $questions_extra = $this->model->fetchQuestionsExtra();
-                    // Cache::write('IsepOrQuestionsExtra', $questions_extra, 11250);
-                // }
+
                 if(!($finalList = Cache::read('IsepOrFinals'))){
                     foreach($questions as $value){
                         if(strpos($value['type'], ',')){
                             $data = array();
                             foreach(explode(',', $value['type']) as $type){
-                               $data = self::__array_rePad($data, $this->model->fetchFinals($value['id'], $type, 1));
+                               $data = self::__array_rePad($data, $this->model->fetchFinals($value['id'], $type, 1,true));
                             }
                             $finalList[$value['id']] = array_slice(self::__array_orderby($data, 'cmpt', SORT_DESC), 0, 3);
                         } else 
-                            $finalList[$value['id']] = $this->model->fetchFinals($value['id'], $value['type'], 1);
+                            $finalList[$value['id']] = $this->model->fetchFinals($value['id'], $value['type'], 1,true);
                     }
                     Cache::write('IsepOrFinals', $finalList, 11250);
                 }
@@ -83,7 +79,6 @@ class IsepOr_Controller extends Controller {
                     'empty_post' => true,
                     'datas' => $finalList,
                     'questions' => $questions,
-                    //'questionsExtra' => $questions_extra
                 ));
             } else {
                 $this->model->save($_POST, 2);
@@ -96,30 +91,24 @@ class IsepOr_Controller extends Controller {
     }
     
     public function result() {
-        $this->setView('result.php');
-
         if (!isset(User_Model::$auth_data))
             throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
         if (!isset(User_Model::$auth_data['student_number']))
-            throw new Exception('You must be a student to see this');
-        if(Config::ISEP_OR_STATE !== 3 && User_Model::$auth_data['admin'] != '1')
+            throw new Exception('You must be a student to see this');		
+		
+        if(Cache::read('IsepOrRound') !== 3 && User_Model::$auth_data['admin'] != '1')
             throw new Exception('It\'s not ready for Prime Time');
-
+		
+		$this->setView('result.php');
+		
         if(User_Model::$auth_data['admin'] == '1') {
             Cache::delete('IsepOrQuestions');
-            Cache::delete('IsepOrQuestionsExtra');
             Cache::delete('IsepOrCount');
-            Cache::delete('IsepOrCountExtra');
             Cache::delete('IsepOrResults');
-            Cache::delete('IsepOrResultsExtra');
         }
         if(!($questions = Cache::read('IsepOrQuestions'))){
             $questions = $this->model->fetchQuestions();
             Cache::write('IsepOrQuestions', $questions, 11250);
-        }
-        if(!($questions_extra = Cache::read('IsepOrQuestionsExtra'))){
-            $questions_extra = $this->model->fetchQuestionsExtra();
-            Cache::write('IsepOrQuestionsExtra', $questions_extra, 11250);
         }
         if (!($finalList = Cache::read('IsepOrResults'))) {
             foreach ($questions as $value) {
@@ -134,19 +123,7 @@ class IsepOr_Controller extends Controller {
             }
             Cache::write('IsepOrResults', $finalList, 11250);
         }
-        if (!Cache::read('IsepOrResultsExtra')) {
-            foreach ($questions_extra as $value) {
-                if (strpos($value['type'], ',')) {
-                    $data = array();
-                    foreach (explode(',', $value['type']) as $type) {
-                        $data = self::__array_rePad($data, $this->model->fetchFinals($value['id'], $type, 2, true));
-                    }
-                    $finalListExtra[$value['id']] = array_slice(self::__array_orderby($data, 'cmpt', SORT_DESC), 0, 3);
-                } else
-                    $finalListExtra[$value['id']] = $this->model->fetchFinals($value['id'], $value['type'], 2, true);
-            }
-            Cache::write('IsepOrResultsExtra', $finalListExtra, 11250);
-        }
+
         if(!($count = Cache::read('IsepOrCount'))){
             $count = array();
             foreach (($this->model->countUser()) as $value) {
@@ -154,20 +131,11 @@ class IsepOr_Controller extends Controller {
             }
             Cache::write('IsepOrCount', $count, 11250);
         }
-        if(!Cache::read('IsepOrCountExtra')){
-            $count_extra = array();
-            foreach (($this->model->countUser(true)) as $value) {
-                $count_extra[$value['isepdor_questions_id']] = $value['Lignes'];
-            }
-            Cache::write('IsepOrCountExtra', $count_extra, 11250);
-        }
+
         $this->set(array(
                 'countUser' => $count,
                 'datas'     => $finalList,
                 'questions' => $questions,
-                'countUserExtra' => $count_extra,
-                'datasExtra'     => $finalListExtra,
-                'questionsExtra' => $questions_extra
         ));
     }
     
@@ -219,7 +187,7 @@ class IsepOr_Controller extends Controller {
     }
     
     
-    static private function __array_rePad(array $array, array $array2) {
+    static public function __array_rePad(array $array, array $array2) {
        $array = array_values($array);
        $array2 = array_values($array2);
        $nb = count($array)+1;
@@ -229,7 +197,7 @@ class IsepOr_Controller extends Controller {
        return array_values($array);
     }
     
-    static private function __array_orderby() {
+    static public function __array_orderby() {
         $args = func_get_args();
         $data = array_shift($args);
         foreach ($args as $n => $field) {
@@ -245,27 +213,4 @@ class IsepOr_Controller extends Controller {
         array_multisort($args[0], $args[1], $data);
         return $data;
     }
-	
-	public static function verifdate(){
-		$dateround1=IsepOr_Model::verifdate(1);
-		$dateround2=IsepOr_Model::verifdate(2);
-		$round1=array();
-		$round2=array();
-		foreach ($dateround1 as $dates){
-			array_push($round1,$dates['date']);
-			
-		}
-		foreach ($dateround2 as $dates){
-			array_push($round2,$dates['date']);
-			
-		}
-		if($round1[0] <= date("Y-m-d") && date("Y-m-d") < $round1[1]){
-			return 1;
-		}
-		if($round2[0] <= date("Y-m-d") && date("Y-m-d") < $round2[1]){
-			return 2;
-		}
-		return 0;
-	}
-    
 }

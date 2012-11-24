@@ -374,7 +374,7 @@ class Post_Controller extends Controller {
 				}
 			}
 			
-			// VidÃ©os
+			// Vidéos
 			/* @uses PHPVideoToolkit : http://code.google.com/p/phpvideotoolkit/
 			 * @requires ffmpeg, php5-ffmpeg
 			 */
@@ -423,7 +423,7 @@ class Post_Controller extends Controller {
 							unset($img);
 							
 							// Convert to FLV
-							if(!preg_match('#\.flv$#i', $filepath)){
+							/*if(!preg_match('#\.flv$#i', $filepath)){
 								$toolkit = new PHPVideoToolkit();
 								$toolkit->on_error_die = true;	// Will throw exception on error
 								$toolkit->setInputFile($filepath);
@@ -437,7 +437,7 @@ class Post_Controller extends Controller {
 								$filepath = $filepath[0];
 								
 								unset($toolkit);
-							}
+							}*/
 							
 							$attachments[] = array($filepath, $name, $thumbpath);
 							$uploaded_files[] = $filepath;

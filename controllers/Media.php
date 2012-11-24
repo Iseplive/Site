@@ -8,11 +8,9 @@ class Media_Controller extends Controller {
 		$is_student = $is_logged && isset(User_Model::$auth_data['student_number']);
 		$is_admin = $is_logged && User_Model::$auth_data['admin']=='1';
 		
-		$this->set(array(
-			'is_logged'			=> $is_logged,
-			'is_student'		=> $is_student,
-			'is_admin'			=> $is_admin
-		));
+		if (!$is_student)
+            throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
+			
 		//Pour tout les média
 		$medias=$this->model->getMedias();
 		$annee=array();
@@ -21,7 +19,7 @@ class Media_Controller extends Controller {
 			$date=date('Y',$media['time']); 
 			$ok=0;
 			for($i=0;$i<=count($annee);$i++){
-				if($date==$annee[$i]){
+				if(isset($annee[$i]) && $date==$annee[$i]){
 					$ok=1;
 				}
 			}
@@ -48,7 +46,7 @@ class Media_Controller extends Controller {
 			$date=date('Y',$photo['time']); 
 			$ok=0;
 			for($i=0;$i<=count($annee1);$i++){
-				if($date==$annee1[$i]){
+				if(isset($annee1[$i]) && $date==$annee1[$i]){
 					$ok=1;
 				}
 			}
@@ -73,7 +71,7 @@ class Media_Controller extends Controller {
 			$date=date('Y',$video['time']); 
 			$ok=0;
 			for($i=0;$i<=count($annee2);$i++){
-				if($date==$annee2[$i]){
+				if(isset($annee2[$i]) && $date==$annee2[$i]){
 					$ok=1;
 				}
 			}
@@ -98,7 +96,7 @@ class Media_Controller extends Controller {
 			$date=date('Y',$journal['time']); 
 			$ok=0;
 			for($i=0;$i<=count($annee3);$i++){
-				if($date==$annee3[$i]){
+				if(isset($annee3[$i]) && $date==$annee3[$i]){
 					$ok=1;
 				}
 			}
@@ -123,7 +121,7 @@ class Media_Controller extends Controller {
 			$date=date('Y',$podcast['time']); 
 			$ok=0;
 			for($i=0;$i<=count($annee4);$i++){
-				if($date==$annee4[$i]){
+				if(isset($annee4[$i]) && $date==$annee4[$i]){
 					$ok=1;
 				}
 			}

@@ -52,6 +52,23 @@ class PostCommentLike_Model extends Model {
         self::clearCache();
         return $id;
     }
+	
+	/*
+	* Delete a commentlike when attachment is deleted
+	*
+	*@param int $post_id	id of the post
+	*@param int $attach_id	id of the attachment file
+	*/
+	public static function attachmentDelete($post_id,$attach_id){
+		$id = DB::createQuery('post_comment_likes')
+			->fields('id')
+			->where(array('attachement_id' => $attach_id,'post_id'=>$post_id))
+			->select();
+		for($i=0;$i<count($id);$i++)
+			$id = $this->createQuery()->delete($id[$i]['id']);
+		
+		self::clearCache();
+	}
 
     public function get($id) {
         $likes = $this->createQuery()->select($id);

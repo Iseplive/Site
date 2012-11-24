@@ -249,7 +249,7 @@ class ElasticSearchTransportHTTP extends ElasticSearchTransport {
             throw $exception;
         }
 
-        if (array_key_exists('error', $data))
+        if (is_array($data) && array_key_exists('error', $data))
             $this->handleError($url, $method, $payload, $data);
 
         return $data;

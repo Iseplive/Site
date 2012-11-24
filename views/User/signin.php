@@ -1,8 +1,7 @@
-
 <div id="signin-block">
 	<h1><?php echo __('SIGNIN_TITLE'); ?></h1>
 
-	<form action="<?php echo Config::URL_ROOT.Routes::getPage('signin', array('redirect' => isset($signin_redirect) ? $signin_redirect : $_SERVER['REQUEST_URI'])); ?>" method="post">
+	<form action="<?php echo Config::URL_ROOT.Routes::getPage('signin', array('redirect' => isset($signin_redirect) ? $signin_redirect :"")); ?>" method="post">
 		<p id="signin-block-username">
 			<label for="signin-username"><?php echo __('SIGNIN_USERNAME'); ?></label>
 			<input type="text" name="username" id="signin-username" value="" />

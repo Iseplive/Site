@@ -1,4 +1,3 @@
-
 <div class="profile-column <?php echo isset($posts) ? 'left' : 'center'; ?>">
 	<a href="<?php echo $student['avatar_big_url']; ?>" rel="lightbox" class="avatar profile-avatar"><img src="<?php echo $student['avatar_url']; ?>" alt="" /></a>
 
