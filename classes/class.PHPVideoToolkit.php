@@ -98,6 +98,7 @@
 	{
 		define('PHPVIDEOTOOLKIT_MENCODER_BINARY', '/usr/local/bin/mencoder');
 	}
+	
 
 	class PHPVideoToolkit
 	{
@@ -765,12 +766,12 @@
 			}
 // 			generate a random filename
 			$info_file = $this->_tmp_directory.$this->unique($hash).'.info';
-			
+
 // 			execute the ffmpeg lookup
 // 			exec(PHPVIDEOTOOLKIT_FFMPEG_BINARY.' -i '.$file.' &> '.$info_file); 
-			exec(PHPVIDEOTOOLKIT_FFPROBE_BINARY.' -show_streams '.$file.' 2>&1', $buffer);
-			$buffer2=$buffer;
+			exec(PHPVIDEOTOOLKIT_FFMPEG_BINARY.' -i '.$file.' 2>&1', $buffer);
 			$buffer = implode("\r\n", $buffer);
+
 // 			$data = false;
 // 			try to open the file
 // 			$handle = fopen($info_file, 'r');
@@ -800,7 +801,7 @@
 					$data['duration']['timecode']['seconds']['exact']   = $timecode;
 					$data['duration']['timecode']['seconds']['excess']  = intval(substr($timecode, 9));
 				}
-				
+
 // 				match the video stream info
 				preg_match('/Stream(.*): Video: (.*)/', $buffer, $matches);
 				if(count($matches) > 0)
@@ -812,12 +813,12 @@
 // 					print_r($dimensions_matches);
 					$dimensions_value = $dimensions_matches[0];
 					$data['video']['dimensions'] 	= array(
-						'width' 					=> floatval(str_replace ("width=","",$buffer2[49])),
+						'width' 					=> floatval($dimensions_matches[1]),
 						'height' 					=> floatval($dimensions_matches[2])
 					);
 // 					get the framerate
 					preg_match('/([0-9\.]+) (fps|tb)\(r\)/', $matches[0], $fps_matches);
-					$data['video']['frame_rate'] 	= floatval((int) str_replace ("avg_frame_rate=","",$buffer2[61]) );
+					$data['video']['frame_rate'] 	= floatval($fps_matches[1]);
 					$fps_value = $fps_matches[0];
 // 					get the ratios
 					preg_match('/\[PAR ([0-9\:\.]+) DAR ([0-9\:\.]+)\]/', $matches[0], $ratio_matches);
@@ -830,7 +831,7 @@
 					if(isset($data['duration']) && isset($data['video']))
 					{
 // 						set the total frame count for the video
-						$data['video']['frame_count'] 						= ceil(str_replace ("nb_frames=","",$buffer2[22]));
+						$data['video']['frame_count'] 						= ceil($data['duration']['seconds'] * $data['video']['frame_rate']);
 // 						set the framecode
 						$frames												= ceil($data['video']['frame_rate']*($data['duration']['timecode']['seconds']['excess']/10));
 						$data['duration']['timecode']['frames'] 			= array();
@@ -853,7 +854,7 @@
 					$data['video']['pixel_format'] 	= $formats[1];
 					$data['video']['codec'] 		= $formats[0];
 				}
-				
+
 // 				match the audio stream info
 				preg_match('/Stream(.*): Audio: (.*)/', $buffer, $matches);
 				if(count($matches) > 0)
@@ -909,7 +910,7 @@
 				{
 					$data['_raw_info'] = $buffer;
 				}
-				
+
 // 			    fclose($handle);
 // 			}
 // 			if(is_file($info_file))
@@ -920,6 +921,7 @@
 // 			cache info and return
 			return self::$_file_info[$hash] = $data;
 		}		
+
 
 		/**
 		 * Sets the input file that is going to be manipulated.

@@ -5,11 +5,17 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
 		<meta name="robots" content="index,follow"/>
+		<script type="text/javascript" src="<?php echo Config::URL_STATIC; ?>js/jquery/jquery-1.8.0.min.js"></script>
+		<script type="text/javascript" src="<?php echo Config::URL_STATIC; ?>js/mediaelement/mediaelement.min.js"></script>
+		<script type="text/javascript" src="<?php echo Config::URL_STATIC; ?>js/mediaelement/mediaelement-and-player.js"></script>
+		
+		
 		
 <?php
 foreach($cssFiles as $cssFile){
 ?>
 		<link rel="stylesheet" type="text/css" href="<?php echo $cssFile; ?>" />
+		
 <?php
 }
 ?>
@@ -41,7 +47,6 @@ foreach($cssFiles as $cssFile){
 		
 	</head>
 	<body>
-		
 		<div id="container">
 			<header>
 				<a href="<?php echo Config::URL_ROOT; ?>" id="header-title">
@@ -55,7 +60,6 @@ foreach($cssFiles as $cssFile){
 								<a  id="adminNav"><?php echo __('NAV_ADMIN'); ?></a>
 								<div id="adminMenu" class="hidden" >
 									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> "users")); ?>"><?php echo __('ADMIN_UPDATE'); ?></a>
-									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> 1)); ?>"><?php echo __('ADMIN_ANNUAIRE'); ?></a>
 									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> "isepdor")); ?>"><?php echo __('ADMIN_ISEPDOR'); ?></a>
 									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> "bde")); ?>"><?php echo __('ADMIN_BDE'); ?></a>
 									<a href="<?php echo Config::URL_ROOT.Routes::getPage('admin',array("nav"=> "admins")); ?>"><?php echo __('ADMIN_ADMINISTRATEUR'); ?></a>

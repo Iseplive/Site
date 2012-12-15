@@ -397,6 +397,7 @@
 // 			check the frame required exists in the video
 			if($frame_number > $this->getFrameCount())
 			{
+				echo "error1";
 				return false;
 			}
 // 			work out the exact frame to take
@@ -414,6 +415,7 @@
 // 			print_r(array($tmp_name, $this->_toolkit->getLastOutput()));
 			if($result !== PHPVideoToolkit::RESULT_OK)
 			{
+				echo "error2";
 				return false;
 			}
 // 			load the frame into gd

@@ -64,6 +64,7 @@ class Post_Controller extends Controller {
 			'calendar_month'	=> (int) date('n'),
 			'calendar_year'		=> (int) date('Y')
 		));
+		
 	}
 	
 	
@@ -186,8 +187,19 @@ class Post_Controller extends Controller {
 						'id'	=> (int) $attachment['id'],
 						'url'	=> $attachment['url']
 					);
+					if($post['category_id']==1){	
+						$galleria[] = array(
+							'thumb'	=> $attachment['thumb'],
+							'image'	=> $attachment['url'],
+							'id'	=> (int) $attachment['id'],
+						);
+					}
 			}
-			$this->addJSCode('Post.photos = '.json_encode($photos).';');
+			$this->addJSCode('Post.photos = '.json_encode($photos).';Post.photoDelete();');
+			
+			if($post['category_id']==1){		
+				$this->addJSCode('Post.initGalleria('.json_encode($galleria).');');
+			}
 		}
 		
 	}
@@ -388,57 +400,36 @@ class Post_Controller extends Controller {
 						$uploaded_files[] = $filepath;
 					foreach($filepaths as $i => $filepath){
 						$name = isset($_FILES['attachment_video']['name'][$i]) ? $_FILES['attachment_video']['name'][$i] : '';
+						
 						try {
-							$video = new ffmpeg_movie($filepath, false);
-							if(!$video->hasVideo())
-								throw new Exception('No video stream found in the file');
-							if(!$video->hasAudio())
-								throw new Exception('No audio stream found in the file');
+							require_once(APP_DIR."classes/class.Ffprobe_info.php");
+							$info=new ffprobe($filepath);
+							$format=array("avi","mp4");
+							$fileformat=explode(",",$info->format->format_name);
+							$ext=pathinfo(File::getName($filepath), PATHINFO_EXTENSION);
+							if(count(array_intersect($fileformat,$format))==0 || !in_array($ext,$format)){
+								throw new Exception();
+							}
+							
 						}catch(Exception $e){
+						echo $e;
 							throw new Exception(__('POST_ADD_ERROR_VIDEO_FORMAT'));
 						}
-						// Video conversion
-						try {
-							$video_current_width = $video->getFrameWidth();
-							$video_width = min($video_current_width, Config::VIDEO_MAX_WIDTH);
-							if($video_width % 2 == 1)	// Even number required
-								$video_width--;
-							$video_height = $video_width * $video->getFrameHeight() / $video_current_width;
-							if($video_height % 2 == 1)	// Even number required
-								$video_height--;
-							
-							// Extract thumb
-							$video_thumb = $video->getFrame(round($video->getFrameCount()*0.2));
-							unset($video);
-							$video_thumb = $video_thumb->toGDImage();
-							$thumbpath = DATA_DIR.Config::DIR_DATA_TMP.File::getName($filepath).'.thumb';
-							imagejpeg($video_thumb, $thumbpath, 95);
-							unset($video_thumb);
-							$img = new Image();
-							$img->load($thumbpath);
-							$img->setWidth($video_width, true);
-							$img->setType(IMAGETYPE_JPEG);
-							$img->save($thumbpath);
-							$uploaded_files[] = $thumbpath;
-							unset($img);
-							
-							// Convert to FLV
-							/*if(!preg_match('#\.flv$#i', $filepath)){
-								$toolkit = new PHPVideoToolkit();
-								$toolkit->on_error_die = true;	// Will throw exception on error
-								$toolkit->setInputFile($filepath);
-								$toolkit->setVideoOutputDimensions($video_width, $video_height);
-								$toolkit->setFormatToFLV(Config::VIDEO_SAMPLING_RATE, Config::VIDEO_AUDIO_BIT_RATE);
-								$toolkit->setOutput(DATA_DIR.Config::DIR_DATA_TMP, File::getName($filepath).'.flv', PHPVideoToolkit::OVERWRITE_EXISTING);
-								$toolkit->execute(false, false);	// Multipass: false, Log: false
-							
-								File::delete($filepath);
-								$filepath = $toolkit->getLastOutput();
-								$filepath = $filepath[0];
-								
-								unset($toolkit);
-							}*/
-							
+						
+						try {	
+							//thumbnail
+							$thumbpath = DATA_DIR.Config::DIR_DATA_TMP.File::getName($filepath).'.thumb.jpg';
+							exec(PHPVIDEOTOOLKIT_FFMPEG_BINARY." -i ".escapeshellarg($filepath)." -deinterlace -an -ss 3 -t 00:00:01 -r 1 -y -vcodec mjpeg -f mjpeg -s 512x288 ".escapeshellarg($thumbpath)." 2>&1");
+							// Video conversion
+							$tempfilepath=DATA_DIR.Config::DIR_DATA_TMP.File::getName($filepath).".mp4";
+							$command=PHPVIDEOTOOLKIT_FFMPEG_BINARY.' -i '.escapeshellarg($filepath).' -vcodec h264 -vprofile high -preset slow -b:v 1500k -maxrate 1500k -bufsize 1000k -vf scale="min(1280\, iw):-1" -threads 0 -acodec libvo_aacenc -b:a 128k -y '.escapeshellarg($tempfilepath);
+							exec($command);
+							unlink($filepath);
+							if(!is_file($tempfilepath)){
+								throw new Exception();
+							}
+							$filepath=DATA_DIR.Config::DIR_DATA_TMP.File::getName($filepath).'.mp4';
+
 							$attachments[] = array($filepath, $name, $thumbpath);
 							$uploaded_files[] = $filepath;
 							
@@ -621,14 +612,88 @@ class Post_Controller extends Controller {
 		$this->setView('delete.php');
 			$is_logged = isset(User_Model::$auth_data);
 			$is_admin = $is_logged && User_Model::$auth_data['admin']=='1';
-			
-			if( $is_admin){	
-				$this->model->deleteattachment((int) $params['id']);
-				$this->set('success', true);
-				
+
+			if( $is_admin && $this->model->deleteattachment((int) $params['id'],(int) $params['post_id'])){	
+				$this->set('success', true);		
 			}else{
 				$this->set('success', false);
 			}
+
+	}
+	/* Add one or many attachment to a photo post */
+	public function addAttachment($param){
+		$this->setView('iframe_add.php');
+		$is_logged = isset(User_Model::$auth_data);
+		$is_admin = $is_logged && User_Model::$auth_data['admin']=='1';
+		@set_time_limit(0);
+
+		$uploaded_files = array();
+		$attachments = array();
+		try {
+			if($is_admin && isset($param['id']) && isset($_FILES['attachment_photo']) && is_array($_FILES['attachment_photo']['name']) ){
+				foreach($_FILES['attachment_photo']['size'] as $size){
+					if($size > Config::UPLOAD_MAX_SIZE_PHOTO)
+						throw new Exception(__('POST_ADD_ERROR_PHOTO_SIZE', array('size' => File::humanReadableSize(Config::UPLOAD_MAX_SIZE_PHOTO))));
+				}
+				if($filepaths = File::upload('attachment_photo')){
+					foreach($filepaths as $filepath)
+						$uploaded_files[] = $filepath;
+					foreach($filepaths as $i => $filepath){
+						$name = isset($_FILES['attachment_photo']['name'][$i]) ? $_FILES['attachment_photo']['name'][$i] : '';
+						try {
+							$img = new Image();
+							$img->load($filepath);
+							$type = $img->getType();
+							if($type==IMAGETYPE_JPEG)
+								$ext = 'jpg';
+							else if($type==IMAGETYPE_GIF)
+								$ext = 'gif';
+							else if($type==IMAGETYPE_PNG)
+								$ext = 'png';
+							else
+								throw new Exception();
+
+							if($img->getWidth() > 800)
+								$img->setWidth(800, true);
+							$img->save($filepath);
+
+							// Thumb
+							$thumbpath = $filepath.'.thumb';
+							$img->thumb(Config::$THUMBS_SIZES[0], Config::$THUMBS_SIZES[1]);
+							$img->setType(IMAGETYPE_JPEG);
+							$img->save($thumbpath);
+
+							unset($img);
+							$attachments[] = array($filepath, $name, $thumbpath);
+							$uploaded_files[] = $thumbpath;
+
+						}catch(Exception $e){
+							throw new Exception(__('POST_ADD_ERROR_PHOTO_FORMAT'));
+						}
+					}
+				}
+
+				// Attach files
+				foreach($attachments as $attachment)
+					$this->model->attachFile($param['id'], $attachment[0], $attachment[1], isset($attachment[2]) ? $attachment[2] : null);
+
+
+				$this->addJSCode('
+						parent.location = "'. Config::URL_ROOT.Routes::getPage('post',array('id'=>$param['id'])).'";
+					');
+			}
+			Post_Model::clearCache();
+		}catch(Exception $e){
+			// Delete all uploading files in tmp
+			foreach($uploaded_files as $uploaded_file)
+				File::delete($uploaded_file);
+
+			$this->addJSCode('
+				with(parent){
+					Post.errorForm('.json_encode($e->getMessage()).');
+				}
+			');
+		}
 
 	}
 	

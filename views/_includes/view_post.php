@@ -184,9 +184,9 @@
                     }
 							?>
 							<?php if($classhidden==""){?><a href="<?php echo Config::URL_ROOT . Routes::getPage('post', array('id' => $post['id'])) . '#photo-' . $attachment['id']; ?>"><?php }?>
-								<img src="<?php echo $attachment['thumb']; ?>" alt="" />
-								<?php if ($is_admin && $post["category_id"]==1){ ?>
-									<span href="<?php echo Config::URL_ROOT . Routes::getPage('attachment_delete', array('id' => $attachment['id'],'post_id'=>$post['id'])); ?>" style="cursor:pointer" class="photo-delete">.</span>
+								<img src="<?php echo $attachment['thumb']; ?>" alt="" id="thumb<?php echo $attachment['id'];?>"/>
+								<?php if ($is_admin && $post["category_id"]==1){?>
+									<span id="link<?php echo $attachment['id'];?>" href="<?php echo Config::URL_ROOT . Routes::getPage('attachment_delete', array('id' => $attachment['id'],'post_id'=>$post['id'])); ?>" style="cursor:pointer" class="photo-delete">.</span>
 								<?php } ?>
 							<?php if($classhidden==""){?></a><?php }?>
 						   
@@ -223,17 +223,30 @@
 
 			case 'mp4':
 				?>
-					<br/><br/>
-				<video width="800" height="600" poster="<?php echo $attachment['thumb']; ?>" controls="controls" preload="none" class="video">
-					<source type="video/mp4" src="<?php echo $attachment['url']; ?>" />
-					<!-- Fallback flash player for no-HTML5 browsers with JavaScript turned off -->
-					<object class="video" width="800" height="600"  type="application/x-shockwave-flash" data="<?php echo Config::URL_STATIC; ?>players/flashmediaelement.swf"> 		
-						<param name="movie" value="<?php echo Config::URL_STATIC; ?>players/flashmediaelement.swf" /> 
-						<param name="allowfullscreen" value="true" />
-						<param name="flashvars" value="controls=true&amp;file=<?php echo urlencode($attachment['url']); ?>" /> 		
-						<img src="<?php echo $attachment['thumb']; ?>" width="100%" height="100%" />
-					</object> 	
-				</video>
+				<script type="text/javascript">
+				jQuery(document).ready(function($) {
+					jQuery('video').mediaelementplayer({
+						defaultVideoWidth: "100%",
+						defaultVideoHeight: "100%",
+						features: ['playpause','progress','tracks','volume','fullscreen'],
+						videoVolume: 'horizontal'
+					});
+				});
+				</script>
+				<div>
+					<br/>
+					<video	width="<?php if(isset($one_post)){ echo '800';}else{ echo'400';} ?>" height="<?php if(isset($one_post)){echo '450' ;}else{ echo '250' ;}?>" poster="<?php echo $attachment['thumb']; ?>" controls="controls" preload="none"  >
+						<source src="<?php echo $attachment['url']; ?>" type="video/mp4" />
+						<!-- Fallback flash player for no-HTML5 browsers with JavaScript turned off -->
+						<object class="video" width="800" height="600"  type="application/x-shockwave-flash" data="<?php echo Config::URL_STATIC; ?>players/flashmediaelement.swf"> 		
+							<param name="movie" value="<?php echo Config::URL_STATIC; ?>players/flashmediaelement.swf" /> 
+							<param name="allowfullscreen" value="true" />
+							<param name="flashvars" value="controls=true&amp;file=<?php echo urlencode($attachment['url']); ?>" /> 		
+							<img src="<?php echo $attachment['thumb']; ?>" width="100%" height="100%" />
+						</object> 	
+					</video>
+				</div>
+				<br/>
 				<?php
 				break;
 

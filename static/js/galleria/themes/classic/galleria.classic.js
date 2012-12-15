@@ -19,7 +19,7 @@
 			showing_image:"Showing image %s of %s"
 		},
 		_showFullscreen:!0,
-		//_showPopout:!0,
+		_showPopout:!0,
 		_showProgress:!0,
 		_showTooltip:!0
 	},

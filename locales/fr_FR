@@ -152,7 +152,7 @@ POST_ADD_ERROR_PHOTO_FORMAT
 POST_ADD_ERROR_VIDEO_SIZE
 	Une vidéo envoyée ne doit pas excéder {size} !
 POST_ADD_ERROR_VIDEO_FORMAT
-	Format de vidéo non supporté ! Les formats supportés sont : avi, mov ou flv
+	Format de vidéo non supporté ! Les formats supportés sont : avi ou mp4
 POST_ADD_ERROR_VIDEO_CONVERT
 	Erreur lors du traitement de la vidéo
 POST_ADD_ERROR_AUDIO_SIZE

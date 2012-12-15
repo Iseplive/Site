@@ -302,7 +302,8 @@ var Post = {
 							  async:false,
 							  success:function(data) {
 									if(data.success){
-										domElem.parent().fadeOut('slow', function() {
+										thumb=domElem.attr('id').replace("link","");
+										jQuery("#thumb"+thumb).fadeOut('slow', function() {
 											jQuery(this).remove();
 										});
 									}

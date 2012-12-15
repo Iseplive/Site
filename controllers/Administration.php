@@ -387,7 +387,9 @@ class Administration_Controller extends Controller {
 					Admin.loadEventGrid('.json_encode($events).');
 					Admin.loadEmployGrid('.json_encode($this->model->getemployees()).');
 					Admin.loadDate('.json_encode($this->model->getDate()).');
-					Admin.loadDiplome('.$positions.');
+					jQuery(".jcrop-holder").ready(function () {
+						Admin.loadDiplome('.$positions.');
+					});
 					jQuery("#adminIsepdorTab").removeClass("hidden");
 				});
 			');

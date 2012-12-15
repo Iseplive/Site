@@ -112,13 +112,11 @@ final class Config extends ConfigAbstract {
 	// Debug mode
 	const DEBUG			= true;
 
-    // Etat des ISEP d'OR
-    const ISEP_OR_STATE = 1; // 0 -> Rien, 1-> Etape 1, 2-> Round 2, 3-> Resultat
 }
 
 
 // PHPVideoToolkit constants
-define('PHPVIDEOTOOLKIT_TEMP_DIRECTORY', '/tmp/');
-define('PHPVIDEOTOOLKIT_FFMPEG_BINARY', 'ffmpeg');
-define('PHPVIDEOTOOLKIT_FFPROBE_BINARY', 'ffprobe');
+define('PHPVIDEOTOOLKIT_TEMP_DIRECTORY', 'D:\wamp\tmp\\');
+define('PHPVIDEOTOOLKIT_FFMPEG_BINARY', '%FFMPEG_HOME%\ffmpeg');
+define('PHPVIDEOTOOLKIT_FFPROBE_BINARY', '%FFMPEG_HOME%\ffprobe');
 define('PHPVIDEOTOOLKIT_FLVTOOLS_BINARY', '/usr/bin/flvtool2');

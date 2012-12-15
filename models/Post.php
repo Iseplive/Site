@@ -189,7 +189,7 @@ class Post_Model extends Model {
 				}
 				
 				$attachment['url'] = self::getAttachedFileURL((int) $attachment['id'], $attachment['ext']);
-				if(in_array($attachment['ext'], array('jpg', 'png', 'gif', 'flv')))
+				if(in_array($attachment['ext'], array('jpg', 'png', 'gif', 'flv','mp4')))
 					$attachment['thumb'] = self::getAttachedFileURL((int) $attachment['id'], 'jpg', 'thumb');
 				
 				if(!isset($attachments_by_post_id[$post_id]))
