@@ -23,6 +23,15 @@ class Student_Controller extends Controller {
 			'students'		=> $students,
 			'last_promo'	=> $last_promo
 		));
+				
+		$this->addJSCode('
+			Admin.loadjscssfile("'.Config::URL_STATIC.'css/jqx.base.css","css");
+			Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxcore.js","js");
+			Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxbuttons.js","js");
+			Admin.loadjscssfile("'.Config::URL_STATIC.'js/jqx/jqxslider.js","js");
+			Student.slider();
+		');
+		
 	}
 	
 	
@@ -224,6 +233,28 @@ class Student_Controller extends Controller {
 		$this->set('student', $student);
 		$this->addJSCode('User.initEdit();');
 		
+	}
+	
+	/*
+	* Affiche les promos en fonction de la position du slider
+	*/
+	public function oldPromo($params){
+		$this->setView('old_promo_ajax.php');
+		
+		$is_logged = isset(User_Model::$auth_data);
+		if(!$is_logged)
+			throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
+		
+		$last_promo = ((int) date('Y'))-($params['index']-1)*5;
+		if((int) date('m') < 9)
+			$last_promo -= 1;
+		
+		$students = $this->model->getAllByPromos($last_promo, $last_promo-1, $last_promo-2, $last_promo-3, $last_promo-4);
+		
+		$this->set(array(
+			'students'		=> $students,
+			'last_promo'	=> $last_promo
+		));
 	}
 	
 }

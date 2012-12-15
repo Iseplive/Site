@@ -18,6 +18,36 @@ class Group_Controller extends Controller {
 			'is_logged'		=> $is_logged,
 			'is_admin'		=> $is_admin
 		));
+		$this->addJSCode('jQuery("#carrousel").jcoverflip({
+					beforeCss: function( el, container, offset ){
+						return [
+						  jQuery.jcoverflip.animationElement( el, { left: ( container.width( )/2 - 170 - 70*offset  )+"px", bottom: "20px" }, { } ),
+						  jQuery.jcoverflip.animationElement( el.find( "img" ), { width: Math.max(40,50-10*offset*offset) + "px" }, {} )
+						];
+						
+					  },
+					  afterCss: function( el, container, offset ){
+						return [
+						  jQuery.jcoverflip.animationElement( el, { left: ( container.width( )/2 + 70*offset )+"px", bottom: "20px" }, { } ),
+						  jQuery.jcoverflip.animationElement( el.find( "img" ), { width: Math.max(40,50-10*offset*offset) + "px" }, {} )
+						];
+					  },
+					  currentCss: function( el, container ){
+						return [
+						  jQuery.jcoverflip.animationElement( el, { left: ( container.width( )/2 - 100 )+"px" , bottom: 0 }, { } ),
+						  jQuery.jcoverflip.animationElement( el.find( "img" ), { width: "70px" }, { } )
+						];
+					  },
+					  change:function(event, ui){
+						jQuery(".group-profile").addClass("hidden");
+						jQuery("#description"+jQuery("#carrousel").jcoverflip("current")).removeClass("hidden");
+					  }
+						
+		
+		});
+		jQuery("#carrousel").jcoverflip("current",'.(round(count($groups)/2)+4).');
+
+		');
 	}
 	
 	

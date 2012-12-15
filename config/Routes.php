@@ -64,6 +64,11 @@ final class Routes extends RoutesAbstract {
 			'vars'		=> 'controller=Post&action=iframe_add&mode=iframe',
 			'url'		=> 'post/add'
 		),
+		'attachment_add'	=> array(
+			'regexp'	=> '^post/add/([0-9]+)(?=\?|$)',
+			'vars'		=> 'controller=Post&action=addAttachment&id=$1&mode=iframe',
+			'url'		=> 'post/add/{id}'
+		),
 		
 		// Delete post
 		'post_delete'	=> array(
@@ -74,9 +79,9 @@ final class Routes extends RoutesAbstract {
 		
 		// Delete attachment
 		'attachment_delete'	=> array(
-			'regexp'	=> '^post/([0-9]+)(?=\?|$)',
-			'vars'		=> 'controller=Post&action=deleteattachment&id=$1&post_id=$2&mode=json',
-			'url'		=> 'post/{post_id}'
+			'regexp'	=> '^ajax/post/([0-9]+)/([0-9]+)/delete(?=\?|$)',
+			'vars'		=> 'controller=Post&action=deleteattachment&post_id=$1&id=$2&mode=json',
+			'url'		=> 'ajax/post/{post_id}/{id}/delete'
 		),
 		
 		// Add a comment to a post
@@ -233,6 +238,11 @@ final class Routes extends RoutesAbstract {
 			'vars'		=> 'controller=Student&action=index',
 			'url'		=> 'students'
 		),
+		'students_promo' =>array(
+			'regexp'	=> '^ajax/students_promo/([0-9]+)(?=\?|$)',
+			'vars'		=> 'controller=Student&action=oldPromo&index=$1&mode=raw',
+			'url'		=> 'ajax/students_promo'
+		),
 		
 		// Group's page
 		'group'	=> array(
@@ -324,11 +334,6 @@ final class Routes extends RoutesAbstract {
 			'vars'		=> 'controller=Student&action=autocomplete&mode=json',
 			'url'		=> 'ajax/autocomplete/student/name'
 		),
-		'autocomplete'	=> array(
-			'regexp'	=> '^ajax/autocomplete(?=\?|$)',
-			'vars'		=> 'controller=Search&action=autocomplete&mode=json',
-			'url'		=> 'ajax/autocomplete'
-		),
 
         // Extra : Isep D'OR
         'isep_or_1'	=> array(
@@ -359,7 +364,7 @@ final class Routes extends RoutesAbstract {
 		),
 		//Administration
 		'admin'	=> array(
-			'regexp'	=> '^administration/([0-9]+)(?=\?|$)',
+			'regexp'	=> '^administration/([a-z]+)(?=\?|$)',
 			'vars'		=> 'controller=Administration&action=index&nav=$1',
 			'url'		=> 'administration/{nav}'
 		),

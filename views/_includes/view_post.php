@@ -134,40 +134,68 @@
 
 
 // Attachments
+		$classhidden="";
+		if($post["category_id"]==1 && isset($one_post) && $post['attachments_nb_photos'] != 0){
+			$classhidden="hidden";
+			?>
+				<br/><br/><br/>
+				<?php
+				if ($is_admin){
+					?><a id="adminView" style="cursor:pointer">
+						<img alt="" style="position:relative;top:3px;" src="<?php echo Config::URL_STATIC."images/icons/edit.png";?>"/>
+						<?php echo __("ADMIN_POST_PHOTO");?>
+					</a><br/><br/><?php
+				}
+				?>
+				<div id="galleria"></div>
+			<?php
+		}
         if (!isset($post['attachments']))
             $post['attachments'] = array();
         $nb_photos = 0;
-
+		
         foreach ($post['attachments'] as $attachment) {
             switch ($attachment['ext']) {
-
-
-
                 // Photo
                 // see: http://flash-mp3-player.net/players/maxi/
                 case 'jpg':
                 case 'gif':
                 case 'png':
                     if ($nb_photos == 0) {
+						if ($is_admin && $post["category_id"]==1 && isset($one_post) && $post['attachments_nb_photos'] != 0 ){
+							?>	
+								<div id="addAdmin" style="display:none">
+									<form id="publish-form" action="<?php echo Config::URL_ROOT.Routes::getPage('attachment_add',array('id'=>$post['id'])); ?>" method="post" enctype="multipart/form-data" target="publish_iframe" onsubmit="return Post.submitForm();">
+										<fieldset id="publish-stock-attachment-photo" class="publish-attachment">
+											<legend><img src="<?php echo Config::URL_STATIC; ?>images/icons/attachment_photo.png" alt="" class="icon" /> <?php echo __('ADD_ATTACHMENT_PHOTO'); ?></legend>
+											<?php echo __('PUBLISH_ATTACHMENT_SEND'); ?> <input type="file" name="attachment_photo[]" multiple /><br />
+											<span class="publish-attachment-info"><?php echo __('PUBLISH_ATTACHMENT_PHOTO_INFO', array('size' => File::humanReadableSize(Config::UPLOAD_MAX_SIZE_PHOTO))); ?></span>
+											<input type="submit" id="publish-submit" value="<?php echo __('PUBLISH_SUBMIT'); ?>" />
+										</fieldset>
+									</form>
+									<div id="publish-error" class="hidden"></div>
+									<iframe name="publish_iframe" class="hidden"></iframe>
+								</div>
+							<?php
+						}
                         ?>
-                        <div class="photos">
+                        <div class="photos <?php echo $classhidden;?>" >
                             <?php
-                        }
-                        ?>
-                        <a href="<?php echo Config::URL_ROOT . Routes::getPage('post', array('id' => $post['id'])) . '#photo-' . $attachment['id']; ?>">
-							<img src="<?php echo $attachment['thumb']; ?>" alt="" />
-							<?php if ($is_admin){ ?>
-									<a href="<?php echo Config::URL_ROOT . Routes::getPage('attachment_delete', array('id' => $attachment['id'],'post_id'=>$post['id'])); ?>" class="photo-delete">.</a>
-							<?php } ?>
-							
-						</a>
-                       
-						<?php
-                        $nb_photos++;
-                        if (!isset($one_post) && $nb_photos == Config::PHOTOS_PER_POST && Config::PHOTOS_PER_POST < $post['attachments_nb_photos']) {
-                            ?>
-                            <a href="<?php echo Config::URL_ROOT . Routes::getPage('post', array('id' => $post['id'])); ?>" class="photos-more"><?php echo __('POST_LINK_PHOTOS', array('nb' => $post['attachments_nb_photos'])); ?></a>
-                        </div>
+                    }
+							?>
+							<?php if($classhidden==""){?><a href="<?php echo Config::URL_ROOT . Routes::getPage('post', array('id' => $post['id'])) . '#photo-' . $attachment['id']; ?>"><?php }?>
+								<img src="<?php echo $attachment['thumb']; ?>" alt="" id="thumb<?php echo $attachment['id'];?>"/>
+								<?php if ($is_admin && $post["category_id"]==1){?>
+									<span id="link<?php echo $attachment['id'];?>" href="<?php echo Config::URL_ROOT . Routes::getPage('attachment_delete', array('id' => $attachment['id'],'post_id'=>$post['id'])); ?>" style="cursor:pointer" class="photo-delete">.</span>
+								<?php } ?>
+							<?php if($classhidden==""){?></a><?php }?>
+						   
+							<?php
+							$nb_photos++;
+							if (!isset($one_post) && $nb_photos == Config::PHOTOS_PER_POST && Config::PHOTOS_PER_POST < $post['attachments_nb_photos']) {
+								?>
+								<a href="<?php echo Config::URL_ROOT . Routes::getPage('post', array('id' => $post['id'])); ?>" class="photos-more"><?php echo __('POST_LINK_PHOTOS', array('nb' => $post['attachments_nb_photos'])); ?></a>
+						</div>
                         <?php
                     } else if ($nb_photos == $post['attachments_nb_photos']) {
                         ?>
@@ -193,7 +221,34 @@
                 <?php
                 break;
 
-
+			case 'mp4':
+				?>
+				<script type="text/javascript">
+				jQuery(document).ready(function($) {
+					jQuery('video').mediaelementplayer({
+						defaultVideoWidth: "100%",
+						defaultVideoHeight: "100%",
+						features: ['playpause','progress','tracks','volume','fullscreen'],
+						videoVolume: 'horizontal'
+					});
+				});
+				</script>
+				<div>
+					<br/>
+					<video	width="<?php if(isset($one_post)){ echo '800';}else{ echo'400';} ?>" height="<?php if(isset($one_post)){echo '450' ;}else{ echo '250' ;}?>" poster="<?php echo $attachment['thumb']; ?>" controls="controls" preload="none"  >
+						<source src="<?php echo $attachment['url']; ?>" type="video/mp4" />
+						<!-- Fallback flash player for no-HTML5 browsers with JavaScript turned off -->
+						<object class="video" width="800" height="600"  type="application/x-shockwave-flash" data="<?php echo Config::URL_STATIC; ?>players/flashmediaelement.swf"> 		
+							<param name="movie" value="<?php echo Config::URL_STATIC; ?>players/flashmediaelement.swf" /> 
+							<param name="allowfullscreen" value="true" />
+							<param name="flashvars" value="controls=true&amp;file=<?php echo urlencode($attachment['url']); ?>" /> 		
+							<img src="<?php echo $attachment['thumb']; ?>" width="100%" height="100%" />
+						</object> 	
+					</video>
+				</div>
+				<br/>
+				<?php
+				break;
 
 
             // Audio
@@ -220,7 +275,7 @@
 
 
 // Si on affiche uniquement ce post, on prépare l'affichage des photos en grand
-    if (isset($one_post) && $post['attachments_nb_photos'] != 0) {
+    if (isset($one_post) && $post['attachments_nb_photos'] != 0 && $post['category_id']!=1) {
         ?>
         <div id="attachment-photo" class="hidden">
             <a href="javascript:;" id="attachment-photo-prev"><?php echo __('POST_PHOTO_PREV'); ?></a>

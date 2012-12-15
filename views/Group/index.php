@@ -1,11 +1,22 @@
 
 <div id="groups-list">
+	<ul id="carrousel">
+		<?php
+		foreach($groups as $groupCarou){
+			$url = Config::URL_ROOT.Routes::getPage('group', array('group' => $groupCarou['url_name']));
+		?>
+			<li><img src="<?php echo $groupCarou['avatar_url']; ?>" alt=""> </li>
+		<?php
+		}
+		?>
+	</ul>
 <?php
+$i=0;
 foreach($groups as $group){
 	$url = Config::URL_ROOT.Routes::getPage('group', array('group' => $group['url_name']));
 ?>
 
-	<div class="group-profile">
+	<div id="description<?php echo $i;?>" class="group-profile hidden">
 		<a href="<?php echo $url; ?>" class="avatar profile-avatar"><img src="<?php echo $group['avatar_url']; ?>" alt="" /></a>
 
 		<div class="profile-info">
@@ -22,6 +33,7 @@ foreach($groups as $group){
 	</div>
 	
 <?php
+	$i++;
 }
 ?>
 </div>

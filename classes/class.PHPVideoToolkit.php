@@ -71,6 +71,13 @@
 		define('PHPVIDEOTOOLKIT_FFMPEG_BINARY', '/usr/local/bin/ffmpeg');
 	}
 	/**
+	 * Set the ffprobe binary path
+	 */
+	if(!defined('PHPVIDEOTOOLKIT_FFPROBE_BINARY'))
+	{
+		define('PHPVIDEOTOOLKIT_FFPROBE_BINARY', '/usr/local/bin/ffprobe');
+	}
+	/**
 	 * Set the flvtool2 binary path
 	 */
 	if(!defined('PHPVIDEOTOOLKIT_FLVTOOLS_BINARY'))
@@ -91,6 +98,7 @@
 	{
 		define('PHPVIDEOTOOLKIT_MENCODER_BINARY', '/usr/local/bin/mencoder');
 	}
+	
 
 	class PHPVideoToolkit
 	{
@@ -758,12 +766,12 @@
 			}
 // 			generate a random filename
 			$info_file = $this->_tmp_directory.$this->unique($hash).'.info';
-			
+
 // 			execute the ffmpeg lookup
 // 			exec(PHPVIDEOTOOLKIT_FFMPEG_BINARY.' -i '.$file.' &> '.$info_file); 
 			exec(PHPVIDEOTOOLKIT_FFMPEG_BINARY.' -i '.$file.' 2>&1', $buffer);
 			$buffer = implode("\r\n", $buffer);
-			
+
 // 			$data = false;
 // 			try to open the file
 // 			$handle = fopen($info_file, 'r');
@@ -793,7 +801,7 @@
 					$data['duration']['timecode']['seconds']['exact']   = $timecode;
 					$data['duration']['timecode']['seconds']['excess']  = intval(substr($timecode, 9));
 				}
-				
+
 // 				match the video stream info
 				preg_match('/Stream(.*): Video: (.*)/', $buffer, $matches);
 				if(count($matches) > 0)
@@ -846,7 +854,7 @@
 					$data['video']['pixel_format'] 	= $formats[1];
 					$data['video']['codec'] 		= $formats[0];
 				}
-				
+
 // 				match the audio stream info
 				preg_match('/Stream(.*): Audio: (.*)/', $buffer, $matches);
 				if(count($matches) > 0)
@@ -902,7 +910,7 @@
 				{
 					$data['_raw_info'] = $buffer;
 				}
-				
+
 // 			    fclose($handle);
 // 			}
 // 			if(is_file($info_file))
@@ -913,6 +921,7 @@
 // 			cache info and return
 			return self::$_file_info[$hash] = $data;
 		}		
+
 
 		/**
 		 * Sets the input file that is going to be manipulated.

@@ -56,4 +56,21 @@ class PostComment_Model extends Model {
 		Post_Model::clearCache();
 	}
 	
+	/*
+	* Delete a comment when attachment is deleted
+	*
+	*@param int $post_id	id of the post
+	*@param int $attach_id	id of the attachment file
+	*/
+	public static function attachmentDelete($post_id,$attach_id){
+		$id = DB::createQuery('post_comments')
+			->fields('id')
+			->where(array('attachment_id' => $attach_id,'post_id'=>$post_id))
+			->select();
+		for($i=0;$i<count($id);$i++)
+			$id = $this->createQuery()->delete($id[$i]['id']);
+		
+		Post_Model::clearCache();
+	}
+	
 }

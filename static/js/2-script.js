@@ -128,12 +128,10 @@ var Post = {
 	
     // Viewing a photo gallery
     initPhoto : function(){
-		
         window.addEvent('hashchange', function(hash){
             var photos = $$('.photos');
             if(photos.length == 0)
                 return;
-			
             var m = hash.match(/^photo-([0-9]+)$/);
             if(m){
                 photos[0].addClass('hidden');
@@ -149,7 +147,6 @@ var Post = {
                 if(i == -1){
                     location.hash = '';
                 }else{
-					
                     Post.currentPhoto = i;
                     var photo = Post.photos[i],
                     img = $("attachment-photo-img");
@@ -202,7 +199,7 @@ var Post = {
                 $("attachment-photo").addClass('hidden');
 				
                 Post.currentPhoto = -1;
-		$$(".post-like").each(function(l){
+				$$(".post-like").each(function(l){
                         if(l.hasClass("post-like-attachment-0"))
                             l.removeClass("hidden");
                         else
@@ -293,6 +290,30 @@ var Post = {
         .set("href", "javascript:;");
     },
 	
+	photoDelete :function(){
+		jQuery(".photos .photo-delete").each(function(i,elem){
+			jQuery(elem).bind('click',function(e){
+				domElem=jQuery(this);
+				if(confirm(__("ADMIN_CONFIRM_DELETE"))){
+					jQuery.ajax({
+							  url: domElem.attr('href'),
+							  dataType: 'json',			  
+							  type: "GET",
+							  async:false,
+							  success:function(data) {
+									if(data.success){
+										thumb=domElem.attr('id').replace("link","");
+										jQuery("#thumb"+thumb).fadeOut('slow', function() {
+											jQuery(this).remove();
+										});
+									}
+							  }
+					  }); 
+				}
+				return false;
+			});
+		});
+	},	
 	
     formEnable : true,
 	
@@ -441,7 +462,124 @@ var Post = {
     errorForm : function(errMsg){
         $("publish-error").set("html", errMsg).removeClass("hidden");
         this.enableForm();
-    }
+    },
+	initGalleria:function(data){
+		Galleria.loadTheme('../static/js/galleria/themes/classic/galleria.classic.js');
+		index=0;
+		if((photo=location.hash.match(/^#photo-([0-9]+)$/))){
+			for(var j=0; j < data.length; j++){
+				if(data[j].id==photo[1]){
+					index=j;
+				}
+			}
+		}
+		Galleria.run('#galleria', {
+			dataSource: data,
+			imageCrop:false,
+			show: index,
+		});
+		Galleria.ready(function(){
+			this.bind("image", function(e) {
+				Post.galleriaComLike("photo-"+this.getData(e.index).id);
+			});
+		});
+		jQuery("#adminView").click(function(){
+			jQuery("#galleria").toggle();
+			if(jQuery(".photos").hasClass('hidden')){
+				jQuery(".photos").removeClass('hidden');
+			}
+			else{
+				jQuery(".photos").addClass('hidden');
+			}
+			jQuery("#addAdmin").toggle();
+		});
+	},
+	galleriaComLike:function(photoHash){
+		//gestion des comment et like
+            var photos = $$('.photos');
+            if(photos.length == 0)
+                return;
+            var m = photoHash.match(/^photo-([0-9]+)$/);
+            if(m){
+                photos[0].addClass('hidden');		
+                var i = -1;
+                for(var j=0; j < Post.photos.length; j++){
+                    if(Post.photos[j].id == m[1]){
+                        i = j;
+                        break;
+                    }
+                }
+                if(i == -1){
+                    location.hash = '';
+                }else{
+                    Post.currentPhoto = i;
+                    var photo = Post.photos[i];
+                    // Cas de base : On a jamais aimé    
+                    $$('.like-link').removeClass('hidden');
+                    $$('.unlike-link').addClass('hidden');
+                    // Pour chaques Likes :
+                    $$(".post-like").each(function(l){
+                        // Cas ou quelqu'un a deja aimé && c'est la photo affiché.
+                        if(l.hasClass("post-like-attachment-"+photo.id)){
+                            // On affiche la "Like Box"
+                            l.removeClass("hidden");
+                            // Cas ou on a personnellement aimé
+                            if($('like-it-'+photo.id) === null){
+                                // On affiche "Je n'aime plus !"
+                                $$('.like-link').removeClass('hidden');
+                                $$('.unlike-link').addClass('hidden');
+                            } else {
+                                // On affiche "J'aime"
+                                $$('.like-link').addClass('hidden');
+                                $$('.unlike-link').removeClass('hidden');
+                            }
+                        } else {
+                            // C'est pas la bonne photo, on cache la "Like Box"
+                            l.addClass("hidden");
+                        }
+                    });
+                    $$(".post-comment").each(function(e){
+                        if(e.hasClass("post-comment-attachment"+photo.id))
+                            e.removeClass("hidden");
+                        else
+                            e.addClass("hidden");
+                    });
+                    $$(".post-delete").addClass("hidden");
+                }
+				
+            }else if(photos[0].hasClass('hidden')){
+                photos[0].removeClass('hidden');
+				
+                Post.currentPhoto = -1;
+				$$(".post-like").each(function(l){
+                        if(l.hasClass("post-like-attachment-0"))
+                            l.removeClass("hidden");
+                        else
+                            l.addClass("hidden");
+                });		
+                $$(".post-comment").each(function(e){
+                    if(e.hasClass("post-comment-attachment0"))
+                        e.removeClass("hidden");
+                    else
+                        e.addClass("hidden");
+                });
+            }
+        if(location.hash.indexOf('#') == 0)
+            window.fireEvent('hashchange', location.hash.substr(1));
+		
+        var prev = function(){
+            var i = Post.currentPhoto-1;
+            if(i < 0)
+                i = Post.photos.length-1;
+            location.hash = '#photo-'+Post.photos[i].id;
+        };
+        var next = function(){
+            var i = Post.currentPhoto+1;
+            if(i >= Post.photos.length)
+                i = 0;
+            location.hash = '#photo-'+Post.photos[i].id;
+        };
+	}
 };
 
 var Like = {
@@ -1073,6 +1211,7 @@ window.addEvent("domready", function(){
 	
     // Video resizing
     resizeVideos();
+	
 });
 
 // Video auto-resizing
@@ -1111,45 +1250,39 @@ window.addEvent('submit', function(e) {
 
 //Fonctions requises pour la page Administration
 var Admin= {
-	init: function(){
-	
-		 // Start/End date
-        new Picker.Date($("first1"), {
-            pickerClass: "datepicker_jqui",
-            format: __("GROUP_EDIT_FORM_CREATION_DATE_FORMAT_PARSE"),
-            draggable : false
-        }); 
-		new Picker.Date($("first2"), {
-            pickerClass: "datepicker_jqui",
-            format: __("GROUP_EDIT_FORM_CREATION_DATE_FORMAT_PARSE"),
-            draggable : false
-        }); new Picker.Date($("second1"), {
-            pickerClass: "datepicker_jqui",
-            format: __("GROUP_EDIT_FORM_CREATION_DATE_FORMAT_PARSE"),
-            draggable : false
-        }); new Picker.Date($("second2"), {
-            pickerClass: "datepicker_jqui",
-            format: __("GROUP_EDIT_FORM_CREATION_DATE_FORMAT_PARSE"),
-            draggable : false
-        });
-		
+	adminsInit:function(){
 		//autocomplétion pour ajout d'admin
+		var type=$('type').get('value');
 		new Meio.Autocomplete('admin_edit_add_admin', $('admin_edit_add_admin_url').value, {
             delay: 200,
             minChars: 1,
             cacheLength: 100,
             maxVisibleItems: 10,
-			
             onSelect: function(elements, data){
-                var i = $('admin_edit_add_admin').set('value', '');
-                i.blur();
-                setTimeout(function(){
-                    i.focus();
-                }, 0);
+				$('admin_edit_add_admin').addClass('form-ok');
+				$('admin_edit_add_admin').removeClass('form-error');
+				$('error-com').addClass('hidden');
+				$('valid').set('value', data.valid);
             },
+			onDeselect: function(elements){
+				$('valid').set('value', '');
+				$('admin_edit_add_admin').addClass('form-error');
+				$('admin_edit_add_admin').addClass('form-ok');
+				$('error-nan').addClass('hidden');
+			},
 			
+			onNoItemToList: function(elements){
+			   $('valid').set('value', '');
+			   $('admin_edit_add_admin').addClass('form-error');
+			   $('error-nan').removeClass('hidden');
+			}, 
+				
             urlOptions: { 
                 queryVarName: 'q',
+				extraParams: [{
+						name: 'type',
+						value: type
+				}],
                 max: 10
             },
             filter: {
@@ -1157,162 +1290,671 @@ var Admin= {
                     return true;
                 },
                 formatMatch: function(text, data, i){
-                    return data.value;
+                    return data.shows;
                 },
                 formatItem: function(text, data){
-                    return data.value;
+                    return data.shows;
                 }
             },
-			 listOptions: {
-                    width: 'field', // you can pass any other value settable by set('width') to the list container
+			listOptions: {
+				width: 'field', // you can pass any other value settable by set('width') to the list container
 
-                    classes: {
-                        container: 'ma-container',
-                        hover: 'ma-hover', // applied to the focused options
-                        odd: 'ma-odd', // applied to the odd li's
-                        even: 'ma-even' // applied to the even li's
-                    }
-                },
-                requestOptions: {
-                    formatResponse: function(jsonResponse){ // this function should return the array of autocomplete data from your jsonResponse
-                        return jsonResponse;
-                    }
-                }
-			
-			
-        });
-    },
-	//change les liens
-	navAdminChange: function(type){
-		if(type==1){
-			$("updatestudent").removeClass('hidden');
-			$("isepdor").addClass('hidden');
-			$("campagne").addClass('hidden');
-			$("admin").addClass('hidden');
-		}
-		if(type==3){
-			$("updatestudent").addClass('hidden');
-			$("isepdor").removeClass('hidden');
-			$("campagne").addClass('hidden');
-			$("admin").addClass('hidden');
-		}
-		if(type==4){
-			$("updatestudent").addClass('hidden');
-			$("isepdor").addClass('hidden');
-			$("campagne").removeClass('hidden');
-			$("admin").addClass('hidden');
-		}
-		if(type==5){
-			$("updatestudent").addClass('hidden');
-			$("isepdor").addClass('hidden');
-			$("campagne").addClass('hidden');
-			$("admin").removeClass('hidden');
-		}
-	},
-	
-	//permet d'afficher la page de modif des isep d'or
-	modif: function(type){
-		if(type==1){
-			$("isepdorcat").addClass('hidden');
-			$("isepdormodif").removeClass('hidden');
-		}
-		if(type==2){
-			$("table_admin_view").addClass('hidden');
-			$("table_admin_modif").removeClass('hidden');
-		}
-		if(type==3){
-			$("table_event_view").addClass('hidden');
-			$("table_event_modif").removeClass('hidden');
-		}
-	},
-	
-	//permet d'ajouter de nouvelles catégories aux isep d'or
-	ajout: function(promo,type){
-		if(type==1){
-			promo=parseInt(promo);
-			 newnb = parseInt($("nbquestion").value) ;
-			 selectoption="<option value='"+(newnb+1)+"'>"+(newnb+1)+"</option>";
-			 for(var a=1 ; a <= newnb+1; a++){
-				selectoption+="<option value='"+a+"'>"+a+"</option>";
-			 }
-			 $("form_isepdor").innerHTML+="<span id='post_isepdor"+newnb+"'><select name='extra"+newnb+"'><option value=''></option'><option value='soiree'>"+ __('ADMIN_ISEPDOR_TEXT5')+"</option><option value='"+promo+"'>"+promo+"</option><option value='"+(promo-1)+"'>"+(promo-1)+"</option><option value='"+(promo-2)+"'>"+(promo-2)+"</option><option value='"+(promo-3)+"'>"+(promo-3)+"</option><option value='"+(promo-4)+"'>"+(promo-4)+"</option></select>&nbsp;&nbsp<input type='text' value='' name='quest"+newnb+"'/>&nbsp;&nbsp;<select id='select"+newnb+"' name='position"+newnb+"'>"+selectoption+"</select>&nbsp;&nbsp<input type='checkbox' name='students"+newnb+"' />"+ __('ADMIN_ISEPDOR_TEXT1')+"<input type='checkbox' name='events"+newnb+"' />"+ __('ADMIN_ISEPDOR_TEXT2')+"<input type='checkbox' name='associations"+newnb+"' />"+ __('ADMIN_ISEPDOR_TEXT3')+"<input type='checkbox' name='employees"+newnb+"' />"+ __('ADMIN_ISEPDOR_TEXT4')+"<br/><br/></span>";
-			 for(var i=0; i<newnb; i++){
-				var option=document.createElement("option");
-				option.text=newnb+1;
-				option.value=newnb+1;
-				if($("select"+i+"")){
-					$("select"+i+"").add(option,null);
+				classes: {
+					container: 'ma-container',
+					hover: 'ma-hover', // applied to the focused options
+					odd: 'ma-odd', // applied to the odd li's
+					even: 'ma-even' // applied to the even li's
+				}
+			},
+			requestOptions: {
+				formatResponse: function(jsonResponse){ // this function should return the array of autocomplete data from your jsonResponse
+					return jsonResponse;
 				}
 			}
-			 $("nbquestion").value=newnb+1;
-		}
-		if(type==2){
-			newnb = parseInt($("nbchamps").value) ;
-			$("form_table_admin").innerHTML+='<span id="post_table_admin'+newnb+'"><input type="text" value="" name="lastname'+newnb+'"/><input type="text" value="" name="firstname'+newnb+'"/></span><br/>';
-			$("nbchamps").value=newnb+1;
-		}
-		if(type==3){
-			newnb = parseInt($("nbevent").value) ;
-			$("form_table_event").innerHTML+='<span id="post_table_event'+newnb+'"><input type="text" value="" name="name'+newnb+'"/><input type="checkbox" name="soiree'+newnb+'" />'+__('ADMIN_ISEPDOR_TEXT5')+'</span><br/>';
-			$("nbevent").value=newnb+1;
-		}
+        });
+		
+		//bind de l'envoie des données (suppression et ajout);
+		jQuery("#admins img").each(function(i,elem){
+			jQuery(elem).bind('click',function(){
+				if(confirm(__("ADMIN_DELETE_CONFIRM"))){
+					window.location.href =jQuery("#form_admins").attr("action")+"?del="+jQuery(this).attr("id");
+				}
+			});
+		});
+		jQuery("#form_admins").submit(function(){
+			if(jQuery("#form_admins :input[name='valid-students']").val()=="")
+				return false;
+		});
 	},
 	
-	//permet de supprimer des catégories des ISEP d'or
-	deletecat: function(i,id,type){
-		if(type==1){
-			$("form_isepdor").removeChild($("post_isepdor"+i));
-			
-		}
-		if(type==2){
-			$("form_table_admin").removeChild($("post_table_admin"+i));
-			
-		}
-		if(type==3){
-			$("form_table_event").removeChild($("post_table_event"+i));
-		}
-		var URL_ROOT = $('header-title').getProperty('href');
-		new Request({
-			url: URL_ROOT+'admindelete/'+type+'/'+id,
-		}).get();
+	loadjscssfile:function(filename, filetype){
+		 if (filetype=="js"){ //if filename is a external JavaScript file
+			  var fileref=document.createElement('script')
+			  fileref.setAttribute("type","text/javascript")
+			  fileref.setAttribute("src", filename)
+			  
+		 }
+		 else if (filetype=="css"){ //if filename is an external CSS file
+			  var fileref=document.createElement("link")
+			  fileref.setAttribute("rel", "stylesheet")
+			  fileref.setAttribute("type", "text/css")
+			  fileref.setAttribute("href", filename)
+		 }
+		 if (typeof fileref!="undefined")
+			jQuery("#container").after(fileref);
 	},
 	
-	//permet de naviguer dans la catégorie isep d'or
-	isepdornav: function(type){
-		if(type==1){
-			$("isepdorcat").removeClass('hidden');
-			$("tableevent").addClass('hidden');
-			$("tableadmin").addClass('hidden');
-			$("isepdor_admin").addClass('hidden');
+	loadCatGrid:function(dataCat){
+		date=new Date();
+		last_promo = ( date.getFullYear()) + 5;
+		if( date.getMonth() < 9){
+			last_promo -= 1;
 		}
-		if(type==2){
-			$("isepdorcat").addClass('hidden');
-			$("tableevent").removeClass('hidden');
-			$("tableadmin").addClass('hidden');
-			$("table_event_modif").addClass('hidden');
-			$("table_event_view").removeClass('hidden');
-			$("isepdormodif").addClass('hidden');
-			$("isepdor_admin").addClass('hidden');
-		}
-		if(type==3){
-			$("isepdorcat").addClass('hidden');
-			$("tableevent").addClass('hidden');
-			$("tableadmin").removeClass('hidden');
-			$("table_admin_modif").addClass('hidden');
-			$("table_admin_view").removeClass('hidden');
-			$("isepdormodif").addClass('hidden');
-			$("isepdor_admin").addClass('hidden');
+			// prepare the data
+			var source =
+			{
+				localdata: dataCat,
+				datatype: "json",
+				datafields: [
+					{ name: 'extra' },
+					{ name: 'position',type:'number' },
+					{ name: 'questions' },
+					{ name: 'students' },
+					{ name: 'events' },
+					{ name: 'associations' },
+					{ name: 'employees' },
+					{ name: 'id' },
+				],
+			};
+			var dataAdapter = new jQuery.jqx.dataAdapter(source);
+			// initialize CategorieGrid
+			jQuery("#categorieGrid").jqxGrid({
+				width: 660,
+				source: dataAdapter,
+				autoheight:true,
+				editable: true,
+				editmode: 'dblclick',
+				selectionmode: 'singlerow',
+				rendered: function(type){
+                    // select all grid cells.
+                    var gridCells = jQuery('#categorieGrid').find('.jqx-grid-cell').parent();
+                    // initialize the jqxDragDrop plug-in. Set its drop target to the second Grid.
+                    gridCells.jqxDragDrop({
+                        appendTo: '#isepdorcat', 
+						dragZIndex: 1000, 
+                        dropAction:'default',
+						initFeedback: function (feedback) {
+                            feedback.height(25);
+                        },
+                        dropTarget: jQuery('#categorieReorderGrid'), 
+						revert: true
+                    });
+                    gridCells.off('dragEnd');
+
+                    // set the new cell value when the dragged cell is dropped over the second Grid.      
+                    gridCells.on('dragEnd', function (event) {
+                        var value = jQuery(this).find("div:nth-child(3)").text();
+						var id = jQuery(this).find("div:nth-child(2)").text();
+                        var cell = jQuery("#categorieReorderGrid").jqxGrid('getcellatposition', event.args.pageX, event.args.pageY);
+                        if (cell != null) {
+                            jQuery("#categorieReorderGrid").jqxGrid('setcellvalue', cell.row, "question", value);
+							jQuery("#categorieReorderGrid").jqxGrid('setcellvalue', cell.row, "ids", id);
+                        }
+                    });
+					
+                },
+				columns: [
+				  { text: __("ADMIN_POSITION"), datafield: 'position', cellsalign: 'center',align:"center",editable: false	,width:60,pinned:true },
+				  { text: __("ADMIN_ID"), datafield: 'id', cellsalign: 'center',align:"center",editable: false	,width:30,pinned:true },
+				  { text: __("ADMIN_QUESTIONS"), columntype: 'textbox',align:"center", datafield: 'questions' ,width:170,},
+				  { text: __("ADMIN_PARAM"), datafield: 'extra',align:"center",cellsalign: 'center',columntype: 'dropdownlist',width:80,
+							createeditor: function (row, column, editor) {
+								// assign a new data source to the combobox.
+								var list = [" ", 'soiree', last_promo,last_promo-1,last_promo-2,last_promo-3,last_promo-4];
+								editor.jqxDropDownList({ source: list,});
+							},
+				  },
+				  { text: __("ADMIN_EVENT"), datafield: 'events',align:"center", columntype: 'checkbox',width:80 },
+				  { text: __("ADMIN_ASSOC"), datafield: 'associations', align:"center",columntype: 'checkbox',width:80},
+				  { text: __("ADMIN_ELEVES"), datafield: 'students', align:"center",columntype: 'checkbox',width:80},
+				  { text: __("ADMIN_EMPLOYEES"), datafield: 'employees',align:"center", columntype: 'checkbox', width:80}
+			   ]
+			});
+			var pos=new Array();
+			for(i=0;i<dataCat.length;i++){
+				pos[i]=new Array();
+				pos[i]["pos"]=i+1;
+				pos[i]["questions"]="";
+				pos[i]["ids"]="";
+			}
+			// initialize reorder categorie
+			jQuery("#categorieReorderGrid").jqxGrid(
+			{
+				width: 250,
+				autoheight:true,
+				selectionmode: 'singlerow',
+				source: { 
+					localdata: pos,
+					datatype:"array",
+					datafields:[
+						{ name: 'pos',type:'number' },
+						{ name: 'question'},
+						{ name: 'ids'}
+					]
+                },
+				columns: [
+				  { text: __("ADMIN_POSITION"), datafield: 'pos', align:"center",cellsalign: 'center'	,width:60 },
+				  { text: __("ADMIN_ID"), datafield: 'ids', cellsalign: 'center',width:30,align:"center", },
+				  { text: __("ADMIN_QUESTIONS"), columntype: 'textbox',align:"center", datafield: 'question' },
+			   ]
+			});
 			
+			jQuery("#addrowCat").bind('click', function () {
+				var data=new Array();
+				data[0]=new Array();
+				data[0]["pos"]=jQuery('#categorieReorderGrid').jqxGrid('getrows').length+1;
+				data[0]['id']=" ";
+				data[0]['questions']="";
+                jQuery("#categorieReorderGrid").jqxGrid('addrow', jQuery('#categorieReorderGrid').jqxGrid('getrows').length, data);
+				jQuery("#categorieReorderGrid").jqxGrid('renderer');	
+				data[0]["position"]=" ";
+				data[0]['id']=" ";
+				data[0]['questions']="";
+				data[0]['parametres']="NULL";
+				data[0]['events']=0;
+				data[0]['students']=0;
+				data[0]['employees']=0;
+				data[0]['associations']=0;
+				jQuery("#categorieGrid").jqxGrid('addrow', jQuery('#categorieReorderGrid').jqxGrid('getrows').length, data);
+            });
+			jQuery("#delrowCat").bind('click', function () {
+				var selectedrowindex = jQuery("#categorieGrid").jqxGrid('getselectedrowindex');
+                var rowscount = jQuery("#categorieGrid").jqxGrid('getdatainformation').rowscount;
+                if (selectedrowindex >= 0 && selectedrowindex < rowscount) {
+                    var id=jQuery("#categorieGrid").jqxGrid('getrowid', selectedrowindex);
+                    jQuery("#categorieGrid").jqxGrid('deleterow', id);
+					jQuery("#categorieReorderGrid").jqxGrid('deleterow', jQuery('#categorieReorderGrid').jqxGrid('getrows').length-1);
+                }
+			});
+			
+			jQuery("#saveNoOrderCat").bind('click', function () {
+				ok=0;
+				gridData=jQuery("#categorieGrid").jqxGrid('getrows');
+				jQuery("#errorsCat").addClass('hidden');
+				jQuery("#errorsCat").html("");
+				data=new Array();
+				for(i=0;i<gridData.length;i++){
+					if(jQuery.trim(gridData[i].questions)!=""){
+						data[i]={};
+						data[i]['id']=jQuery.trim(gridData[i].id);
+						data[i]['position']=i+1;
+						data[i]['questions']=gridData[i].questions;
+						data[i]['extra']=jQuery.trim(gridData[i].extra);
+						data[i]['type']="";
+						if(gridData[i].students==1){
+							data[i]['type']+="students";
+						}
+						if(gridData[i].events==1){
+							if(data[i]['type'].length>0){
+								data[i]['type']+=",";
+							}
+							data[i]['type']+="events";
+						}
+						if(gridData[i].employees==1){
+							if(data[i]['type'].length>0){
+								data[i]['type']+=",";
+							}
+							data[i]['type']+="employees";
+						}
+						if(gridData[i].associations==1){
+							if(data[i]['type'].length>0){
+								data[i]['type']+=",";
+							}
+							data[i]['type']+="associations";
+						}
+						
+					}
+					else{
+						ok=1;
+						jQuery("#errorsCat").append(__("ADMIN_ISEPDOR_EMPTY_QUESTION")+" <br/>");
+						jQuery("#errorsCat").removeClass('hidden');
+					}
+				}
+				if(ok==0){
+					jQuery.ajax({
+						  url: jQuery("#pageUrl").val(),
+						  dataType: 'text',			  
+						  type: "POST",
+						  data: {categories: JSON.stringify(data) } ,
+						  async:false,
+						  cache: false,
+						  success:function() {
+							window.location.reload()
+						  }
+					});
+				}
+			});
+			
+			jQuery("#saveOrderCat").bind('click', function () {
+				ok=0;
+				gridData=jQuery("#categorieGrid").jqxGrid('getrows');
+				jQuery("#errorsCat").addClass('hidden');
+				jQuery("#errorsCat").html("");
+				data=new Array();
+				for(i=0;i<gridData.length;i++){
+					var question=jQuery.trim(gridData[i].questions);
+					if(question!=""){
+						data[i]={};
+						data[i]['id']=jQuery.trim(gridData[i].id);
+						if((position=Admin.getOrderPosition(gridData[i].id,question))){
+							data[i]['position']=position;
+						}
+						else{
+							ok=1;
+							jQuery("#errorsCat").append(__("ADMIN_ISEPDOR_EMPTYORDER_QUESTION") +question+"<br/>");
+							jQuery("#errorsCat").removeClass('hidden');
+						}
+						data[i]['questions']=question;
+						data[i]['extra']=jQuery.trim(gridData[i].extra);
+						data[i]['type']="";
+						if(gridData[i].students==1){
+							data[i]['type']+="students";
+						}
+						if(gridData[i].events==1){
+							if(data[i]['type'].length>0){
+								data[i]['type']+=",";
+							}
+							data[i]['type']+="events";
+						}
+						if(gridData[i].employees==1){
+							if(data[i]['type'].length>0){
+								data[i]['type']+=",";
+							}
+							data[i]['type']+="employees";
+						}
+						if(gridData[i].associations==1){
+							if(data[i]['type'].length>0){
+								data[i]['type']+=",";
+							}
+							data[i]['type']+="associations";
+						}
+						
+					}
+					else{
+						ok=1;
+						jQuery("#errorsCat").html(__("ADMIN_ISEPDOR_EMPTY_QUESTION")+"<br/>");
+						jQuery("#errorsCat").removeClass('hidden');
+					
+					}
+				}
+				if(ok==0){
+					jQuery.ajax({
+						  url: jQuery("#pageUrl").val(),
+						  dataType: 'text',			  
+						  type: "POST",
+						  data: {categories: JSON.stringify(data) } ,
+						  async:false,
+						  cache: false,
+						  success:function() {
+							window.location.reload()
+						  }
+					});
+					
+				}
+			});
+	},
+	getOrderPosition:function (id,name){
+		gridOrderData=jQuery("#categorieReorderGrid").jqxGrid('getrows');
+		for(j=0;j<gridOrderData.length;j++){
+			position=gridOrderData[j].pos;
+			if(jQuery.trim(id)!="" && gridOrderData[j].ids==id && gridOrderData[j].question==name){
+				return position;
+			}
+			else if(jQuery.trim(id)=="" && gridOrderData[j].question==name){
+				return position;
+			}
 		}
-		if(type==4){
-			$("isepdorcat").addClass('hidden');
-			$("tableevent").addClass('hidden');
-			$("tableadmin").addClass('hidden');
-			$("isepdormodif").addClass('hidden');
-			$("isepdor_admin").removeClass('hidden');
-		}
+		return false;
+	},
+	loadEventGrid:function(dataEvent){
+			// prepare the data
+			var source =
+			{
+				localdata: dataEvent,
+				datatype: "json",
+				datafields: [
+					{ name: 'extra' },
+					{ name: 'name' },
+					{ name: 'id' },
+				],
+			};
+			var dataAdapter = new jQuery.jqx.dataAdapter(source);
+			// initialize eventGrid
+			jQuery("#eventGrid").jqxGrid({
+				width: 360,
+				source: dataAdapter,
+				autoheight:true,
+				editable: true,
+				editmode: 'dblclick',
+				selectionmode: 'singlerow',
+				columns: [
+				  { text: __("ADMIN_ID"), datafield: 'id', cellsalign: 'center',align:"center",editable: false	,width:30,pinned:true },
+				  { text: __("ADMIN_EVENT"), columntype: 'textbox',align:"center", datafield: 'name' ,width:250,},
+				  { text: __("ADMIN_ISEPDOR_SOIREE"), datafield: 'extra',align:"center", columntype: 'checkbox',width:80 },
+			   ]
+			});
+			jQuery("#addrowEvent").bind('click', function () {
+				var data=new Array();
+				data[0]=new Array();
+				data[0]["extra"]=0;
+				data[0]['id']="";
+				data[0]['name']="";
+                jQuery("#eventGrid").jqxGrid('addrow', jQuery('#eventGrid').jqxGrid('getrows').length, data);
+            });
+			jQuery("#delrowEvent").bind('click', function () {
+				var selectedrowindex = jQuery("#eventGrid").jqxGrid('getselectedrowindex');
+                var rowscount = jQuery("#eventGrid").jqxGrid('getdatainformation').rowscount;
+                if (selectedrowindex >= 0 && selectedrowindex < rowscount) {
+                    var id=jQuery("#eventGrid").jqxGrid('getrowid', selectedrowindex);
+                    jQuery("#eventGrid").jqxGrid('deleterow', id);
+                }
+			});
+			jQuery("#saveEvent").bind('click', function () {
+				ok=0;
+				gridData=jQuery("#eventGrid").jqxGrid('getrows');
+				jQuery("#errorsEvent").addClass('hidden');
+				jQuery("#errorsEvent").html("");
+				data=new Array();
+				for(i=0;i<gridData.length;i++){
+					if(jQuery.trim(gridData[i].name)!=""){
+						data[i]={};
+						data[i]['id']=jQuery.trim(gridData[i].id);
+						data[i]['name']=gridData[i].name;
+						data[i]['extra']=gridData[i].extra;						
+					}
+					else{
+						ok=1;
+						jQuery("#errorsEvent").html(__("ADMIN_ISEPDOR_EMPTY_QUESTION")+"<br/>");
+						jQuery("#errorsEvent").removeClass('hidden');
+					}
+				}
+				if(ok==0){
+					jQuery.ajax({
+						  url: jQuery("#pageUrl").val(),
+						  dataType: 'text',			  
+						  type: "POST",
+						  data: {events: JSON.stringify(data) } ,
+						  async:false,
+						  cache: false,
+						  success:function() {
+							window.location.reload()
+						  }
+					});
+				}
+			});
+
+	},
+	loadEmployGrid:function(dataEmploy){
+			// prepare the data
+			var source =
+			{
+				localdata: dataEmploy,
+				datatype: "json",
+				datafields: [
+					{ name: 'firstname' },
+					{ name: 'lastname' },
+					{ name: 'username' },
+					{ name: 'id' },
+				],
+			};
+			var dataAdapter = new jQuery.jqx.dataAdapter(source);
+			// initialize eventGrid
+			jQuery("#employGrid").jqxGrid({
+				width: 430,
+				source: dataAdapter,
+				autoheight:true,
+				editable: true,
+				editmode: 'dblclick',
+				selectionmode: 'singlerow',
+				columns: [
+				  { text: __("ADMIN_ID"), datafield: 'id', cellsalign: 'center',align:"center",editable: false	,width:30,pinned:true },
+				  { text: __("ADMIN_ISEPDOR_USERNAME"), datafield: 'username', cellsalign: 'center',align:"center",editable: false	,width:100,pinned:true },
+				  { text: __("ADMIN_ISEPDOR_FIRSTNAME"), align:"center", datafield: 'firstname' ,width:150,},
+				  { text: __("ADMIN_ISEPDOR_LASTNAME"), datafield: 'lastname',align:"center", width:150 },
+			   ]
+			});
+			jQuery("#addrowEmploy").bind('click', function () {
+				var data=new Array();
+				data[0]=new Array();
+				data[0]["firstname"]="";
+				data[0]['lastname']="";
+				data[0]['username']="";
+				data[0]['id']="";
+                jQuery("#employGrid").jqxGrid('addrow', jQuery('#employGrid').jqxGrid('getrows').length, data);
+            });
+			jQuery("#delrowEmploy").bind('click', function () {
+				var selectedrowindex = jQuery("#employGrid").jqxGrid('getselectedrowindex');
+                var rowscount = jQuery("#employGrid").jqxGrid('getdatainformation').rowscount;
+                if (selectedrowindex >= 0 && selectedrowindex < rowscount) {
+                    var id=jQuery("#employGrid").jqxGrid('getrowid', selectedrowindex);
+                    jQuery("#employGrid").jqxGrid('deleterow', id);
+                }
+			});
+			jQuery("#saveEmploy").bind('click', function () {
+				ok=0;
+				gridData=jQuery("#employGrid").jqxGrid('getrows');
+				jQuery("#errorsEvent").addClass('hidden');
+				jQuery("#errorsEvent").html("");
+				data=new Array();
+				for(i=0;i<gridData.length;i++){
+					if(jQuery.trim(gridData[i].firstname)!="" && jQuery.trim(gridData[i].lastname)!=""){
+						data[i]={};
+						data[i]['id']=jQuery.trim(gridData[i].id);
+						data[i]['firstname']=gridData[i].firstname;
+						data[i]['lastname']=gridData[i].lastname;						
+					}
+					else{
+						ok=1;
+						jQuery("#errorsEvent").html(__("ADMIN_ISEPDOR_EMPTY_QUESTION")+"<br/>");
+						jQuery("#errorsEvent").removeClass('hidden');
+					}
+				}
+				if(ok==0){
+					jQuery.ajax({
+						  url: jQuery("#pageUrl").val(),
+						  dataType: 'text',			  
+						  type: "POST",
+						  data: {employees: JSON.stringify(data) } ,
+						  async:false,
+						  cache: false,
+						  success:function() {
+							window.location.reload()
+						  }
+					});
+				}
+			});
+	},
+	loadDate:function(dataDate){
+			jQuery("#first1").jqxDateTimeInput({ 
+				width: '120px', 
+				height: '20px',	
+				textAlign: "center",
+				culture: 'fr-FR'
+			});
+			jQuery("#first2").jqxDateTimeInput({ 
+				width: '120px', 
+				height: '20px',
+				textAlign: "center",
+				culture: 'fr-FR'
+			});
+			jQuery("#third1").jqxDateTimeInput({ 
+				width: '120px', 
+				height: '20px',
+				textAlign: "center",
+				culture: 'fr-FR'
+			});
+			jQuery("#third2").jqxDateTimeInput({ 
+				width: '120px', 
+				height: '20px',
+				textAlign: "center",
+				culture: 'fr-FR'
+			});
+			jQuery("#second1").jqxDateTimeInput({ 
+				width: '120px', 
+				height: '20px',
+				textAlign: "center",
+				culture: 'fr-FR'
+			});
+			jQuery("#second2").jqxDateTimeInput({ 
+				width: '120px', 
+				height: '20px',
+				textAlign: "center",
+				culture: 'fr-FR'
+			});
+			jQuery('#first1 ').jqxDateTimeInput('setDate',new Date(dataDate[0].start)); 
+			jQuery('#first2 ').jqxDateTimeInput('setDate', new Date(dataDate[0].end));
+			jQuery('#second1 ').jqxDateTimeInput('setDate', new Date(dataDate[1].start));
+			jQuery('#second2 ').jqxDateTimeInput('setDate', new Date(dataDate[1].end));
+			jQuery('#third1 ').jqxDateTimeInput('setDate', new Date(dataDate[2].start));
+			jQuery('#third2 ').jqxDateTimeInput('setDate', new Date(dataDate[2].end));
+			jQuery("#saveDate").bind('click', function () {
+				ok=0;
+				first1=jQuery('#first1').jqxDateTimeInput('getDate');
+				first2=jQuery('#first2').jqxDateTimeInput('getDate');
+				second1=jQuery('#second1').jqxDateTimeInput('getDate');
+				second2=jQuery('#second2').jqxDateTimeInput('getDate');
+				third1=jQuery('#third1').jqxDateTimeInput('getDate');
+				third2=jQuery('#third2').jqxDateTimeInput('getDate');
+				if((first1>first2) || (second1>second2) || (third1>third2)){
+					ok=1;
+					jQuery("#errorsDate").html(__("ADMIN_ISEPDOR_ERRORDATE")+"<br/>");
+					jQuery("#errorsDate").removeClass('hidden');
+				}
+				
+				if(ok==0){
+					data=new Array();
+					data[0]=new Array(first1,first2);
+					data[1]=new Array(second1,second2);
+					data[2]=new Array(third1,third2);
+					jQuery.ajax({
+						  url: jQuery("#pageUrl").val(),
+						  dataType: 'text',			  
+						  type: "POST",
+						  data: {dates: JSON.stringify(data) } ,
+						  async:false,
+						  cache: false,
+						  success:function() {
+							window.location.reload()
+						  }
+					});
+				}
+			});
+	},
+	loadTab:function(){
+		var index = jQuery.jqx.cookie.cookie("jqxTabs_jqxWidget");
+        if (undefined == index) index = 3;
+		jQuery('#adminIsepdorTab').jqxTabs({ 
+			selectedItem: index,
+			width: '98%',  
+			animationType: 'fade',
+			autoHeight: true,
+			position: 'top' ,
+			keyboardNavigation: false
+		});
+		jQuery("#adminIsepdorTab").bind('selected', function (event) {
+			jQuery.jqx.cookie.cookie("jqxTabs_jqxWidget", event.args.item);
+		});
 	},
 	
+	loadCrop:function(){
+		jQuery('img#adminCrop').Jcrop({
+			onSelect:   showCoords,
+			bgColor:     'grey',
+            bgOpacity:   .4,
+			addClass: 'jcrop-dark'
+		});
+		
+		function showCoords(c){
+			coord='<strong>X1:</strong>'+Math.round(c.x/0.7)+'<br/>'+
+				'<strong>Y1:</strong>'+Math.round(c.y/0.7)+'<br/>'+
+				'<strong>X2:</strong>'+Math.round(c.x2/0.7)+'<br/>'+
+				'<strong>Y2:</strong>'+Math.round(c.y2/0.7)+'<br/>'+
+				'<strong>Width:</strong>'+Math.round(c.w/0.7)+'<br/>'+
+				'<strong>Height:</strong>'+Math.round(c.h/0.7)+'<br/>'+
+				'<strong style="color:'+color[jQuery('#diplomeTab').jqxTabs('selectedItem')]+'">Color</strong>';
+			jQuery('#diplomeTab').jqxTabs('setContentAt', jQuery('#diplomeTab').jqxTabs('selectedItem'), coord); 
+			color=new Array();
+			color[0]="blue";
+			color[1]="red";
+			color[2]="green";
+			jQuery(".cropShower"+jQuery('#diplomeTab').jqxTabs('selectedItem')).remove();
+			shower='<div class="cropShower'+jQuery('#diplomeTab').jqxTabs('selectedItem')+'" style="position:absolute;top:'+c.y+'px;left:'+c.x+'px;width:'+c.w+'px;height:'+c.h+'px;z-index:1000;border:solid 1px '+color[jQuery('#diplomeTab').jqxTabs('selectedItem')]+';"></div>';
+			jQuery(".jcrop-holder").prepend(shower);
+			
+			diplomeData[jQuery('#diplomeTab').jqxTabs('selectedItem')]={},
+			diplomeData[jQuery('#diplomeTab').jqxTabs('selectedItem')]["x1"]=c.x/0.7;
+			diplomeData[jQuery('#diplomeTab').jqxTabs('selectedItem')]["y1"]=c.y/0.7;
+			diplomeData[jQuery('#diplomeTab').jqxTabs('selectedItem')]["x2"]=c.x2/0.7;
+			diplomeData[jQuery('#diplomeTab').jqxTabs('selectedItem')]["y2"]=c.y2/0.7;
+			diplomeData[jQuery('#diplomeTab').jqxTabs('selectedItem')]["w"]=c.w/0.7;
+			diplomeData[jQuery('#diplomeTab').jqxTabs('selectedItem')]["h"]=c.h/0.7;
+			diplomeData[jQuery('#diplomeTab').jqxTabs('selectedItem')]["index"]=jQuery('#diplomeTab').jqxTabs('selectedItem');
+		};
+	},
+	loadDiplome:function(data){
+		jQuery('#diplomeTab').jqxTabs({ 
+			width: '90%',  
+			animationType: 'fade',
+			height: 150,
+			position: 'top' ,
+			keyboardNavigation: false
+		});
+		div=new Array();	
+		div[0]="diplomeCat";
+		div[1]="diplomeName";
+		div[2]="diplomeBirth";
+		color=new Array();
+		color[0]="blue";
+		color[1]="red";
+		color[2]="green";
+		jQuery('#diplomeTab').ready(function(){ 
+			try {
+				json = jQuery.parseJSON(data);
+				for(i=0;i<data.length;i++){
+					x1=data[i].x1;
+					y1=data[i].y1;
+					x2=data[i].x2;
+					y2=data[i].y2;
+					w=data[i].w;
+					h=data[i].h;
+					jQuery("#"+div[i]).html('<strong>X1:</strong>'+Math.round(x1)+'<br/>'+
+											'<strong>Y1:</strong>'+Math.round(y1)+'<br/>'+
+											'<strong>X2:</strong>'+Math.round(x2)+'<br/>'+
+											'<strong>Y2:</strong>'+Math.round(y2)+'<br/>'+
+											'<strong>Width:</strong>'+Math.round(w)+'<br/>'+
+											'<strong>Height:</strong>'+Math.round(h)+'<br/>'+
+											'<strong style="color:'+color[data[i].index]+'">Color</strong>'
+					);
+					shower='<div class="cropShower'+data[i].index+'" style="position:absolute;top:'+(y1*0.7)+'px;left:'+(x1*0.7)+'px;width:'+(w*0.7)+'px;height:'+(h*0.7)+'px;z-index:1000;border:solid 1px '+color[data[i].index]+';"></div>';
+					jQuery(".jcrop-holder").prepend(shower);
+				}
+			} catch (e) {}
+		});
+		jQuery("#saveDiplome").bind('click', function () {
+			jQuery.ajax({
+				  url: jQuery("#pageUrl").val(),
+				  dataType: 'text',			  
+				  type: "POST",
+				  data: {diplomeData: JSON.stringify(diplomeData) } ,
+				  async:false,
+				  cache: false,
+				  success:function() {
+					window.location.reload()
+				  }
+			});
+			
+		});
+	},
 	//export des bases isepdor_round1 et isepdor_round2
 	exportDB: function(type){
 		var URL_ROOT = $('header-title').getProperty('href');
@@ -1323,22 +1965,7 @@ var Admin= {
 				}
        }).get();
 		
-	},
-	
-	//supprimer un admin
-	deleteadmin: function (username){
-		var URL_ROOT = $('header-title').getProperty('href');
-		new Request({
-            url: URL_ROOT+'admindelete2/'+username,
-       }).get();
-	},
-	
-	success: function(){
-		$('success').removeClass('hidden');
-	}
-
-	
-	
+	},	
 };
 
 //Média navigation bar
@@ -1374,3 +2001,140 @@ var Media= {
 		}
 	}
 };
+
+var Student = {
+	slider:function(){
+		//initialisation de la page (premier pannau anterieur et curseur)
+		jQuery('#sliderStudent').jqxSlider({ min: 0, max: jQuery("#loadPannels").val()*5+4,ticksFrequency: 1, value: 0, step: 1,mode: 'fixed',tooltip: false, showTicks: false,width: jQuery("#main").width()*0.98}).trigger('resize');	
+		Student.loadStudents(1); 
+		jQuery('.jqx-slider-track').remove();
+		jQuery("#sliderContainer").css('visibility','visible');
+		jQuery('#sliderStudent').css('visibility','visible');
+		
+		// fonction qui bind les évènement sur le slideur
+		jQuery('.jqx-slider-right').bind('click', function () {
+			Student.affectSlide();
+		});
+		jQuery('.jqx-slider-left').bind('click', function () {
+			Student.affectSlide();
+		});
+
+	},
+	loadStudents:function(index){
+		ok=0;
+		jQuery.ajax({
+			  url: jQuery("#url").val()+'/'+index,
+			  dataType: 'html',			  
+			  type: "GET",
+			  async:false,
+			  success:function(data) {
+				if(data!=""){
+					jQuery("#sliderContainer").append(data);
+					jQuery("#sliderContainer").children().css('width',jQuery("#main").width()*0.2).trigger('resize');
+					ok=1;
+				}
+			  }
+	  }); 
+	  if(ok==1){
+		return true;
+	  }
+	  return false;
+	},
+	showThumb:function(object,avatar,number,promo){
+		name=object.innerHTML;
+		topPos=jQuery(object).offset().top-80;
+		leftPos=jQuery(object).offset().left+30;
+		jQuery("#thumbNailer").css('top',topPos);
+		jQuery("#thumbNailer").css('left',leftPos);
+		jQuery("#thumbNailer span:nth-child(1)").html('<img src='+avatar+' />');
+		jQuery("#thumbNailer span:nth-child(2)").html(name+'<br/><br/>'+__('PROFILE_PROMO')+"&nbsp;"+ promo+'<br/>'+__("PROFILE_STUDENT_NUMBER") +"&nbsp;"+ number);
+		jQuery("#thumbNailer").removeClass("hidden");
+	},
+	
+	hiddeThumb:function(){
+		jQuery("#thumbNailer").addClass("hidden");	
+	},
+	
+	affectSlide:function(){
+			nbPanels=jQuery("#loadPannels").val();
+			prev=jQuery("#prev").val();
+			cur=jQuery('#sliderStudent').jqxSlider('value');
+			pannel=Math.ceil(cur/5);
+			maxSlider=pannel*5+4;
+			maxPanels=Math.ceil((new Date().getFullYear() -2010)/5)+1;
+			//charge dynamiquement les années anterieurs
+			if(pannel>nbPanels){
+				if(pannel<maxPanels && Student.loadStudents(pannel)){
+					jQuery('#sliderStudent').jqxSlider({max:maxSlider});
+					jQuery("#loadPannels").val(pannel);
+				} 
+				else{
+					jQuery('#sliderStudent').jqxSlider({value:jQuery('#sliderStudent').jqxSlider('value')-1});
+					return
+				}
+			}			
+			// déplace les blocs de chaque promo
+			if(prev<cur){
+				for(i=jQuery("#sliderContainer").children().length;i>=1;i--){
+					if(i!=1){
+						newLeft=jQuery("#sliderContainer div:nth-child("+(i-1)+")").offset().left;
+					}
+					else{
+						newLeft=jQuery("#sliderContainer div:nth-child("+i+")").offset().left-jQuery("#sliderContainer div:nth-child("+i+")").width();
+					}
+					jQuery("#sliderContainer div:nth-child("+i+")").offset({left:newLeft});
+					jQuery("#prev").val(cur);
+				}				
+			}
+			if(prev>cur){
+				for(i=1;i<=jQuery("#sliderContainer").children().length;i++){
+					if(i!=jQuery("#sliderContainer").children().length){
+						newLeft=jQuery("#sliderContainer div:nth-child("+(i+1)+")").offset().left;
+					}
+					else{
+						newLeft=jQuery("#sliderContainer div:nth-child("+i+")").offset().left+jQuery("#sliderContainer div:nth-child("+i+")").width();
+					}
+					jQuery("#sliderContainer div:nth-child("+i+")").offset({left:newLeft});
+					jQuery("#prev").val(cur);
+				}
+			}
+	},
+};
+
+var Layout={
+	init:function(){
+		jQuery("#adminNav").bind('mouseover',function(){
+				Layout.showMenu();
+		});
+		jQuery("#adminNav").bind('mouseout',function(){
+			if(!jQuery("#adminMenu").is(":hover"))
+				Layout.hiddeMenu();
+		});
+		jQuery("#adminMenu").bind('mouseover',function(){
+				Layout.showMenu();
+		});
+		jQuery("#adminMenu").bind('mouseout',function(){
+				Layout.hiddeMenu();
+		});
+
+
+	},
+	showMenu:function(){
+		width=jQuery("#adminNav").width();
+		width += parseInt(jQuery("#adminNav").css("padding-left"), 10) + parseInt(jQuery("#adminNav").css("padding-right"), 10); //Total Padding Width
+		width += parseInt(jQuery("#adminNav").css("margin-left"), 10) + parseInt(jQuery("#adminNav").css("margin-right"), 10); //Total Margin Width
+		width += parseInt(jQuery("#adminNav").css("borderLeftWidth"), 10) + parseInt(jQuery("#adminNav").css("borderRightWidth"), 10); //Total Border Width
+		top=jQuery("#adminNav").offset().top;
+		left=jQuery("#adminNav").offset().left;
+		jQuery("#adminMenu").width(width);
+		jQuery("#adminMenu").css('top',top);
+		jQuery("#adminMenu").css('left',left);
+		jQuery("#adminMenu").removeClass('hidden'); 
+		jQuery("#adminNav").addClass("hovered");
+	},
+	hiddeMenu:function(){
+		jQuery("#adminMenu").addClass('hidden');
+		jQuery("#adminNav").removeClass("hovered");
+	}
+};
+	

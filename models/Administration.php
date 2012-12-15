@@ -133,7 +133,36 @@ class Administration_Model extends Model {
 			->insert();
 	 
 	 }
-	 
+	 /**
+	 *
+	 *@param string $id	 	tableau contenant les ids des nouvelles questions
+	 */
+	  public function checkIsepdorQuestions($id){
+		$ids=DB::select('
+			SELECT id FROM isepdor_questions WHERE id NOT IN ('. implode(',',$id) . ');
+		');
+		return $ids;
+	  }
+	 /**
+	 *
+	 *@param string $id	 	tableau contenant les ids des nouvelles données
+	 */
+	  public function checkIsepdorEvents($id){
+		$ids=DB::select('
+			SELECT id FROM isepdor_event WHERE id NOT IN ('. implode(',',$id) . ');
+		');
+		return $ids;
+	  }	
+	 /**
+	 *
+	 *@param string $id	 	tableau contenant les ids des nouvelles données
+	 */
+	  public function checkIsepdorEmployees($id){
+		$ids=DB::select('
+			SELECT id FROM isepdor_employees WHERE id NOT IN ('. implode(',',$id) . ');
+		');
+		return $ids;
+	  }		  
 	 /**
 	 * Load data of ISEP d'or's employees tables
 	 *
@@ -165,7 +194,7 @@ class Administration_Model extends Model {
 	 * @param int $id
 	 * @param string $username
 	 */	
-	 public function updateemployees($lastname,$firstname,$id,$username){
+	 public function updateEmployees($lastname,$firstname,$id,$username){
 		DB::createQuery('isepdor_employees')
 			->set(array(
 				'lastname'		=>$lastname,
@@ -200,7 +229,7 @@ class Administration_Model extends Model {
 	 * @param string $soiree	 	
 	 * @param int $id
 	 */	
-	 public function updateevent($name,$id,$soiree){
+	 public function updateEvent($name,$id,$soiree){
 		DB::createQuery('isepdor_event')
 			->set(array(
 				'name'			=>$name,
@@ -216,7 +245,7 @@ class Administration_Model extends Model {
 	 * @param string $firstname	 	
 	 * @param string $username
 	 */	
-	 public function insertevent($name,$soiree){
+	 public function insertEvent($name,$soiree){
 		DB::createQuery('isepdor_event')
 			->set(array(
 				'name'		=>$name,
@@ -225,13 +254,13 @@ class Administration_Model extends Model {
 			->insert();
 	 }
 	 
-	 /* load isepdor_date
+	 /* load event_date
 	 *
-	 * @return  resulte
+	 * @return  results
 	 */	
-	 public function getdate(){
+	 public function getDate(){
 		$date=DB::select('
-			SELECT * FROM isepdor_date ORDER BY tour
+			SELECT * FROM event_date WHERE nom="isepdor" ORDER BY tour
 		');
 		return $date;
 	 }
@@ -243,78 +272,53 @@ class Administration_Model extends Model {
 	 *@param $second1  2nd tour debut
 	 *@param $second1  2nd tour fin
 	 */
-	 public function insertdate($first1,$first2,$second1,$second2){
-		DB::createQuery('isepdor_date')
+	 public function insertdate($first1,$first2,$second1,$second2,$third1,$third2){
+		DB::createQuery('event_date')
 			->set(array(
-				'date'			=>$first1
+				'start'			=>$first1,
+				'end'			=>$first2
 			))
-			->where(array('tour' => 1, 'type'=>1))
+			->where(array('tour' => 1, 'nom'=>"isepdor"))
 			->update();
 			
-		DB::createQuery('isepdor_date')
+		DB::createQuery('event_date')
 			->set(array(
-				'date'			=>$first2
+				'start'			=>$second1,
+				'end'			=>$second2
 			))
-			->where(array('tour' => 1, 'type'=>2))
+			->where(array('tour' => 2, 'nom'=>"isepdor"))
 			->update();
 		
-		DB::createQuery('isepdor_date')
+		DB::createQuery('event_date')
 			->set(array(
-				'date'			=>$second1
+				'start'			=>$third1,
+				'end'			=>$third2
 			))
-			->where(array('tour' => 2, 'type'=>1))
+			->where(array('tour' => 3, 'nom'=>"isepdor"))
 			->update();
-		
-		DB::createQuery('isepdor_date')
-			->set(array(
-				'date'			=>$second2
-			))
-			->where(array('tour' => 2, 'type'=>2))
-			->update();
-	 
 	 }
 	 
 	 /* Récupère les résultats des vote isepd'or 
 	 *
-	 *tour 1
 	 */
-	 public function getresult1(){
+	 public function getResult(){
 		$result=DB::select('
-			SELECT i.student_username,i.isepdor_associations_id,u.username,q.questions,e.name,em.username as admin,a.name as assoce
-			FROM isepdor_round1 i
+			SELECT i.round,i.student_username,i.isepdor_associations_id,u.username,q.questions,e.name,em.username as admin,a.name as assoce
+			FROM isepdor_round i
 			LEFT JOIN users u ON u.id=i.voting_user_id 
 			LEFT JOIN isepdor_questions q ON q.id=i.isepdor_questions_id
 			LEFT JOIN isepdor_event e ON e.id=i.isepdor_event_id
-			LEFT JOIN isepdor_associations a ON a.id=i.isepdor_associations_id
+			LEFT JOIN groups a ON a.id=i.isepdor_associations_id
 			LEFT JOIN  isepdor_employees em ON em.id=i.isepdor_employees_id
 			ORDER BY i.voting_user_id 
 		');
 		return $result;
 	 }
-	 
-	 /* Récupère les résultats des vote isepd'or 
-	 *
-	 *tour 2
-	 */
-	 public function getresult2(){
-		$result=DB::select('
-			SELECT i.student_username,i.isepdor_associations_id,u.username,q.questions,e.name,em.username as admin
-			FROM isepdor_round2 i
-			LEFT JOIN users u ON u.id=i.voting_user_id 
-			LEFT JOIN isepdor_questions q ON q.id=i.isepdor_questions_id
-			LEFT JOIN isepdor_event e ON e.id=i.isepdor_event_id
-			LEFT JOIN isepdor_associations a ON a.id=i.isepdor_associations_id
-			LEFT JOIN  isepdor_employees em ON em.id=i.isepdor_employees_id
-			ORDER BY i.voting_user_id 
-		');
-		return $result;
-	 }
-	 
 	 /*Supprime dans isepdor_event
 	 *
 	 * @param $id
 	 */
-	 public function deleteevent($id){
+	 public function deleteEvents($id){
 		DB::createQuery('isepdor_event')
 			->where(array('id' => $id))
 			->delete();
@@ -324,7 +328,7 @@ class Administration_Model extends Model {
 	 *
 	 * @param $id
 	 */
-	 public function deletequestions($id){
+	 public function deleteQuestions($id){
 		DB::createQuery('isepdor_questions')
 			->where(array('id' => $id))
 			->delete();
@@ -334,7 +338,7 @@ class Administration_Model extends Model {
 	 *
 	 * @param $id
 	 */
-	 public function deleteemployees($id){
+	 public function deleteEmployees($id){
 		DB::createQuery('isepdor_employees')
 			->where(array('id' => $id))
 			->delete();
@@ -345,7 +349,7 @@ class Administration_Model extends Model {
 	 * @param $id
 	 */
 	 public function deleteresult(){
-		DB::createQuery('isepdor_round1')
+		DB::createQuery('isepdor_round')
 		->force()
 		->delete();
 	 }
@@ -369,13 +373,40 @@ class Administration_Model extends Model {
 	 * @param $username
 	 */
 	 public function deleteadmin($username){
-		DB::createQuery('users')
-			->set(array(
-				'admin'			=>0
-			))
-			->where(array('username' => $username))
-			->update();
-	 
+		if($this->checkuser($username,1)){
+			DB::createQuery('users')
+				->set(array(
+					'admin'			=>0
+				))
+				->where(array('username' => $username))
+				->update();
+		}
 	 }
+	 /*ajouteun admin
+	 *
+	 * @param $username
+	 */
+	 public function addadmin($username){
+		if($this->checkuser($username,1)){
+			DB::createQuery('users')
+				->set(array(
+					'admin'			=>1
+				))
+				->where(array('username' => $username))
+				->update();
+		}
+	 }
+	 
+	 /*
+	 * Récupere la date d'anniversaire d'un utilisateur
+	*/
+	public function getBirthDay($username){
+		$result=DB::select('
+			SELECT birthday
+			FROM users 
+			WHERE username="'.$username.'"
+		');
+		return date("d/m/Y", strtotime($result[0]['birthday']));
+	}
 }
 ?>
