@@ -426,6 +426,7 @@ class Post_Controller extends Controller {
 							exec($command);
 							unlink($filepath);
 							if(!is_file($tempfilepath)){
+								unlink($thumbpath);
 								throw new Exception();
 							}
 							$filepath=DATA_DIR.Config::DIR_DATA_TMP.File::getName($filepath).'.mp4';

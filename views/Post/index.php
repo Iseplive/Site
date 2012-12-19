@@ -81,6 +81,7 @@ foreach($categories as $category){
 			<li><a href="http://eleves.isep.fr/moodle/">Moodle ISEP</a></li>
 			<li><a href="http://gcma.isep.fr">Annuaire ISEP</a></li>
 			<li><a href="http://logement.isep.fr/">Logements ISEP</a></li>
+			<li><a href="http://isep.tombapik.com/"><img src="<?php echo Config::URL_STATIC; ?>images/logo_tomb.png" alt="Tombapik" /></a></li>
 			<li><a href="http://forge.isep.fr/">Forge ISEP</a></li>
 		</ul>
 
