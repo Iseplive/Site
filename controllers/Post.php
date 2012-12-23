@@ -337,6 +337,7 @@ class Post_Controller extends Controller {
 			$private = isset($_POST['private']);
 			if($private && !$is_student)
 				throw new Exception(__('POST_ADD_ERROR_PRIVATE'));
+                        $dislike = isset($_POST['dislike']);
 			
 			
 			$attachments = array();
@@ -374,9 +375,14 @@ class Post_Controller extends Controller {
 							$img->thumb(Config::$THUMBS_SIZES[0], Config::$THUMBS_SIZES[1]);
 							$img->setType(IMAGETYPE_JPEG);
 							$img->save($thumbpath);
+							// Thumb
+							$mobilepath = $filepath.'.mobile';
+							$img->thumb(Config::$MOBILE_SIZES[0], Config::$MOBILE_SIZES[1]);
+							$img->setType(IMAGETYPE_JPEG);
+							$img->save($mobilepath);
 							
 							unset($img);
-							$attachments[] = array($filepath, $name, $thumbpath);
+							$attachments[] = array($filepath, $name, $thumbpath,$mobilepath);
 							$uploaded_files[] = $thumbpath;
 							
 						}catch(Exception $e){
@@ -542,12 +548,12 @@ class Post_Controller extends Controller {
 			
 			
 			// Creation of the post
-			$id = $this->model->addPost((int) User_Model::$auth_data['id'], $message, $category, $group, $official, $private);
+			$id = $this->model->addPost((int) User_Model::$auth_data['id'], $message, $category, $group, $official, $private,$dislike);
 			
 			
 			// Attach files
 			foreach($attachments as $attachment)
-				$this->model->attachFile($id, $attachment[0], $attachment[1], isset($attachment[2]) ? $attachment[2] : null);
+				$this->model->attachFile($id, $attachment[0], $attachment[1], isset($attachment[2]) ? $attachment[2] : null, isset($attachment[3]) ? $attachment[3] : null);
 			
 			// Event
 			if(isset($event))
