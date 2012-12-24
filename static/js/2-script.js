@@ -722,6 +722,151 @@ var Like = {
         });
     }
 };
+var Dislike={
+    initPostDislike:function(a){
+        var b=$("header-title").getProperty("href");
+        var c={};
+        
+        if(Post.currentPhoto!=-1){
+            c.attachment=Post.photos[Post.currentPhoto].id
+            }else{
+            c.attachment=0
+            }
+            new Request({
+            url:b+"ajax/dislike/"+a+"/add",
+            onSuccess:function(d){
+                if(d=="true"){
+                    $("post-dislike-link-"+a).toggleClass("hidden");
+                    $("post-undislike-link-"+a).toggleClass("hidden");
+                    if($("post-dislike-"+a+"-"+c.attachment)!=null){
+                        $("post-dislike-"+a+"-"+c.attachment).removeClass("hidden");
+                        $("new-dislike-container-"+a+"-"+c.attachment).removeClass("hidden");
+                        $("dislike-grammar-"+a+"-"+c.attachment).set("text","z")
+                        }else{
+                        $("post-dislike-"+a+"-all").clone().set("id","post-dislike-"+a+"-"+c.attachment).addClass("post-dislike-attachment-"+c.attachment).inject("post-dislike-"+a+"-all","after");
+                        $("post-dislike-"+a+"-"+c.attachment).removeClass("hidden");
+                        $$("#post-dislike-"+a+"-"+c.attachment+" .dislike-last").set("id","dislike-last-"+a+"-"+c.attachment)
+                        }
+                    }else{
+                alert("Erreur, ajout impossible.")
+                }
+            }
+        }).post(c)
+},
+initPostComDislike:function(a,b){
+    var c=$("header-title").getProperty("href");
+    var d={
+        comment_id:b
+    };
+    
+    if(Post.currentPhoto!=-1){
+        d.attachment=Post.photos[Post.currentPhoto].id
+        }
+        new Request({
+        url:c+"ajax/dislikecom/"+a+"/add",
+        onSuccess:function(f){
+            if(f=="true"){
+                $("post-com-dislike-link-"+b).toggleClass("hidden");
+                $("post-com-undislike-link-"+b).toggleClass("hidden");
+                var e=parseInt($("post-com-dislike-val-"+b).get("text"));
+                $("post-com-dislike-val-"+b).set("text",(++e));
+                $("post-com-dislike-new-"+b).removeClass("hidden");
+                if(e>1){
+                    $("dislike-com-conj-"+b).removeClass("hidden")
+                    }else{
+                    $("dislike-com-conj-"+b).addClass("hidden")
+                    }
+                }else{
+            alert("Erreur, ajout impossible.")
+            }
+        }
+    }).post(d)
+},
+initPostUndislike:function(a){
+    var b=$("header-title").getProperty("href");
+    var c={};
+    
+    if(Post.currentPhoto!=-1){
+        c.attachment=Post.photos[Post.currentPhoto].id
+        }else{
+        c.attachment=0
+        }
+        new Request({
+        url:b+"ajax/dislike/"+a+"/delete",
+        onSuccess:function(d){
+            if(d=="true"){
+                $("post-dislike-link-"+a).toggleClass("hidden");
+                $("post-undislike-link-"+a).toggleClass("hidden");
+                if(parseInt($("dislike-last-"+a+"-"+c.attachment).get("text"))==0){
+                    $("post-dislike-"+a+"-"+c.attachment).destroy()
+                    }else{
+                    if(parseInt($("dislike-last-"+a+"-"+c.attachment).get("text"))>2){
+                        $("dislike-grammar-"+a+"-"+c.attachment).set("text","nt");
+                        $("new-dislike-container-"+a+"-"+c.attachment).addClass("hidden")
+                        }else{
+                        $("dislike-grammar-"+a+"-"+c.attachment).set("text","");
+                        $("new-dislike-container-"+a+"-"+c.attachment).addClass("hidden")
+                        }
+                    }
+            }else{
+        alert("Erreur, ajout impossible.")
+        }
+    }
+}).post(c)
+},
+initPostComUndislike:function(a,b){
+    var c=$("header-title").getProperty("href");
+    var d={
+        comment_id:b
+    };
+    
+    if(Post.currentPhoto!=-1){
+        d.attachment=Post.photos[Post.currentPhoto].id
+        }
+        new Request({
+        url:c+"ajax/dislikecom/"+a+"/delete",
+        onSuccess:function(f){
+            if(f=="true"){
+                $("post-com-dislike-link-"+b).toggleClass("hidden");
+                $("post-com-undislike-link-"+b).toggleClass("hidden");
+                var e=parseInt($("post-com-dislike-val-"+b).get("text"));
+                $("post-com-dislike-val-"+b).set("text",(--e));
+                if(e<1){
+                    $("post-com-dislike-new-"+b).addClass("hidden")
+                    }else{
+                    if(e==1){
+                        $("dislike-com-conj-"+b).addClass("hidden")
+                        }else{
+                        $("dislike-com-conj-"+b).removeClass("hidden")
+                        }
+                    }
+            }else{
+        alert("Erreur, ajout impossible.")
+        }
+    }
+}).post(d)
+},
+showAll:function(a){
+    var b;
+    if(Post.currentPhoto!=-1){
+        b=Post.photos[Post.currentPhoto].id
+        }else{
+        b=0
+        }
+        $("dislike-show-short-"+a+"-"+b).destroy();
+    $("dislike-show-all-"+a+"-"+b).removeClass("hidden")
+    },
+showAllCom:function(){
+    var b=$$(".dislikeTooltips");
+    var a=new Tips(b,{
+        offsets:{
+            x:0,
+            y:0
+        },
+        fixed:true
+    })
+    }
+};
 
 var Comment = {
     init : function(e){

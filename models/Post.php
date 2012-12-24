@@ -54,7 +54,7 @@ class Post_Model extends Model {
 			$where[] = 'p.id = '.$params['id'];
 		$posts = DB::select('
 			SELECT
-				p.id, p.message, p.time, p.private, p.official,p.category_id,
+				p.id, p.message, p.time, p.private, p.official, p.category_id,p.dislike,
 				a.id AS group_id, a.name AS group_name, a.url_name AS group_url,
 				u.username,
 				s.student_number, s.firstname, s.lastname
@@ -162,6 +162,41 @@ class Post_Model extends Model {
 				$likes_by_post_id[$post_id][$attachment_id][] = $like;
 			}
 			unset($likes);
+                        // Posts Dislikes
+			$dislikes = DB::select('
+				SELECT
+					dli.post_id, dli.id, dli.user_id as dislike_user_id,dli.attachment_id,
+					u.username,
+					s.firstname, s.lastname
+				FROM post_dislikes dli
+				INNER JOIN users u ON u.id = dli.user_id
+				INNER JOIN students s ON s.username = u.username
+				WHERE dli.post_id IN ('.implode(',', $post_ids).')
+                                '.(isset($params['restricted']) && $params['restricted'] ? 'AND dli.attachment_id IS NULL' : '').'
+				ORDER BY dli.id DESC
+			');
+			$dislikes_by_post_id = array();
+                        $users_dislikes = array();
+			foreach($dislikes as $dislike){
+                                // Les trie par post_id => puis par $attachement_id
+				$post_id = (int) $dislike['post_id'];
+                                // On Extrait le n° d'attachment
+                                if($dislike['attachment_id'] == null)
+                                    $attachment_id = 0;
+                                else
+                                    $attachment_id = (int) $dislike['attachment_id'];
+                                
+                                if(empty($dislikes_by_post_id[$post_id][$attachment_id]))
+                                    $dislikes_by_post_id[$post_id][$attachment_id] = array();
+                                // Pour savoir qui a "Aimé"
+                                if(empty($users_dislikes[$post_id][$attachment_id]))
+                                    $users_dislikes[$post_id][$attachment_id] = array();
+                                $users_dislikes[$post_id][$attachment_id][] = $dislike['dislike_user_id'];
+				unset($dislike['post_id']);
+                                unset($dislike['attachment_id']);
+				$dislikes_by_post_id[$post_id][$attachment_id][] = $dislike;
+			}
+			unset($dislikes);
 			
 //                        echo '<pre>';
 //                            print_r($likes_by_post_id);
@@ -257,6 +292,10 @@ class Post_Model extends Model {
 					$post['likes']['data'] = & $likes_by_post_id[$post_id];
                                 if(isset($users_likes[$post_id]))
 					$post['likes']['users'] = & $users_likes[$post_id];
+                                if(isset($dislikes_by_post_id[$post_id]))
+					$post['dislikes']['data'] = & $dislikes_by_post_id[$post_id];
+                                if(isset($users_dislikes[$post_id]))
+					$post['dislikes']['users'] = & $users_dislikes[$post_id];
 				if(isset($attachments_by_post_id[$post_id]))
 					$post['attachments'] = & $attachments_by_post_id[$post_id];
 				if(isset($events_by_post_id[$post_id]))
@@ -328,7 +367,7 @@ class Post_Model extends Model {
 	 * @param boolean $private		If true, the message will be visible only to the students
 	 * @return int	Id of the new post
 	 */
-	public function addPost($user_id, $message, $category_id, $group_id, $official, $private){
+	public function addPost($user_id, $message, $category_id, $group_id, $official, $private,$dislike){
 		$id = $this->createQuery()
 			->set(array(
 				'user_id'		=> $user_id,
@@ -337,7 +376,8 @@ class Post_Model extends Model {
 				'category_id'	=> $category_id,
 				'group_id'		=> $group_id,
 				'official'		=> $official ? 1 : 0,
-				'private'		=> $private ? 1 : 0
+				'private'		=> $private ? 1 : 0,
+                                'dislike'               => $dislike ? 1 : 0
 			))
 			->insert();
 		
@@ -361,7 +401,7 @@ class Post_Model extends Model {
 	 * @param string $filepath	Path of the tmp file
 	 * @param string $thumbpath	Path of the thumb (optional)
 	 */
-	public function attachFile($post_id, $filepath, $name, $thumbpath=null){
+	public function attachFile($post_id, $filepath, $name, $thumbpath=null,$mobilepath=null){
 		$ext = strtolower(File::getExtension($filepath));
 		
 		// In the DB
@@ -381,6 +421,8 @@ class Post_Model extends Model {
 		File::rename($filepath, $newfilepath);
 		if(isset($thumbpath))
 			File::rename($thumbpath, self::getAttachedFilePath($file_id, 'jpg', 'thumb'));
+		if(isset($mobilepath))
+			File::rename($mobilepath, self::getAttachedFilePath($file_id, 'jpg', 'mobile'));
 	}
 	
 	/**

@@ -300,6 +300,8 @@
             <!-- Like Links -->
             <?php
             $has_liked = (empty($post['likes']['users'][0])) ? false : in_array(User_Model::$auth_data['id'], array_unique($post['likes']['users'][0], SORT_REGULAR), true);
+            $has_disliked = (empty($post['dislikes']['users'][0])) ? false : in_array(User_Model::$auth_data['id'], array_unique($post['dislikes']['users'][0], SORT_REGULAR), true);
+            $dislikeEnable=$post['dislike'];
             if (!$has_liked) {
                 ?>
                 &#183; <a href="javascript:;" onclick="Like.initPostLike(<?php echo $post['id'] ?>)" class="like-link" id="post-like-link-<?php echo $post['id'] ?>" ><?php echo __('POST_LIKE_LINK'); ?></a>
@@ -309,6 +311,18 @@
                 <a href="javascript:;" onclick="Like.initPostLike(<?php echo $post['id'] ?>)" class="like-link hidden" id="post-like-link-<?php echo $post['id'] ?>" ><?php echo __('POST_LIKE_LINK'); ?></a>
                 <?php
             }
+            if ($dislikeEnable == "1" && $is_admin) {
+                
+                if (!$has_disliked) {
+                    ?>
+                    &#183; <a href="javascript:;" onclick="Dislike.initPostDislike(<?php echo $post['id'] ?>)" class="dislike-link" id="post-dislike-link-<?php echo $post['id'] ?>" ><?php echo __('POST_DISLIKE_LINK'); ?></a>
+                    <a href="javascript:;" onclick="Dislike.initPostUndislike(<?php echo $post['id'] ?>)" class="undislike-link hidden" id="post-undislike-link-<?php echo $post['id'] ?>"><?php echo __('POST_UNDISLIKE_LINK'); ?></a>
+                <?php } else { ?>
+                    &#183; <a href="javascript:;" onclick="Dislike.initPostUndislike(<?php echo $post['id'] ?>)" class="undislike-link" id="post-undislike-link-<?php echo $post['id'] ?>" ><?php echo __('POST_UNDISLIKE_LINK'); ?></a>
+                    <a href="javascript:;" onclick="Dislike.initPostDislike(<?php echo $post['id'] ?>)" class="dislike-link hidden" id="post-dislike-link-<?php echo $post['id'] ?>" ><?php echo __('POST_DISLIKE_LINK'); ?></a>
+                    <?php
+                }
+         }
         }
         if ($post['private'] == '1') {
             ?>
@@ -321,7 +335,8 @@
     foreach ($post['likes']['data'] as $key => $like) {
         $modifier = ($key == 0) ? '' : ' hidden'; ?>
         <div id="post-like-<?php echo $post['id'] ?>-<?php echo $key ?>" class="post-like post-like-attachment-<?php echo $key.$modifier; ?>" style="min-height: 16px;  width: 370px;">
-        <?php 
+     
+   <?php 
             $name = array();
             $has_liked = false;
             // On Range des utilisateur pour pouvoir mieux les afficher.
@@ -390,6 +405,89 @@
         <span class="hidden like-last">0</span>
         <?php echo __('POST_LIKE_USER') ?> <?php echo __('POST_LIKE_END_LIKE').$conj[0].' '.__('POST_LIKE_END_THIS'); ?>
     </div>
+        <!-- Dislike -->
+        <?php if (isset($post['dislikes'])) { 
+    // Affichage en mode Single Post.
+    foreach ($post['dislikes']['data'] as $key => $dislike) {
+        $modifier = ($key == 0) ? '' : ' hidden'; ?>
+        <div id="post-dislike-<?php echo $post['id'] ?>-<?php echo $key ?>" class="post-dislike post-dislike-attachment-<?php echo $key.$modifier; ?>" style="min-height: 16px;  width: 370px;">
+     
+   <?php 
+            $name = array();
+            $has_disliked = false;
+            // On Range des utilisateur pour pouvoir mieux les afficher.
+            foreach (array_unique($post['dislikes']['data'][$key], SORT_REGULAR) as $dislike) {
+                if($dislike['dislike_user_id'] == User_Model::$auth_data['id']){ ?>
+                    <span id="dislike-it-<?php echo $key; ?>" class="hidden"></span>
+          <?php }
+                $dislike_user_url = Config::URL_ROOT . Routes::getPage('student', array('username' => $dislike['username']));
+                if ($dislike['username'] != User_Model::$auth_data['username'])
+                    $name[] = '<a href="' . $dislike_user_url . '" class="post-comment-username">' . htmlspecialchars($dislike['firstname'] . ' ' . $dislike['lastname']) . '</a>';
+                else
+                    $has_disliked = true;
+            }
+            // On compte combient ils sont
+            $last = count($name);
+            echo '<span id="dislike-last-'.$post['id'].'-'.$key.'" class="hidden">'.$last.'</span>';
+            
+            $separator = '';
+            if($last == 1)
+                $separator = ' '.__('POST_DISLIKE_LASTSEP');
+            else if($last > 1)
+                $separator = __('POST_DISLIKE_SEPARATOR');
+            if($has_disliked){
+                // On le met en premier !
+                $string = '<span id="new-dislike-container-'.$post['id'].'-'.$key.'" class="">'.__('POST_DISLIKE_USER').$separator.'</span>';
+                array_unshift($name, $string);
+            } else {
+                $string = '<span id="new-dislike-container-'.$post['id'].'-'.$key.'" class="hidden">'.__('POST_DISLIKE_USER').$separator.'</span>';
+                array_unshift($name, $string);
+            }
+            $last = ($has_disliked) ? $last + 1 : $last;
+            // On fait de belle phrase !
+            if (($last > 1 && !$has_disliked) || ($last > 2 && $has_disliked)){
+                $name[$last - 1] .= ' ' . __('POST_DISLIKE_LASTSEP') . ' ' . array_pop($name);
+                unset($name[$last--]);
+                for($i = 1; $i < $last; $i++)
+                    $name[$i] .= ',';
+            }
+            // Rendering !
+            $stringNb = __('POST_DISLIKE_CONJ');
+            $modificateur = ($has_disliked) ? __('POST_DISLIKE_END_DISLIKE').'<span id="dislike-grammar-'.$post['id'].'-'.$key.'">'.$stringNb[0].'</span> '.__('POST_DISLIKE_END_THIS') :
+                                           __('POST_DISLIKE_END_DISLIKE').'<span id="dislike-grammar-'.$post['id'].'-'.$key.'">'.(($last > 1)?$stringNb[1]:'').'</span> '.__('POST_DISLIKE_END_THIS');
+            switch ($last):
+                case 0:
+                    echo implode(' ', $name);
+                    break;
+                case 1:
+                    echo implode(' ', $name).' '.$modificateur;
+                    break;
+                case 2:
+                    echo implode(' ', $name).' '.$modificateur;
+                    break;
+                default: ?>
+                    <span id="dislike-show-short-<?php echo $post['id'] ?>-<?php echo $key ?>"><?php echo implode(' ', array_slice($name, 0, ($has_disliked) ? Config::DISLIKE_DISPLAYED : Config::DISLIKE_DISPLAYED +1)) . ' ' . __('POST_DISLIKE_LASTSEP') ?>
+                        <a href="javascript:;"  onclick="Dislike.showAll(<?php echo $post['id']; ?>)"><?php echo (($last > Config::DISLIKE_DISPLAYED) ? ($last-Config::DISLIKE_DISPLAYED+1).' ': '').__('POST_DISLIKE_OTHER_'.(($last > 1)?'PLURAL':'SING')) ; ?></a> <?php echo $modificateur?></span>
+                    <span class="hidden" id="dislike-show-all-<?php echo $post['id']; ?>-<?php echo $key ?>"><?php echo implode(' ', $name) . ' ' . $modificateur; ?></span>       
+              <?php break;
+            endswitch;
+            unset($name);
+        ?>
+        </div>
+    <?php }  ?>      
+<?php }?>
+
+        
+    <?php $conj = __('POST_DISLIKE_CONJ'); ?>
+    <div id="post-dislike-<?php echo $post['id'] ?>-all" class="post-dislike hidden" style="min-height: 16px; width: 370px;">
+        <span class="hidden dislike-last">0</span>
+        <?php echo __('POST_DISLIKE_USER') ?> <?php echo __('POST_DISLIKE_END_DISLIKE').$conj[0].' '.__('POST_DISLIKE_END_THIS'); ?>
+    </div>
+        
+        
+        
+        
+        <!-- fin dislike -->
     <!--  COMMENTS  -->
     <div class="post-comments">
         <?php

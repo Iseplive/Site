@@ -46,6 +46,8 @@ POST_TITLE_OFFICIAL
 	Publications des associations
 POST_TITLE_NONOFFICIAL
 	Publications des élèves
+POST_TITLE_DISLIKE
+	Activer le "j'aime pas"
 POST_CATEGORIES
 	Catégories
 POST_CATEGORIES_ALL
@@ -87,6 +89,32 @@ POST_LIKE_OTHER_PLURAL
 POST_LIKE_OTHER_SING
         une personne
 POST_LIKE_STRING
+        personne
+POST_DISLIKE_LINK
+	Je mange une pomme
+POST_UNDISLIKE_LINK
+	J'arrête de manger
+POST_DISLIKE_USER
+	Vous
+POST_DISLIKE_LASTSEP
+        et 
+POST_DISLIKE_SEPARATOR
+        ,
+POST_DISLIKE_END_THIS
+        une pomme.
+POST_DISLIKE_END_DISLIKE
+        mange
+POST_DISLIKE_CONJ[]
+        z
+POST_DISLIKE_CONJ[]
+        nt
+POST_DISLIKE_PLURAL_CONJ
+        s
+POST_DISLIKE_OTHER_PLURAL
+        personnes
+POST_DISLIKE_OTHER_SING
+        une personne
+POST_DISLIKE_STRING
         personne
 POST_PRIVATE
 	Visible uniquement par les élèves
