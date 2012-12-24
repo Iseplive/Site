@@ -402,12 +402,12 @@ class Post_Controller extends Controller {
 						$name = isset($_FILES['attachment_video']['name'][$i]) ? $_FILES['attachment_video']['name'][$i] : '';
 						
 						try {
-							require_once(APP_DIR."classes/class.Ffprobe_info.php");
-							$info=new ffprobe($filepath);
+							/*require_once(APP_DIR."classes/class.Ffprobe_info.php");
+							$info=new ffprobe($filepath);*/
 							$format=array("avi","mp4");
-							$fileformat=explode(",",$info->format->format_name);
+							//$fileformat=explode(",",$info->format->format_name);
 							$ext=pathinfo(File::getName($filepath), PATHINFO_EXTENSION);
-							if(count(array_intersect($fileformat,$format))==0 || !in_array($ext,$format)){
+							if(/*count(array_intersect($fileformat,$format))==0 ||*/ !in_array($ext,$format)){
 								throw new Exception();
 							}
 							
@@ -422,7 +422,7 @@ class Post_Controller extends Controller {
 							exec(PHPVIDEOTOOLKIT_FFMPEG_BINARY." -i ".escapeshellarg($filepath)." -deinterlace -an -ss 3 -t 00:00:01 -r 1 -y -vcodec mjpeg -f mjpeg -s 512x288 ".escapeshellarg($thumbpath)." 2>&1");
 							// Video conversion
 							$tempfilepath=DATA_DIR.Config::DIR_DATA_TMP.File::getName($filepath).".mp4";
-							$command=PHPVIDEOTOOLKIT_FFMPEG_BINARY.' -i '.escapeshellarg($filepath).' -vcodec h264 -vprofile high -preset slow -b:v 1500k -maxrate 1500k -bufsize 1000k -vf scale="min(1280\, iw):-1" -threads 0 -acodec libvo_aacenc -b:a 128k -y '.escapeshellarg($tempfilepath);
+							$command=PHPVIDEOTOOLKIT_FFMPEG_BINARY.' -i '.escapeshellarg($filepath).' -vcodec libx264 -profile high -preset slow -vb 1500k -maxrate 1500k -bufsize 1000k -vf scale="min(1280\, iw):-1" -threads 0 -acodec libfaac -ab 128k -y '.escapeshellarg($tempfilepath);
 							exec($command);
 							unlink($filepath);
 							if(!is_file($tempfilepath)){

@@ -26,7 +26,7 @@ class ffprobe{
 
 		// Run the ffprobe, save the JSON output then decode
 		
-		exec(PHPVIDEOTOOLKIT_FFPROBE_BINARY.' -v quiet -print_format json -show_format -count_frames -show_streams '.escapeshellarg($filename),$buffer);
+		exec(PHPVIDEOTOOLKIT_FFPROBE_BINARY.' -loglevel quiet -print_format json -show_format -show_streams '.escapeshellarg($filename),$buffer);
 		$json = json_decode(implode ($buffer));
 		if (!isset($json->format)) {
 			throw new Exception('Unsupported file type');
