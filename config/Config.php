@@ -78,9 +78,16 @@ final class Config extends ConfigAbstract {
 
 	// Thumbs sizes
 	public static $THUMBS_SIZES = array(100, 100);
+	
+	// Mobiles sizes
+	public static $MOBILE_SIZES = array(500, 500);
+        
 
 	// Avatars' thumbs sizes
 	public static $AVATARS_THUMBS_SIZES = array(70, 70);
+	
+			        // Number of displayed like
+        const DISLIKE_DISPLAYED = 2;
 
 	// Max uploaded files sizes
 	const UPLOAD_MAX_SIZE_PHOTO = 2097152;

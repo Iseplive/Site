@@ -381,6 +381,37 @@ h1, h1 a, h1 a:hover, h1 a:visited, h1 a:active, h1 a:focus {
     white-space: nowrap;
 }
 
+
+/* DisLikes */
+
+.post-dislike{
+    background: transparent url("../images/icons/dislike.png") 4px 4px no-repeat;
+    padding-left: 26px !important;
+    margin-top: 4px;
+    max-width: 400px;
+    font-size: 12px;
+    background-color: #E4E5F9;
+    margin-top: 2px;
+    padding: 4px;
+    overflow: hidden;
+}
+
+.hidden-dislike-box{
+    position: absolute;
+    background-color: white;
+    border: 3px solid #6666ff;
+    margin-left: 165px;
+    margin-top: -15px;
+    padding: 3px;
+}
+
+.inline-dislike{
+    background: transparent url("../images/icons/dislike.png") 0px 1px no-repeat;
+    padding-left: 18px !important;
+    white-space: nowrap;
+}
+
+
 .timeline .video {
 	margin-top: 10px;
 }
