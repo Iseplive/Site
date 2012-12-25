@@ -223,7 +223,10 @@ class IsepOr_Model extends Model {
 			FROM event_date
 			WHERE start<="'.date("Y-m-d").'" AND end>="'.date("Y-m-d").'"
 		');
-		return $result[0]['tour'];
+		if(isset($result[0])){
+			return $result[0]['tour'];
+		}
+		return null;
 	}
 
 }

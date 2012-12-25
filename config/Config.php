@@ -59,7 +59,7 @@ final class Config extends ConfigAbstract {
 	// ElasticSearch
 	public static $ELASTICSEARCH	= array(
 		'host'	=> 'localhost',
-		'port'	=> 80,
+		'port'	=> 9200,
 		'index'	=> 'iseplive'
 	);
 

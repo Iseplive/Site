@@ -70,6 +70,7 @@ class Mimetype {
 		'htpasswd' => array('txt.png', 'text/plain', 'Identifiants', true),
 		'rtf' => array('txt.png', 'application/rtf', 'Document Texte'),
 		'doc' => array('doc.png', 'application/msword', 'Document Texte'),
+		'docx' => array('doc.png', 'application/msword', 'Document Texte'),
 		'odt' => array('txt.png', 'application/msword', 'Document Texte'),
 		'sxw' => array('txt.png', 'application/msword', 'Document Texte'),
 		'xls' => array('txt.png', 'application/vnd.ms-excel', 'Tableau Excel'),
