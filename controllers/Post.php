@@ -431,10 +431,13 @@ class Post_Controller extends Controller {
 							$command=PHPVIDEOTOOLKIT_FFMPEG_BINARY.' -i '.escapeshellarg($filepath).' -vcodec libx264 -profile high -preset slow -vb 1500k -maxrate 1500k -bufsize 1000k -vf scale="min(1280\, iw):-1" -threads 0 -acodec libfaac -ab 128k -y '.escapeshellarg($tempfilepath);
 							exec($command);
 							unlink($filepath);
+							//permet de déplacer les infos au début pour les players flash
+							exec('qt-faststart '.escapeshellarg($tempfilepath).' '.DATA_DIR.Config::DIR_DATA_TMP.'tempvideo.mp4');
 							if(!is_file($tempfilepath)){
 								unlink($thumbpath);
 								throw new Exception();
 							}
+							unlink($tempfilepath);
 							$filepath=DATA_DIR.Config::DIR_DATA_TMP.File::getName($filepath).'.mp4';
 
 							$attachments[] = array($filepath, $name, $thumbpath);
