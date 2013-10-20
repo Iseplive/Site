@@ -39,7 +39,7 @@ class User_Model extends Model {
 			if(Config::AUTHENTICATION_MODE == 'ldap'){
 				$ldap_conn = ldap_connect('ldaps://'.Config::$LDAP['host']);//, Config::$LDAP['port']
 				$result = ldap_bind($ldap_conn, 'uid='.$username.','.Config::$LDAP['basedn'], $password);
-				echo $ldap_conn;
+				//echo $ldap_conn;
 				
 			}else{
 				$curl = curl_init();
@@ -108,7 +108,7 @@ class User_Model extends Model {
 		else
 			throw new Exception('User not found');
 		
-		//permet de checker l'autenticité de l'admin
+		//permet de checker l'autenticitï¿½ de l'admin
 		if(isset(User_Model::$auth_data['admin']) && User_Model::$auth_data['admin']==1){
 			if(Cache::read('auth_admin')){
 				Cache::delete('auth_admin');

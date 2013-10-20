@@ -311,7 +311,7 @@
                 <a href="javascript:;" onclick="Like.initPostLike(<?php echo $post['id'] ?>)" class="like-link hidden" id="post-like-link-<?php echo $post['id'] ?>" ><?php echo __('POST_LIKE_LINK'); ?></a>
                 <?php
             }
-            if ($dislikeEnable == "1" && $is_admin) {
+            if ($dislikeEnable == "1") {
                 
                 if (!$has_disliked) {
                     ?>

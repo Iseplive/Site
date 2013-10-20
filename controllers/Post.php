@@ -428,7 +428,7 @@ class Post_Controller extends Controller {
 							exec(PHPVIDEOTOOLKIT_FFMPEG_BINARY." -i ".escapeshellarg($filepath)." -deinterlace -an -ss 3 -t 00:00:01 -r 1 -y -vcodec mjpeg -f mjpeg -s 512x288 ".escapeshellarg($thumbpath)." 2>&1");
 							// Video conversion
 							$tempfilepath=DATA_DIR.Config::DIR_DATA_TMP.File::getName($filepath).".mp4";
-							$command=PHPVIDEOTOOLKIT_FFMPEG_BINARY.' -i '.escapeshellarg($filepath).' -vcodec libx264 -profile high -preset slow -vb 1500k -maxrate 1500k -bufsize 1000k -vf scale="min(1280\, iw):-1" -threads 0 -acodec libfaac -ab 128k -y '.escapeshellarg($tempfilepath);
+							$command=PHPVIDEOTOOLKIT_FFMPEG_BINARY.' -i '.escapeshellarg($filepath).' -vcodec libx264 -profile high -preset ultrafast -r 25 -vb 1500k -maxrate 1500k -bufsize 1500k -vf scale="min(1280\, iw):-1" -threads 0 -acodec libfaac -ab 128k -y '.escapeshellarg($tempfilepath);
 							exec($command);
 							unlink($filepath);
 							//permet de déplacer les infos au début pour les players flash
@@ -438,7 +438,7 @@ class Post_Controller extends Controller {
 								throw new Exception();
 							}
 							unlink($tempfilepath);
-							$filepath=DATA_DIR.Config::DIR_DATA_TMP.File::getName($filepath).'.mp4';
+							$filepath=DATA_DIR.Config::DIR_DATA_TMP.'tempvideo.mp4';
 
 							$attachments[] = array($filepath, $name, $thumbpath);
 							$uploaded_files[] = $filepath;

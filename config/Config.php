@@ -6,13 +6,13 @@
 final class Config extends ConfigAbstract {
 
 	// Absolute URL of the website
-	const URL_ABSOLUTE	= 'http://localhost/';
+	const URL_ABSOLUTE	= 'http://www.iseplive.fr/';
 	// Absolute URL of the storage dir
-	const URL_STORAGE	= '/www/data/storage/';
+	const URL_STORAGE	= 'http://storage.iseplive.fr/';
 	// Absolute path of the website on the domain
-	const URL_ROOT		= '/www/app/';
+	const URL_ROOT		= '/';
 	// Absolute path for static files
-	const URL_STATIC	= '/www/app/static/';
+	const URL_STATIC	= '/static/';
 
 	// Timezone
 	const TIMEZONE	= 'Europe/Paris';
@@ -21,8 +21,8 @@ final class Config extends ConfigAbstract {
 	public static $DB	= array(
 		'driver'	=> 'mysql',
 		'dsn'		=> 'host=localhost;dbname=iseplive',
-		'username'	=> 'root',
-		'password'	=> ''
+		'username'	=> 'iseplive',
+		'password'	=> 'VsWbRNZr3q6VRFVQ'
 	);
 
 	// LDAP
@@ -117,13 +117,13 @@ final class Config extends ConfigAbstract {
 	const GALLERY_ROWS = 8;
 
 	// Debug mode
-	const DEBUG			= true;
+	const DEBUG			= false;
 
 }
 
 
 // PHPVideoToolkit constants
-define('PHPVIDEOTOOLKIT_TEMP_DIRECTORY', 'D:\wamp\tmp\\');
-define('PHPVIDEOTOOLKIT_FFMPEG_BINARY', '%FFMPEG_HOME%\ffmpeg');
-define('PHPVIDEOTOOLKIT_FFPROBE_BINARY', '%FFMPEG_HOME%\ffprobe');
+define('PHPVIDEOTOOLKIT_TEMP_DIRECTORY', '/tmp/');
+define('PHPVIDEOTOOLKIT_FFMPEG_BINARY', '/usr/bin/ffmpeg');
+define('PHPVIDEOTOOLKIT_FFPROBE_BINARY', '/usr/bin/ffprobe');
 define('PHPVIDEOTOOLKIT_FLVTOOLS_BINARY', '/usr/bin/flvtool2');

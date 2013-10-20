@@ -286,6 +286,7 @@ class Administration_Controller extends Controller {
 					if(isset($avatarpath) && File::exists($avatarpath)){
 						$avatar_path = APP_DIR.Config::DIR_APP_STATIC."images/header/logo_bde.png";
 						$avatar_dir = File::getPath($avatar_path)."/logo_bde.png";
+						chmod($avatarpath, 0777);
 						File::rename($avatarpath, $avatar_dir);
 					}
 				}catch(Exception $e){

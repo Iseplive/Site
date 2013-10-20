@@ -17,16 +17,19 @@ define('DATA_DIR', realpath('../data').'/');
 		return Config::URL_STORAGE.'files/'.substr($extended_file_id, 0, 2).'/'.substr($extended_file_id, 2, 2).'/'.$file_id.($suffix=='' ? '' : '_'.$suffix).'.'.$ext;
 	}
 
+	
 try{
 	
 	// Loading Confeature and User from iseplive
 	require_once '../../confeature/init.php';
 	require_once '../models/User.php';
-	
+
         $username = $_GET['user'];
         $pass = $_GET['pass'];
+		
+		
         
-        // Création du XML
+       // Création du XML
         $xml = new DOMDocument('1.0', 'utf-8');
         $MainNode = $xml->createElement('iseplive');
         $plateform = $xml->createElement('plateform',"android");
@@ -45,7 +48,7 @@ try{
                 $node = $xml->createElement('avatar',User_Model::$auth_data['avatar_url']);
                 $user->appendChild($node);
                 $MainNode->appendChild($user);
-                
+                		
 	}
         else
         {
@@ -138,18 +141,17 @@ try{
                           
                            foreach($attachments as $media){
                                $mediaXml = $xml->createElement('media');
-                           //    if ($attachments['category_id'] == "1") {
 				$media['thumb'] = getAttachedFileURL((int) $media['id'], 'jpg', 'thumb');
                                 $media['url'] = getAttachedFileURL((int) $media['id'], $media['ext']);
-                                  /*  if(in_array($media['ext'], array('jpg', 'png', 'gif', 'flv')))
-					$media['thumb'] = self::getAttachedFileURL((int) $media['id'], 'jpg', 'thumb');
-                                    */
+     
+									
+									
+									
                                    $node = $xml->createElement('path',$media['url']);
                                    $mediaXml->appendChild($node);
                                     $node = $xml->createElement('type',"image");
                                    $mediaXml->appendChild($node);
                                    $nb++;
-                            //   }
                                $MainNode->appendChild($mediaXml);
                                
                            }

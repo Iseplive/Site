@@ -125,7 +125,33 @@ final class Routes extends RoutesAbstract {
 			'vars'		=> 'controller=PostCommentLike&action=delete&post_id=$1&mode=json',
 			'url'		=> 'ajax/likecom/{id}/delete'
 		),
+				// Add a disLike
+		'dislike'	=> array(
+			'regexp'	=> '^ajax/dislike/([0-9]+)/add(?=\?|$)',
+			'vars'		=> 'controller=PostDislike&action=add&post_id=$1&mode=raw',
+			'url'		=> 'ajax/dislike/{post_id}/add'
+		),
 		
+		// Delete Like
+		'dislike_delete'	=> array(
+			'regexp'	=> '^ajax/dislike/([0-9]+)/delete(?=\?|$)',
+			'vars'		=> 'controller=PostDislike&action=delete&post_id=$1&mode=json',
+			'url'		=> 'ajax/dislikecom/{id}/delete'
+		),
+            
+                // Add a comment Like
+		'dislike_comment'	=> array(
+			'regexp'	=> '^ajax/dislikecom/([0-9]+)/add(?=\?|$)',
+			'vars'		=> 'controller=PostCommentDislike&action=add&post_id=$1&mode=raw',
+			'url'		=> 'ajax/dislikecom/{post_id}/add'
+		),
+		
+		// Delete comment Like
+		'dislike_comment_delete'	=> array(
+			'regexp'	=> '^ajax/dislikecom/([0-9]+)/delete(?=\?|$)',
+			'vars'		=> 'controller=PostCommentDislike&action=delete&post_id=$1&mode=json',
+			'url'		=> 'ajax/dislikecom/{id}/delete'
+		),
 		// Events' posts in a month
 		'events'	=> array(
 			'regexp'	=> '^events/([0-9]{4})/([0-9]{2})(?=\?|$)',

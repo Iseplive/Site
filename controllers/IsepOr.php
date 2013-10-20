@@ -8,8 +8,8 @@ class IsepOr_Controller extends Controller {
             throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
         if (!isset(User_Model::$auth_data['student_number']))
             throw new Exception('You must be a student to see this');
-        if(Cache::read('IsepOrRound') !== 1 && User_Model::$auth_data['admin'] != '1')
-            throw new Exception('It\'s not ready for Prime Time');
+        /* if(Cache::read('IsepOrRound') !== 1 && User_Model::$auth_data['admin'] != '1')
+            throw new Exception('It\'s not ready for Prime Time'); */
         if($this->model->checkVote(User_Model::$auth_data['id'], 1) > 0){
             $this->set('empty_post', false);
             return;
@@ -44,8 +44,8 @@ class IsepOr_Controller extends Controller {
             throw new ActionException('User', 'signin', array('redirect' => $_SERVER['REQUEST_URI']));
         if (!isset(User_Model::$auth_data['student_number']))
             throw new Exception('You must be a student to see this');
-        if(Cache::read('IsepOrRound') !== 2 && User_Model::$auth_data['admin'] != '1')
-            throw new Exception('It\'s not ready for Prime Time');
+     /*   if(Cache::read('IsepOrRound') != 2 && User_Model::$auth_data['admin'] != '1')
+            throw new Exception('It\'s not ready for Prime Time');*/
         if($this->model->checkVote(User_Model::$auth_data['id'], 2) > 0){
             $this->set('empty_post', false);
             return;

@@ -58,8 +58,12 @@
 		
 		<?php if($is_student){ ?>
 		<div id="publish-private">
-			<input type="checkbox" name="private" id="publish-private-checkbox" value="1" />
+			<input type="checkbox" name="private" id="publish-private-checkbox" value="1" checked="true"/>
 			<label for="publish-private-checkbox"><?php echo __('PUBLISH_PRIVATE'); ?></label>
+		</div>
+		<div id="publish-private">
+			<input type="checkbox" name="dislike" id="publish-dislike-checkbox" value="1" checked="true" />
+			<label for="publish-private-checkbox"><?php echo __('POST_TITLE_DISLIKE'); ?></label>
 		</div>
 		<?php } ?>
 		

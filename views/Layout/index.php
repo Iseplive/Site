@@ -105,8 +105,8 @@ foreach($cssFiles as $cssFile){
 			</div>
 			
 			<footer>
-				<a href="<?php echo Config::URL_ROOT.Routes::getPage('group', array('group' => 'iseplive')); ?>">Association ISEPLive</a> ::
-				Site développé par <a href="http://godefroy.me">Godefroy</a> et <a href="http://github.com/Godefroy/iseplive">libéré sur Github</a>
+				<a href="<?php echo Config::URL_ROOT.Routes::getPage('group', array('group' => 'iseplive')); ?>">Association ISEPLive</a> </a> ::
+				Site développé par <a href="http://godefroy.me">Godefroy</a> et <a href="https://github.com/Iseplive/Site.git">libéré sur Github</a>
 			</footer>
 		</div>
 		
