@@ -11,7 +11,7 @@ class Administration_Controller extends Controller {
 		if(!$is_admin)
 			throw new ActionException('Page', 'error404');
 		
-		//revérifie le compte admin
+		//revï¿½rifie le compte admin
 		/*$user_model = new User_Model();
 		if(isset($_POST['reconfpassword']) ){
 			$username = User_Model::$auth_data['username'];
@@ -97,7 +97,7 @@ class Administration_Controller extends Controller {
 			if($_FILES['uploadxml1']['size'] > Config::UPLOAD_MAX_SIZE_FILE)
 					throw new Exception(__('POST_ADD_ERROR_FILE_SIZE', array('size' => File::humanReadableSize(Config::UPLOAD_MAX_SIZE_FILE))));
 			 
-			//On déplace le fichier vers le serveur
+			//On dï¿½place le fichier vers le serveur
 			if($filepaths = File::upload('uploadxml1')){
 					if(!preg_match('#\.xml$#', $filepaths))
 						throw new Exception(__('POST_ADD_ERROR_FILE_FORMAT'));
@@ -395,7 +395,7 @@ class Administration_Controller extends Controller {
 				});
 			');
 			
-			/* Code qui met à jour le questionnaire pour les ISEP D'or
+			/* Code qui met ï¿½ jour le questionnaire pour les ISEP D'or
 			*
 			*/
 			if(isset($_POST['categories'])){
@@ -426,7 +426,7 @@ class Administration_Controller extends Controller {
 			}
 			
 			
-			/*Code qui met à jour la table isepdor_employees
+			/*Code qui met ï¿½ jour la table isepdor_employees
 			*
 			*/
 			if(isset($_POST['employees'])){
@@ -455,7 +455,7 @@ class Administration_Controller extends Controller {
 				}					
 			}			
 
-			/*Code qui met à jour la table isepdor_event
+			/*Code qui met ï¿½ jour la table isepdor_event
 			*
 			*/
 			if(isset($_POST['events'])){
@@ -489,7 +489,7 @@ class Administration_Controller extends Controller {
 				}					
 			}
 			
-			/*Code qui met à jour les date de vote des isep d'or
+			/*Code qui met ï¿½ jour les date de vote des isep d'or
 			*
 			*/
 			if(isset($_POST['dates'])){
@@ -539,7 +539,7 @@ class Administration_Controller extends Controller {
 				Post_Model::clearCache();
 			}
 			/*
-			* Enregistre les coordonnées
+			* Enregistre les coordonnï¿½es
 			*/
 			if(isset($_POST['diplomeData'])){
 				$post=$_POST['diplomeData'];
@@ -554,7 +554,7 @@ class Administration_Controller extends Controller {
 				$template=DATA_DIR.Config::DIR_DATA_STORAGE.Config::DIR_DATA_ADMIN."diplomeIsepDOr9652.png";
 				$font = DATA_DIR.Config::DIR_DATA_STORAGE.Config::DIR_DATA_ADMIN."font2354.ttf";  
 				$files=Array();
-				$positions=json_decode($positions,true);//récupere les coordonnées précédament demandées
+				$positions=json_decode($positions,true);//rï¿½cupere les coordonnï¿½es prï¿½cï¿½dament demandï¿½es
 				for($i=0;$i<count($positions);$i++){
 					$coord[$positions[$i]['index']]=$positions[$i];
 				}
@@ -572,8 +572,9 @@ class Administration_Controller extends Controller {
 				for($i=0;$i<count($questions);$i++){
 					for($j=0;$j<count($finalList[$questions[$i]['id']]);$j++){
 						File::copy($template, DATA_DIR.Config::DIR_DATA_TMP."diplome".$i.$j.".png");
+						chmod(DATA_DIR.Config::DIR_DATA_TMP."diplome".$i.$j.".png", 0777);
 						array_push($files,DATA_DIR.Config::DIR_DATA_TMP."diplome".$i.$j.".png");
-						$im = ImageCreateFromPng(DATA_DIR.Config::DIR_DATA_TMP."diplome".$i.$j.".png"); // Path Images 
+						$im = @imageCreateFromPng(DATA_DIR.Config::DIR_DATA_TMP."diplome".$i.$j.".png"); // Path Images
 						$color = ImageColorAllocate($im, 0, 0, 0); // Text Color 
 						$champs[0]=$questions[$i]['questions'];
 						$champs[1]=$finalList[$questions[$i]['id']][$j]["name"];
@@ -612,14 +613,14 @@ class Administration_Controller extends Controller {
 					File::delete($file);
 				}
 			}
-			/*Code qui export les résultats des isep d'or
+			/*Code qui export les rï¿½sultats des isep d'or
 			*
 			*/
 				if(isset($_GET['export'])){
 					$db=$this->model->getResult();
 
 				 header('Content-Type: application/vnd.ms-excel');
-				 header('Content-Disposition: filename='.'Résultats_Isepdor'.'.xls');
+				 header('Content-Disposition: filename='.'Rï¿½sultats_Isepdor'.'.xls');
 				 header('Pragma: no-cache');
 				 header('Expires: 0');
 				 
@@ -628,11 +629,11 @@ class Administration_Controller extends Controller {
 							<TR>
 								<TD bgcolor="#3366CC">Tour</TD>
 								<TD bgcolor="#3366CC">Nom du votant</TD>
-								<TD bgcolor="#3366CC">Catégorie</TD>
-								<TD bgcolor="#3366CC">Réponse(student)</TD>
-								<TD bgcolor="#3366CC">Réponse(admin)</TD>
-								<TD bgcolor="#3366CC">Réponse(assoce)</TD>
-								<TD bgcolor="#3366CC">Réponse(event)</TD>						
+								<TD bgcolor="#3366CC">Catï¿½gorie</TD>
+								<TD bgcolor="#3366CC">Rï¿½ponse(student)</TD>
+								<TD bgcolor="#3366CC">Rï¿½ponse(admin)</TD>
+								<TD bgcolor="#3366CC">Rï¿½ponse(assoce)</TD>
+								<TD bgcolor="#3366CC">Rï¿½ponse(event)</TD>						
 							</TR>
 							';
 					foreach ($db as $champs){
@@ -669,7 +670,7 @@ class Administration_Controller extends Controller {
 					throw new Exception(__('ADMIN_UPLOAD_ERROR'));
 				}
 			}
-			/*Code qui met supprime les champs de la table résultat des isep d'or
+			/*Code qui met supprime les champs de la table rï¿½sultat des isep d'or
 			*
 			*/
 			if(isset($_GET['delete_result'])){
@@ -679,7 +680,7 @@ class Administration_Controller extends Controller {
 		}
 	
 	
-	//Fonction qui formate nom et prénom pou en faire un username
+	//Fonction qui formate nom et prï¿½nom pou en faire un username
 	public function makeusername($last,$first){
 		$name1=str_split(strtolower($last),7);
 		$name2=str_split(strtolower($first),1);
