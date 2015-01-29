@@ -45,7 +45,7 @@ class Group_Controller extends Controller {
 						
 		
 		});
-		jQuery("#carrousel").jcoverflip("current", 0);
+		jQuery("#carrousel").jcoverflip("current",'.(round(count($groups)/2)+6).');
 
 		');
 	}
