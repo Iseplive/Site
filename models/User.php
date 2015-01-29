@@ -168,6 +168,10 @@ class User_Model extends Model {
 		// City
 		if(isset($data['city']))
 			$user_data['city'] = $data['city'];
+
+        // Quote
+        if(isset($data['quote']))
+            $user_data['quote'] = $data['quote'];
 		
 		// Cellphone
 		if(isset($data['cellphone'])){

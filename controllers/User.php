@@ -52,7 +52,8 @@ class User_Controller extends Controller {
 		// Saving data
 		if(isset($_POST['mail']) && isset($_POST['msn']) && isset($_POST['jabber'])
 		&& isset($_POST['address']) && isset($_POST['zipcode']) && isset($_POST['city'])
-		&& isset($_POST['cellphone']) && isset($_POST['phone']) && isset($_POST['birthday'])){
+		&& isset($_POST['cellphone']) && isset($_POST['phone']) && isset($_POST['birthday'])
+        && isset($_POST['quote'])){
 			
 			try {
 				
@@ -66,7 +67,8 @@ class User_Controller extends Controller {
 					'city'		=> $_POST['city'],
 					'cellphone'	=> $_POST['cellphone'],
 					'phone'		=> $_POST['phone'],
-					'birthday'	=> $_POST['birthday']
+					'birthday'	=> $_POST['birthday'],
+                    'quote'     => $_POST['quote']
 				);
 				
 				$this->model->save((int) User_Model::$auth_data['id'], $data);

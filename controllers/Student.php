@@ -146,7 +146,7 @@ class Student_Controller extends Controller {
 		&& isset($_POST['address']) && isset($_POST['zipcode']) && isset($_POST['city'])
 		&& isset($_POST['cellphone']) && isset($_POST['phone']) && isset($_POST['birthday'])
 		&& isset($_POST['firstname']) && isset($_POST['lastname']) && isset($_POST['student_number'])
-		&& isset($_POST['promo'])){
+		&& isset($_POST['promo']) && isset($_POST['quote'])){
 			
 			$uploaded_files = array();
 			try {
@@ -161,7 +161,8 @@ class Student_Controller extends Controller {
 					'city'		=> $_POST['city'],
 					'cellphone'	=> $_POST['cellphone'],
 					'phone'		=> $_POST['phone'],
-					'birthday'	=> $_POST['birthday']
+					'birthday'	=> $_POST['birthday'],
+                    'quote'     => $_POST["quote"]
 				);
 				$student_data = array(
 					'firstname'			=> $_POST['firstname'],

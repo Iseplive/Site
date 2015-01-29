@@ -66,7 +66,16 @@ class Group_Model extends Model {
 			$group['avatar_url'] = self::getAvatarURL((int) $group['id'], true);
 			$group['avatar_big_url'] = self::getAvatarURL((int) $group['id']);
 		}
-		
+
+        $realGroups = array();
+        foreach($groups as $k=>$v) {
+            if (htmlspecialchars($v['name'])=="ISEPLive") {
+                array_unshift($realGroups,$v);
+            } else {
+                array_push($realGroups,$v);
+            }
+        }
+
 		Cache::write('groups', $groups, 12*3600);
 		
 		return $groups;
