@@ -345,7 +345,7 @@ final class Routes extends RoutesAbstract {
 		),
 
         'api_login' => array(
-            'regexp'    => '^api/login$',
+            'regexp'    => '^api/login(?=\?|$)',
             'vars'		=> 'controller=Api&action=login',
             'url'       => 'api/login'
         ),
