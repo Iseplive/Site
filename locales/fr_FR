@@ -1,0 +1,763 @@
+
+### Controller: Layout
+
+# View: index.php
+NAV_PUBLICATIONS
+	Publications
+NAV_MEDIA
+	Média
+NAV_ADMIN
+	Administration
+NAV_GROUPS
+	Associations
+NAV_DIRECTORY
+	Annuaire
+NAV_PROFILE
+	Mon profil
+NAV_LOGOUT
+	Déconnexion
+NAV_SIGNIN
+	Connexion
+LAYOUT_SEARCH_FIELD
+	Rechercher
+NAV_ISEP_OR
+	ISEP d'OR
+
+### Controller: Page
+
+# View: error404
+PAGE_ERROR404_TITLE
+	Erreur 404
+PAGE_ERROR404_MESSAGE
+	Page introuvable !
+
+# View: error
+PAGE_ERROR_TITLE
+	Erreur
+PAGE_ERROR_MESSAGE
+	Une erreur est survenue, l'équipe de développement en a été avertie.<br />
+	Merci de bien vouloir revenir plus tard.
+
+
+### Controller: Post
+
+# View: index / view
+POST_TITLE_OFFICIAL
+	Publications des associations
+POST_TITLE_NONOFFICIAL
+	Publications des élèves
+POST_TITLE_DISLIKE
+	Activer le "j'aime pas"
+POST_CATEGORIES
+	Catégories
+POST_CATEGORIES_ALL
+	Toutes
+POST_DELETE_CONFIRM
+	Êtes-vous sûr de vouloir supprimer ce message ?
+POST_COMMENT_SHOW_ALL
+	Afficher les {nb} commentaires
+POST_COMMENT_LINK
+	Commenter
+POST_COMMENT_PLACEHOLDER
+	Rédiger un commentaire...
+POST_COMMENT_SUBMIT
+	Commenter
+POST_COMMENT_DELETE_CONFIRM
+	Êtes-vous sûr de vouloir supprimer ce commentaire ?
+POST_LIKE_LINK
+	J’aime
+POST_UNLIKE_LINK
+	Je n’aime plus
+POST_LIKE_USER
+	Vous
+POST_LIKE_LASTSEP
+        et 
+POST_LIKE_SEPARATOR
+        ,
+POST_LIKE_END_THIS
+        ça.
+POST_LIKE_END_LIKE
+        aime
+POST_LIKE_CONJ[]
+        z
+POST_LIKE_CONJ[]
+        nt
+POST_LIKE_PLURAL_CONJ
+        s
+POST_LIKE_OTHER_PLURAL
+        personnes
+POST_LIKE_OTHER_SING
+        une personne
+POST_LIKE_STRING
+        personne
+POST_DISLIKE_LINK
+	Je mange une pomme
+POST_UNDISLIKE_LINK
+	J'arrête de manger
+POST_DISLIKE_USER
+	Vous
+POST_DISLIKE_LASTSEP
+        et 
+POST_DISLIKE_SEPARATOR
+        ,
+POST_DISLIKE_END_THIS
+        une pomme.
+POST_DISLIKE_END_DISLIKE
+        mange
+POST_DISLIKE_CONJ[]
+        z
+POST_DISLIKE_CONJ[]
+        nt
+POST_DISLIKE_PLURAL_CONJ
+        s
+POST_DISLIKE_OTHER_PLURAL
+        personnes
+POST_DISLIKE_OTHER_SING
+        une personne
+POST_DISLIKE_STRING
+        personne
+POST_PRIVATE
+	Visible uniquement par les élèves
+POST_SHOW_MORE
+	Publications plus anciennes...
+POST_LINK_PHOTOS
+	Voir les {nb} photos
+POST_PHOTO_PREV
+	« Précédente
+POST_PHOTO_NEXT
+	Suivante »
+POST_PHOTOS_ALBUM
+	Voir l'album
+POST_SURVEY_ENDING_DATE
+	Date de fin :
+POST_SURVEY_NB_VOTES
+	({votes} votes)
+POST_SURVEY_SUBMIT
+	Voter
+POST_SURVEY_SHOW_VOTE
+	Voter
+POST_SURVEY_SHOW_RESULTS
+	Voir les résultats
+
+CALENDAR_PREV_MONTH
+	«
+CALENDAR_NEXT_MONTH
+	»
+CALENDAR_ICAL_OFFICIAL
+	iCal officiel
+CALENDAR_ICAL_NON_OFFICIAL
+	iCal élèves
+
+POST_SPONSOR_TITLE
+	Sponsor officiel
+POST_USEFUL_LINKS
+	Liens utiles
+
+# View: events
+EVENTS_TITLE_OFFICIAL
+	Événements des associations
+EVENTS_TITLE_NONOFFICIAL
+	Événements des élèves
+
+
+# View: iframe_add
+POST_ADD_ERROR_SESSION_EXPIRED
+	Votre session semble avoir expiré, merci de bien vouloir vous reconnecter !
+POST_ADD_ERROR_NO_MESSAGE
+	Vous devez écrire un message !
+POST_ADD_ERROR_NO_CATEGORY
+	Vous devez choisir une catégorie !
+POST_ADD_ERROR_OFFICIAL
+	Vous ne pouvez pas poster une message officiel dans cette association !
+POST_ADD_ERROR_GROUP_NOT_FOUND
+	Association introuvable !
+POST_ADD_ERROR_PRIVATE
+	Vous n'avez pas l'autorisation de poster un message privé !
+POST_ADD_ERROR_PHOTO_SIZE
+	Une photo envoyée ne doit pas excéder {size} !
+POST_ADD_ERROR_PHOTO_FORMAT
+	Format de photo non supporté ! Les formats supportés sont : jpg, png, gif
+POST_ADD_ERROR_VIDEO_SIZE
+	Une vidéo envoyée ne doit pas excéder {size} !
+POST_ADD_ERROR_VIDEO_FORMAT
+	Format de vidéo non supporté ! Les formats supportés sont : avi ou mp4
+POST_ADD_ERROR_VIDEO_CONVERT
+	Erreur lors du traitement de la vidéo
+POST_ADD_ERROR_AUDIO_SIZE
+	Un fichier mp3 envoyé ne doit pas excéder {size} !
+POST_ADD_ERROR_AUDIO_FORMAT
+	Format audio non supporté ! Les formats supportés sont : mp3
+POST_ADD_ERROR_FILE_SIZE
+	Un fichier envoyé ne doit pas excéder {size} !
+POST_ADD_ERROR_FILE_FORMAT
+	Format de document non supporté !
+POST_ADD_ERROR_FILE_FORMAT2
+	Pour envoyer une photo, une vidéo, ou une musique, merci d'utiliser le type d'envoi approprié !
+POST_ADD_ERROR_EVENT_NO_TITLE
+	Vous devez entrer un titre pour l'événement !
+POST_ADD_ERROR_EVENT_DATE
+	Les dates de début et de fin de l'événement doivent être de la forme : dd/mm/yyyy à hh:ss
+POST_ADD_ERROR_EVENT_DATE_ORDER
+	La date de fin doit être ultérieure à la date de début...
+POST_ADD_ERROR_SURVEY_NO_QUESTION
+	Vous devez entrer une question pour le sondage !
+POST_ADD_ERROR_SURVEY_DATE
+	La date de fin du sondage doit être de la forme : dd/mm/yyyy à hh:ss
+POST_ADD_ERROR_SURVEY_ANSWERS
+	Le sondage doit comporter au moins 2 questions !
+
+
+### Controller: Student
+
+# View: index
+STUDENTS_TITLE
+	Annuaire des élèves
+STUDENTS_PROMO1
+	Promo {year} (Sup)
+STUDENTS_PROMO2
+	Promo {year} (Spe)
+STUDENTS_PROMO3
+	Promo {year} (A1)
+STUDENTS_PROMO4
+	Promo {year} (A2)
+STUDENTS_PROMO5
+	Promo {year} (A3)
+STUDENTS_PROMO
+	Promo 
+
+# View: view
+PROFILE_PROMO
+	Promo :
+PROFILE_CESURE
+	(césure)
+PROFILE_STUDENT_NUMBER
+	Numéro :
+PROFILE_MAIL_ISEP
+	Adresse ISEP :
+PROFILE_MAIL
+	Adresse email :
+PROFILE_MSN
+	Adresse MSN :
+PROFILE_JABBER
+	Adresse Jabber :
+PROFILE_ADDRESS
+	Adresse postale :
+PROFILE_PHONE
+	Tél :
+PROFILE_BIRTHDAY
+	Date de naissance :
+PROFILE_BIRTHDAY_FORMAT
+	d/m/Y
+PROFILE_GROUPS
+	Associations :
+PROFILE_EDIT_PROFILE
+	Modifier mes informations personnelles
+PROFILE_EDIT
+	Éditer
+PROFILE_POSTS
+	Publications
+
+
+# View: edit
+STUDENT_EDIT_TITLE
+	Édition de l'utilisateur "{username}"
+STUDENT_EDIT_FORM_AVATAR
+	Photo :
+STUDENT_EDIT_ERROR_AVATAR
+	La photo ne doit pas excéder {size} et doit être au format jpg, png, ou gif
+STUDENT_EDIT_FORM_FIRSTNAME
+	Prénom :
+STUDENT_EDIT_ERROR_FIRSTNAME
+	Prénom invalide
+STUDENT_EDIT_FORM_LASTNAME
+	Nom :
+STUDENT_EDIT_ERROR_LASTNAME
+	Nom invalide
+STUDENT_EDIT_FORM_STUDENT_NUMBER
+	Numéro d'étudiant :
+STUDENT_EDIT_ERROR_STUDENT_NUMBER
+	Numéro d'étudiant invalide
+STUDENT_EDIT_FORM_PROMO
+	Promo (année) :
+STUDENT_EDIT_ERROR_PROMO
+	Année de promo invalide
+STUDENT_EDIT_FORM_CESURE
+	césure
+
+
+### Controller: User
+
+# View: signin
+SIGNIN_TITLE
+	Connexion
+SIGNIN_USERNAME
+	Login ISEP
+SIGNIN_PASSWORD
+	Mot de passe
+SIGNIN_SUBMIT
+	Connexion
+SIGNIN_BAD_USERNAME_OR_PASSWORD
+	Nom d'utilisateur ou mot de passe incorrect
+
+# View: profile_edit
+USER_EDIT_TITLE
+	Modification des informations personnelles
+USER_EDIT_FORM_MAIL
+	Adresse email :
+USER_EDIT_ERROR_MAIL
+	Adresse email invalide
+USER_EDIT_FORM_MSN
+	Adresse MSN :
+USER_EDIT_ERROR_MSN
+	Adresse MSN invalide
+USER_EDIT_FORM_JABBER
+	Adresse Jabber :
+USER_EDIT_ERROR_JABBER
+	Adresse Jabber invalide
+USER_EDIT_FORM_ADDRESS
+	Adresse postale
+USER_EDIT_FORM_ZIPCODE
+	Code postal
+USER_EDIT_ERROR_ZIPCODE
+	Code postal invalide
+USER_EDIT_FORM_CITY
+	Ville
+USER_EDIT_FORM_CELLPHONE
+	Tél portable :
+USER_EDIT_ERROR_CELLPHONE
+	Numéro invalide. Veuillez entrez un numéro de la forme 06 01 23 45 67
+USER_EDIT_FORM_PHONE
+	Tél fixe :
+USER_EDIT_ERROR_PHONE
+	Numéro invalide. Veuillez entrez un numéro de la forme 01 23 45 67 89
+USER_EDIT_FORM_BIRTHDAY
+	Date de naissance :
+USER_EDIT_FORM_BIRTHDAY_FORMAT
+	d/m/Y
+USER_EDIT_FORM_QUOTE
+	Ma citation
+USER_EDIT_FORM_BIRTHDAY_FORMAT_PARSE
+	%d/%m/%Y
+USER_EDIT_ERROR_BIRTHDAY
+	Date de naissance invalide
+USER_EDIT_FORM_AVATAR
+	Photo :
+USER_EDIT_ERROR_AVATAR
+	La photo ne doit pas excéder {size} et doit être au format jpg, png, ou gif
+USER_EDIT_FORM_SUBMIT
+	Enregistrer
+
+
+### Controller: Group
+
+# View: index
+GROUPS_TITLE
+	Associations
+GROUP_ADD
+	Ajouter une association
+
+# View: view
+GROUP_TITLE
+	Association {group}
+GROUP_CREATION
+	Date de création :
+GROUP_CONTACT
+	Email :
+GROUP_MEMBERS
+	Membres :
+GROUP_EDIT
+	Éditer
+GROUP_DELETE
+	Supprimer
+GROUP_DELETE_CONFIRM
+	Êtes-vous sûr de vouloir supprimer cette association ?
+	Les messages associés ne seront pas supprimés.
+GROUP_POSTS
+	Publications
+
+# View: edit
+GROUP_EDIT_TITLE
+	Édition de l'association "{group}"
+GROUP_EDIT_FORM_NAME
+	Nom :
+GROUP_EDIT_FORM_CREATION_DATE
+	Date de création :
+GROUP_EDIT_FORM_CREATION_DATE_FORMAT
+	d/m/Y
+GROUP_EDIT_FORM_CREATION_DATE_FORMAT_PARSE
+	%d/%m/%Y
+GROUP_EDIT_FORM_CONTACT
+	Email :
+GROUP_EDIT_FORM_DESCRIPTION
+	Description :
+GROUP_EDIT_FORM_AVATAR
+	Photo :
+GROUP_EDIT_FORM_MEMBER_TITLE
+	Fonction :
+GROUP_EDIT_FORM_MEMBER_ADMIN
+	Administrateur
+GROUP_EDIT_FORM_ADD_MEMBER
+	Ajouter un membre :
+GROUP_EDIT_FORM_SUBMIT
+	Enregistrer
+GROUP_EDIT_ERROR_INVALID_NAME
+	Nom de l'association invalide
+GROUP_EDIT_ERROR_INVALID_CREATION_DATE
+	Date de création invalide
+GROUP_EDIT_ERROR_INVALID_MAIL
+	Adresse email invalide
+GROUP_EDIT_ERROR_AVATAR
+	La photo ne doit pas excéder {size} et doit être au format jpg, png, ou gif
+
+# View: add
+GROUP_ADD_TITLE
+	Ajout d'une association
+
+# View: delete
+GROUP_DELETE_TITLE
+	Suppression d'une association
+GROUP_DELETE_OK
+	Association "{group}" supprimée avec succès !
+
+
+### Controller: Search
+
+# View: index
+SEARCH_TITLE
+	Recherche de "{query}"
+SEARCH_POSTS
+	Publications
+SEARCH_GROUPS
+	Associations
+SEARCH_STUDENTS
+	Élèves
+
+# View: autocomplete
+SEARCH_AUTOCOMPLETE_SUBMIT
+	Rechercher "{query}"
+
+
+### Common views
+
+# View: publish.php
+PUBLISH_TITLE
+	Publier :
+PUBLISH_DEFAULT_MESSAGE
+	Écrivez votre message ici...
+PUBLISH_ATTACHMENTS
+	Joindre :
+PUBLISH_CATEGORY
+	Catégorie :
+PUBLISH_GROUP
+	Association :
+PUBLISH_GROUP_NONE
+	-- Aucune --
+PUBLISH_GROUP_OFFICIAL
+	Officiel
+PUBLISH_PRIVATE
+	Visible uniquement par les élèves
+PUBLISH_SUBMIT
+	Envoyer
+PUBLISH_ATTACHMENT_PHOTO
+	Photo
+PUBLISH_ATTACHMENT_PHOTO_INFO
+	Taille maximum par photo : {size}
+PUBLISH_ATTACHMENT_VIDEO
+	Vidéo
+PUBLISH_ATTACHMENT_VIDEO_INFO
+	Taille maximum par vidéo : {size}
+PUBLISH_ATTACHMENT_AUDIO
+	Son / musique
+PUBLISH_ATTACHMENT_AUDIO_INFO
+	Taille maximum par mp3 : {size}
+PUBLISH_ATTACHMENT_FILE
+	Document
+PUBLISH_ATTACHMENT_FILE_INFO
+	Taille maximum par document : {size}
+PUBLISH_ATTACHMENT_EVENT
+	Événement
+PUBLISH_ATTACHMENT_SEND
+	Envoyer :
+PUBLISH_EVENT_TITLE
+	Titre :
+PUBLISH_EVENT_START
+	Date de début :
+PUBLISH_EVENT_END
+	Date de fin :
+PUBLISH_EVENT_DATE_FORMAT
+	%d/%m/%Y à %H:%M
+PUBLISH_ATTACHMENT_SURVEY
+	Sondage
+PUBLISH_SURVEY_QUESTION
+	Question :
+PUBLISH_SURVEY_END
+	Date de fin :
+PUBLISH_SURVEY_DATE_FORMAT
+	%d/%m/%Y à %H:%M
+PUBLISH_SURVEY_ANSWERS
+	Réponses possibles :
+PUBLISH_SURVEY_ADD_ANSWER
+	Ajouter une réponse
+PUBLISH_SURVEY_MULTIPLE
+	Plusieurs réponses possibles
+
+
+### Common phrases
+
+WEEK_FIRST_DAY	# 0 = sunday, 1 = monday, ...
+	1
+
+DAYS[]
+	Dimanche
+DAYS[]
+	Lundi
+DAYS[]
+	Mardi
+DAYS[]
+	Mercredi
+DAYS[]
+	Jeudi
+DAYS[]
+	Vendredi
+DAYS[]
+	Samedi
+
+MONTHS[]
+	Janvier
+MONTHS[]
+	Février
+MONTHS[]
+	Mars
+MONTHS[]
+	Avril
+MONTHS[]
+	Mai
+MONTHS[]
+	Juin
+MONTHS[]
+	Juillet
+MONTHS[]
+	Août
+MONTHS[]
+	Septembre
+MONTHS[]
+	Octobre
+MONTHS[]
+	Novembre
+MONTHS[]
+	Décembre
+
+DATE_NUMBER_SUFFIX_DEFAULT	# In english : th
+	
+DATE_NUMBER_SUFFIX_ONE		# In english : st
+	er
+DATE_NUMBER_SUFFIX_FIRST	# In english : st
+	
+DATE_NUMBER_SUFFIX_SECOND	# In english : nd
+	
+DATE_NUMBER_SUFFIX_THIRD	# In english : rd
+	
+
+DATE_RECENT
+	Il y a {interval}
+DATE_YEAR
+	an
+DATE_YEARS
+	ans
+DATE_MONTH
+	mois
+DATE_MONTHS
+	mois
+DATE_DAY
+	jour
+DATE_DAYS
+	jours
+DATE_HOUR
+	heure
+DATE_HOURS
+	heures
+DATE_MINUTE
+	min
+DATE_MINUTES
+	min
+DATE_SECOND
+	s
+DATE_SECONDS
+	s
+DATE_INTERVAL_SEPARATOR
+	,
+DATE_INTERVAL_SEPARATOR_LAST
+	, et
+
+DATE_YESTERDAY
+	Hier à {hour}:{min}
+DATE_FULL
+	{day} {date} {month} à {hour}:{min}
+DATE_FULL_WITH_YEAR
+	{day} {date} {month} {year} à {hour}:{min}
+DATE_MONTH_WITHOUT_YEAR
+	{day} {date} {month}
+DATE_MONTH_WITH_YEAR
+	{day} {date} {month} {year}
+DATE_EVENT_TYPE1
+	{day} {date} {month} {year}, de {hour1}:{min1} à {hour2}:{min2}
+DATE_EVENT_TYPE2
+	Du {day1} {date1} {month1} {year1} à {hour1}:{min1} au {day2} {date2} {month2} {year2} à {hour2}:{min2}
+
+#Extra : ISEP D'OR
+ISEPOR_TITLE
+        Les ISEP d'OR ! Votez pour vos personnalités préférées !
+ISEPOR_ERROR_AUTOCOMPLETE
+        Erreur, Ce champ doit être autocompleté.
+ISEPOR_ERROR_NOT_EXIST
+        Erreur, votre recherche n'a pas abouti.
+ISEPOR_ERROR_EMPTY
+        Erreur, ce champ n'est pas valide.
+ISEPOR_VOTE_OK
+        Merci, votre vote à bien été enregistré !
+ISEPOR_TEXT
+        Cette année encore, les ISEP d'OR vont vous permettre de faire entendre votre voix. Vous pensez que votre meilleur pote est un mec en or ? Que votre voisine est une vraie catin ? Alors n'hésitez pas et élisez ceux qui ont, pour vous, marqué cette année !
+ISEPOR_TITLE_RESULTS
+    Les résultats des ISEP d'OR !
+ISEPOR_VOTES_RESULTS
+	{perc} % ({votes} votes)
+ISEPOR_EXTRA_SEPARATEUR
+    SURPRISE !
+ISEPOR_TEXT_EXTRA
+    Comme dirait DSK à sa femme de ménage : tu en veux encore ?<br />
+    Le deuxième tour vous propose une nouvelle fois d'exprimer votre opinion. Validez vos choix et relancez-vous dans les nominations bonus !
+
+#Media
+MEDIA_VIDEO
+	Vidéo
+MEDIA_PHOTOS
+	Photos
+MEDIA_JOURNAUX
+	Journaux
+MEDIA_PODCAST
+	Podcast
+	
+#Page d'administration
+ADMIN_HELP
+	Pour actualiser la liste des élèves, veuillez faire un zip contenant deux fichiers csv et un dossier contenant les photos des élèves. <br/>
+	Les fichiers csv devront se nommer users.csv et students.csv en référence aux tables concernées.<br/>
+	Le dossier de photos devra se nommer photos_students et chaque photo devra être nommée en fonction du numero d'élève.<br/>
+	Veuillez consulter le screenshot ci-dessous pour le remplissage des fichiers csv qui seront générés via excel, les éléments de style sont à exclure, seule la partie rose est à conserver.<br/>
+ADMIN_UPDATE
+	Utilisateurs
+ADMIN_ANNUAIRE
+	Générer l'annuaire
+ADMIN_ISEPDOR
+	ISEP D'or
+ADMIN_BDE
+	BDE
+ADMIN_ENVOYER
+	Envoyer
+ADMIN_ADMINISTRATEUR
+	Administrateurs
+ADMIN_DELETE_CONFIRM
+	Êtes-vous sur de vouloir supprimer cet administrateur.
+ADD_ATTACHMENT_PHOTO
+	Ajouter des photos
+ADMIN_RECONFIRM
+	Confirmation du compte
+ADMIN_TXTENVOIE
+	Fichier xml:
+ADMIN_TEMPLATE_USERS
+	Template pour la table users
+ADMIN_TEMPLATE_STUDENTS
+	Template pour la table students
+ADMIN_USERS_TABLE
+	Table Users
+ADMIN_STUDENTS_TABLE
+	Table Students
+ADMIN_UPLOAD_ERROR
+	Le fichier n'a pas été uploadé vers le serveur
+ADMIN_UPLOAD_ERROR2
+	Le fichier xml ne contient pas les informations necéssaires
+ADMIN_ERROR_EXIST
+	Les étudiants suivant n'ont pas été ajouté car ils existent déjà!
+ADMIN_ERROR_AVATAR
+	Les photos suivantes n'ont put être ajouté!
+ADMIN_LOGOBDE
+	Logo header
+ADMIN_CHANGE_LOGOBDE
+	Changer le logo Bde
+ADMIN_POSITION
+	Position
+ADMIN_QUESTIONS
+	Questions
+ADMIN_PARAM
+	Paramètres
+ADMIN_ELEVES
+	Elèves
+ADMIN_ASSOC
+	Association
+ADMIN_EVENT
+	Evènement
+ADMIN_ID
+	ID
+ADMIN_EMPLOYEES
+	Employés
+ADMIN_ENVOYER
+	Envoyer
+ADMIN_ISEPDOR_SOIREE
+	soirée
+ADMIN_ISEPDOR_EMPTY_QUESTION
+	Le contenu d'une ou plusieurs question(s) est vide
+ADMIN_ISEPDOR_EMPTYORDER_QUESTION
+	Une questions n'a pas été sélectionné pour le reordonnement: 
+ADMIN_ISEPDOR_ADDROW
+	Ajouter une ligne
+ADMIN_ISEPDOR_DELROW
+	Supprimer une ligne
+ADMIN_ISEPDOR_SAVEORDER
+	Enregistrer (ordre tableau de droite)
+ADMIN_ISEPDOR_SAVENOORDER
+	Enregistrer (ordre tableau de gauche)
+ADMIN_ISEPDOR_USERNAME
+	Username
+ADMIN_ISEPDOR_FIRSTNAME
+	Prénom
+ADMIN_ISEPDOR_LASTNAME
+	Nom
+ADMIN_ISEPDOR_BORN
+	Date de naissance
+ADMIN_ISEPDOR_GETDIPLOME
+	Générer les diplomes
+ADMIN_ISEPDOR_NAV1
+	Table questions
+ADMIN_ISEPDOR_NAV2
+	Table évènements
+ADMIN_ISEPDOR_NAV3
+	Table employées
+ADMIN_ISEPDOR_NAV4
+	Administration
+ADMIN_CONFIRM_DELETE
+	Êtes-vous sur de vouloir supprimer cet élément.
+ADMIN_ISEPDOR_DELETERESULTS
+	Êtes-vous sur de vouloir supprimer tout les résultats.
+ADMIN_ISEPDOR_EXPORT
+	Voir les réponses des utilisateurs
+ADMIN_CHANGE_FONT
+	Changer la police
+ADMIN_POST_PHOTO
+	Gestion des photos
+ADMIN_ISEPDOR_FIRST
+	Premier tour
+ADMIN_ISEPDOR_SECOND
+	Second tour
+ADMIN_ISEPDOR_THIRD
+	Résultats
+ADMIN_ISEPDOR_ERRORDATE
+	Les dates sont contradictoires
+ADMIN_CHANGE_DIPLOME
+	Changer l'image du diplome (1122x794)
+ADMIN_ISEPDOR_TOLARGE
+	La taille de l'image doit être de 1122px par 794px
+ADMIN_ISEPDOR_DIPLOME
+	Diplome ISEP D'Or
+ADMIN_ISEPDOR_GESTION
+	Gestion de l'évènement
+ADMIN_ISEPDOR_RESET
+	Réinitialiser les résultats
