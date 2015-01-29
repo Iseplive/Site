@@ -343,7 +343,12 @@ final class Routes extends RoutesAbstract {
 			'vars'		=> 'controller=User&action=logout&redirect=$1',
 			'url'		=> 'logout{redirect}'
 		),
-		
+
+        'api_login' => array(
+            'regexp'    => '^api/login$',
+            'vars'		=> 'controller=Api&action=login',
+            'url'       => 'api/login'
+        ),
 		// Search and Auto completion
 		'search'	=> array(
 			'regexp'	=> '^search(?=\?|$)',
