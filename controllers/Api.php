@@ -3,6 +3,7 @@
 class Api extends Controller {
 
     public function login() {
+        $this->setView('baseApi.php');
         $errors = "";
         $connected = false;
         if(isset($_POST['username']) && isset($_POST['password'])) {
