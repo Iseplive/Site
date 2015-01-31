@@ -3,7 +3,7 @@
 class Api_Controller extends Controller {
 
     public function login() {
-        $this->setView('baseApi.php');
+        //$this->setView('baseApi.php');
         $errors = "";
         $connected = false;
         if(isset($_POST['username']) && isset($_POST['password'])) {
@@ -27,7 +27,7 @@ class Api_Controller extends Controller {
             $errors = 'Please enter an username and a password';
         }
 
-        return json_encode(array('errors' => $errors, 'connected' => $connected));
+        echo json_encode(array('errors' => $errors, 'connected' => $connected));
     }
 
 }
