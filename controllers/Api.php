@@ -1,6 +1,6 @@
 <?php
 
-class Api extends Controller {
+class Api_Controller extends Controller {
 
     public function login() {
         $this->setView('baseApi.php');
