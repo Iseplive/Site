@@ -5,17 +5,20 @@ class Api_Controller extends Controller {
     public function login() {
         $this->setView('baseApi.php');
         $errors = "";
-        $connected = false;
+        $connected = "false";
         if(isset($_POST['username']) && isset($_POST['password'])) {
             $username = $_POST['username'];
             $password = $_POST['password'];
+
+            $mcrypt = new MCrypt();
+            $password = $mcrypt->decrypt($password);
 
             $user_model = new User_Model();
             try {
                 if(!preg_match('#^[a-z0-9-]+$#', $username))
                     $errors = 'Invalid username';
                 if($user_model->authenticate($username, $password)){
-                    $connected = true;
+                    $connected = "true";
                 }else{
                     $errors = 'Bad username or password';
                 }
