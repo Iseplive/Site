@@ -101,36 +101,35 @@ if (isset($post['avatar_url'])) {
         $post['attachments'] = array();
     $nb_photos = 0;
 ?>
-"images":[
+"attachments":[
 <?php
     foreach ($post['attachments'] as $attachment) {
-    switch ($attachment['ext']) {
-    // Photo
-    // see: http://flash-mp3-player.net/players/maxi/
-    case 'jpg':
-    case 'gif':
-    case 'png':
-    if ($nb_photos == 0) {
+        switch ($attachment['ext']) {
+            // Photo
+            // see: http://flash-mp3-player.net/players/maxi/
+            case 'jpg':
+            case 'gif':
+            case 'png':
+                if ($nb_photos == 0) {
 
-        ?>
+                    ?>
 
 
-        <?php
-        }
-        ?>
-        <?php if($classhidden==""){?><?php }?>
-            {"image":"<?php echo $attachment['thumb']; ?>"}<?php if ($nb_photos+1!=count($post['attachments'])) {?>,<?php} ?>
-        <?php
-        $nb_photos++;
-        if (!isset($one_post) && $nb_photos == Config::PHOTOS_PER_POST && Config::PHOTOS_PER_POST < $post['attachments_nb_photos']) {
-        ?>
-    <?php
-    } else if ($nb_photos == $post['attachments_nb_photos']) {
-    ?>
-<?php
-}
-break;
-
+                <?php
+                }
+                ?>
+                <?php if ($classhidden == "") { ?><?php } ?>
+                {"image":"<?php echo $attachment['thumb']; ?>"}<?php if ($nb_photos + 1 != count($post['attachments'])) { ?>,<?php } ?>
+                <?php
+                $nb_photos++;
+                if (!isset($one_post) && $nb_photos == Config::PHOTOS_PER_POST && Config::PHOTOS_PER_POST < $post['attachments_nb_photos']) {
+                    ?>
+                <?php
+                } else if ($nb_photos == $post['attachments_nb_photos']) {
+                    ?>
+                <?php
+                }
+                break;
 
 
 
@@ -169,7 +168,7 @@ default:
 }
 }
 ?>
-
+],
 "comments":[
     <?php
     if (!isset($post['comments']) || !$is_logged)
