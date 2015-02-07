@@ -7,7 +7,7 @@ if (isset($posts)) {
     if (isset($official_posts)) {
         $posted = array_merge($posts,$official_posts);
         usort($posted, function($a, $b) {
-            return $a['id'] - $b['id'];
+            return $b['id'] - $a['id'];
         });
         echo json_encode($posted);
     } else {
