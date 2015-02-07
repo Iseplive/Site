@@ -169,5 +169,7 @@ foreach ($post['comments'] as $comment) {
     "realname":"<?php echo htmlspecialchars($comment['firstname'] . ' ' . $comment['lastname']); ?>",
     "message":"<?php echo Text::inHTML($comment['message']); ?>"}
     <?php if ($n!=$nb_comments) {?>,<?php} ?>
-<?php } ?>
+<?php }
+debug_backtrace();
+?>
 ]}
