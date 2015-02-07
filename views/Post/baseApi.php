@@ -1,5 +1,5 @@
 <?php
-$posted = array_merge($posts,$official_posts);
+//$posted = array_merge($posts,$official_posts);
 /*usort($posted, function($a, $b) {
     return $a['id'] - $b['id'];
 });*/
