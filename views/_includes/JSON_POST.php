@@ -199,9 +199,5 @@ default:
                 "realname":"<?php echo htmlspecialchars($comment['firstname'] . ' ' . $comment['lastname']); ?>",
                 "message":"<?php echo Text::inHTML($comment['message']); ?>"}
         <?php if ($n!=count($post['comments'])) {?>,<?php} ?>
-    <?php }
-    // Dans le cas ou il est Etudiant, alors on affiche le champs de reponse.
-    if ($is_student) {
-        ?>
-
     <?php } ?>
+    ]
