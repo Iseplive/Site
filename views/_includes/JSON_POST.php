@@ -200,4 +200,4 @@ default:
                 "message":"<?php echo Text::inHTML($comment['message']); ?>"}
         <?php if ($n!=count($post['comments'])) {?>,<?php} ?>
     <?php } ?>
-    ]
+    ]}
