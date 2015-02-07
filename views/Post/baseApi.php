@@ -1,4 +1,4 @@
-[
+{"posts":[
 <?php
 $ijklmn = 0;
 foreach($posts as $post){
@@ -7,4 +7,4 @@ foreach($posts as $post){
     if ($ijklmn!=count($posts)) {?>,<?php}
 }
 ?>
-]
+]}
