@@ -1,5 +1,5 @@
 <?php
-$posts = array_merge($posts,$events,$official_posts);
+$posts = array_merge($posts,$official_posts);
 usort($posts, function($a, $b) {
     return $a['id'] - $b['id'];
 });
