@@ -1,4 +1,4 @@
-<?php $post = $posts[0];
-print_r($post);
-require dirname(__FILE__).'/../_includes/JSON_POST.php';
+<?php echo json_encode($posts);
+//print_r($post);
+//require dirname(__FILE__).'/../_includes/JSON_POST.php';
 ?>
