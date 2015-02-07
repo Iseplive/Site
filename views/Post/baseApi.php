@@ -5,7 +5,7 @@
 });*/
 if (isset($posts))
     echo json_encode($posts);
-if (isset($errors)) {
+if (isset($errors)&&!empty($errors)) {
     echo json_encode(array("error"=>$errors));
 }
 //print_r($post);
