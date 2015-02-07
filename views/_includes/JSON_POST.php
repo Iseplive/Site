@@ -12,7 +12,7 @@ if (isset($post['group_id']) && $post['official'] == '1') {
 
 if (isset($post['avatar_url'])) {
     ?>
-    "userUrl":"<?php echo $post_user_url; ?>","avatar":"<?php echo $post['avatar_url']; ?>",
+    "avatar":"<?php echo $post['avatar_url']; ?>",
 <?php
 } else {
     ?>
@@ -28,7 +28,6 @@ if (isset($post['avatar_url'])) {
     // Event
     if (isset($post['event'])) {
         ?>
-        "eventUrl":"<?php echo Config::URL_STATIC; ?>images/icons/event.png",
         "eventTitle":"<?php echo htmlspecialchars($post['event']['title']); ?>",
         "eventDate":"<?php echo Date::event(strtotime($post['event']['date_start']), strtotime($post['event']['date_end'])); ?>",
     <?php
@@ -81,7 +80,8 @@ if (isset($post['avatar_url'])) {
                     ?>
                     {"answer":"<?php echo htmlspecialchars($answer['answer']); ?>",
                     "percent":"<?php echo $perc_s; ?>",
-                    "votes":"<?php echo __('POST_SURVEY_NB_VOTES', array('votes' => $answer['nb_votes'])); ?>"}<?php if (count($post['survey']['answers'])==$lm) {?>,<?php}?>
+                    "votes":"<?php echo __('POST_SURVEY_NB_VOTES', array('votes' => $answer['nb_votes'])); ?>"}
+                    <?php if (count($post['survey']['answers'])!=$lm) {?>,<?php}?>
                     <?php
                 }
                 ?>
@@ -137,14 +137,14 @@ if (isset($post['avatar_url'])) {
 // see: http://flv-player.net/players/maxi/
 case 'flv':
     ?>
-    "video":"<?php echo urlencode($attachment['url']); ?>",
+    {"video":"<?php echo urlencode($attachment['url']); ?>"}
     <?php
     break;
 
 case 'mp4':
     ?>
 
-            "video":"<?php echo $attachment['url']; ?>",
+            {"video":"<?php echo $attachment['url']; ?>"}
 
     <?php
     break;
@@ -153,17 +153,14 @@ case 'mp4':
 // Audio
 case 'mp3':
     ?>
-    "mp3":"<?php echo urlencode($attachment['url']); ?>",
+    {"mp3":"<?php echo urlencode($attachment['url']); ?>"}
     <?php
     break;
 
 
 // Document
 default:
-    ?>
-
-            "documents":"<?php echo $attachment['url']; ?>",
-
+    ?>{"documents":"<?php echo $attachment['url']; ?>"}
     <?php
 }
 }
@@ -198,6 +195,6 @@ default:
             "avatar":"<?php echo $comment['avatar_url']; ?>",
                 "realname":"<?php echo htmlspecialchars($comment['firstname'] . ' ' . $comment['lastname']); ?>",
                 "message":"<?php echo Text::inHTML($comment['message']); ?>"}
-        <?php if ($n!=count($post['comments'])) {?>,<?php} ?>
+        <?php if ($n!=$nb_comments) {?>,<?php} ?>
     <?php } ?>
     ]}
