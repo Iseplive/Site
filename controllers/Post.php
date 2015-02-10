@@ -273,6 +273,87 @@ class Post_Controller extends Controller {
 		}
 		
 	}
+
+    public function viewApi($params){
+        $this->setView('viewApi.php');
+
+        $errors = "";
+        $connected = "false";
+        if(isset($_POST['username']) && isset($_POST['password'])) {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+
+            $mcrypt = new MCrypt();
+            $password = $mcrypt->decrypt($password);
+
+            $user_model = new User_Model();
+            try {
+                if(!preg_match('#^[a-z0-9-]+$#', $username))
+                    $errors = 'Invalid username';
+                if($user_model->authenticate($username, $password)){
+                    $connected = "true";
+
+                    $is_logged = isset(User_Model::$auth_data);
+                    $is_student = $is_logged && isset(User_Model::$auth_data['student_number']);
+                    $is_admin = $is_logged && User_Model::$auth_data['admin']=='1';
+
+                    try {
+                        $post = $this->model->getPost((int) $params['id']);
+
+                    }catch(Exception $e){
+                        throw new ActionException('Page', 'error404');
+                    }
+
+                    $this->set(array(
+                        'is_logged'		=> $is_logged,
+                        'is_student'	=> $is_student,
+                        'is_admin'		=> $is_admin,
+                        'groups_auth'	=> $is_logged ? Group_Model::getAuth() : array(),
+                        'post'			=> $post,
+                        'one_post'		=> true
+                    ));
+
+                }else{
+                    $errors = 'Bad username or password';
+                }
+
+            }catch(Exception $e){
+                $errors = 'An exception occurred while logging in';
+            }
+        } else {
+            $errors = 'Please enter an username and a password';
+        }
+
+        $this->set(array(
+            "errors" => $errors,
+            "connected" => $connected
+        ));
+
+        /*
+        if($post['attachments_nb_photos'] != 0){
+            $photos = array();
+            foreach($post['attachments'] as $attachment){
+                if(in_array($attachment['ext'], array('jpg', 'png', 'gif')))
+                    $photos[] = array(
+                        'id'	=> (int) $attachment['id'],
+                        'url'	=> $attachment['url']
+                    );
+                if($post['category_id']==1){
+                    $galleria[] = array(
+                        'thumb'	=> $attachment['thumb'],
+                        'image'	=> $attachment['url'],
+                        'id'	=> (int) $attachment['id'],
+                    );
+                }
+            }
+            $this->addJSCode('Post.photos = '.json_encode($photos).';Post.photoDelete();');
+
+            if($post['category_id']==1){
+                $this->addJSCode('Post.initGalleria('.json_encode($galleria).');');
+            }
+        }*/
+
+    }
 	
 	
 	/*

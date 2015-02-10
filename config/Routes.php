@@ -355,6 +355,13 @@ final class Routes extends RoutesAbstract {
             'vars'		=> 'controller=Post&action=lastsPostsApi&mode=json',
             'url'		=> 'api/posts'
         ),
+
+        'api_post'	=> array(
+            'regexp'	=> '^api/post/([0-9]+)(?=\?|$)',
+            'vars'		=> 'controller=Post&action=viewApi&id=$1&mode=json',
+            'url'		=> 'api/post/{id}'
+        ),
+
 		// Search and Auto completion
 		'search'	=> array(
 			'regexp'	=> '^search(?=\?|$)',
