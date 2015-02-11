@@ -362,6 +362,12 @@ final class Routes extends RoutesAbstract {
             'url'		=> 'api/post/{id}'
         ),
 
+        'api_media'	=> array(
+            'regexp'	=> '^api/media(?=\?|$)',
+            'vars'		=> 'controller=Media&action=api&mode=json',
+            'url'		=> 'api/media'
+        ),
+
 		// Search and Auto completion
 		'search'	=> array(
 			'regexp'	=> '^search(?=\?|$)',
