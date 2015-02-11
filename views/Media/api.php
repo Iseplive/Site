@@ -20,11 +20,14 @@ for($i=0;$i<count($annee);$i++){
                 $spanline=round(count($mediaannee[''.$annee[$i].''])/3);
                 $arrA["category_id"] = $category;
                 $arrA["id"] = $id;
-                $arrA["title"] = $title;
+                $arrA["title"] = $title[0];
             }
         }
     }
-    $arr[$annee[$i]] = $arrA;
+    if (!isset($arr[$annee[$i]])) {
+        $arr[$annee[$i]] = array();
+    }
+    $arr[$annee[$i]][] = $arrA;
     ?>
 
 <?php
