@@ -9,6 +9,7 @@ $arr = array();
 for($i=0;$i<count($annee);$i++){
 
     for($a=0;$a<=count($mediaannee[''.$annee[$i].'']);$a++){
+        $arrA = array();
         if(isset($mediaannee[''.$annee[$i].''][$a]) ){
             $id=$mediaannee[''.$annee[$i].''][$a];
             if(isset($mediamessage[$id]) && isset($categorie[$id])){
@@ -23,7 +24,7 @@ for($i=0;$i<count($annee);$i++){
                 $arrA["title"] = $title[0];
             }
         }
-        $arrA = array();
+
         if (!isset($arr[$annee[$i]])) {
             $arr[$annee[$i]] = array();
         }
