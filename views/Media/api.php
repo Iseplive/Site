@@ -7,7 +7,7 @@ echo json_encode(array("error"=>$errors));
 <?php
 $arr = array();
 for($i=0;$i<count($annee);$i++){
-    $arrA = array();
+
     for($a=0;$a<=count($mediaannee[''.$annee[$i].'']);$a++){
         if(isset($mediaannee[''.$annee[$i].''][$a]) ){
             $id=$mediaannee[''.$annee[$i].''][$a];
@@ -23,11 +23,13 @@ for($i=0;$i<count($annee);$i++){
                 $arrA["title"] = $title[0];
             }
         }
+        $arrA = array();
+        if (!isset($arr[$annee[$i]])) {
+            $arr[$annee[$i]] = array();
+        }
+        $arr[$annee[$i]][] = $arrA;
     }
-    if (!isset($arr[$annee[$i]])) {
-        $arr[$annee[$i]] = array();
-    }
-    $arr[$annee[$i]][] = $arrA;
+
     ?>
 
 <?php
