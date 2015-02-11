@@ -21,7 +21,7 @@ for($i=0;$i<count($annee);$i++){
                 $spanline=round(count($mediaannee[''.$annee[$i].''])/3);
                 $arrA["category_id"] = $category;
                 $arrA["id"] = $id;
-                $arrA["title"] = count($title[0])>0 ? $title[0]: "";
+                $arrA["title"] = count($title[0])>0 ? $title[0]: "Surprise";
             }
         }
 
