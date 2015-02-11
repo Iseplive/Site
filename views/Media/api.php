@@ -28,7 +28,9 @@ for($i=0;$i<count($annee);$i++){
         if (!isset($arr[$annee[$i]])) {
             $arr[$annee[$i]] = array();
         }
-        $arr[$annee[$i]][] = $arrA;
+        if (count($arrA)>0) {
+            $arr[$annee[$i]][] = $arrA;
+        }
     }
 
     ?>
