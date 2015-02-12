@@ -33,6 +33,106 @@ class Student_Controller extends Controller {
 		');
 		
 	}
+
+    public function listApi($params) {
+        $this->setView('listApi.php');
+        $errors = "";
+        $connected = "false";
+        if(isset($_POST['username']) && isset($_POST['password'])) {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+
+            $mcrypt = new MCrypt();
+            $password = $mcrypt->decrypt($password);
+
+            $user_model = new User_Model();
+            try {
+                if(!preg_match('#^[a-z0-9-]+$#', $username))
+                    $errors = 'Invalid username';
+                if($user_model->authenticate($username, $password)){
+                    $connected = "true";
+
+                    $last_promo = ((int) date('Y')) + 5;
+                    if((int) date('m') < 9)
+                        $last_promo -= 1;
+
+                    $students = $this->model->getAllByPromos($last_promo, $last_promo-1, $last_promo-2, $last_promo-3, $last_promo-4);
+
+                    $this->set(array(
+                        'students'		=> $students,
+                        'last_promo'	=> $last_promo
+                    ));
+                }else{
+                    $errors = 'Bad username or password';
+                }
+
+            }catch(Exception $e){
+                $errors = 'An exception occurred while logging in';
+            }
+                    } else {
+                $errors = 'Please enter an username and a password';
+            }
+
+        $this->set(array(
+            "errors" => $errors,
+            "connected" => $connected
+        ));
+    }
+
+    public function viewApi($params) {
+        $this->setView('viewApi.php');
+        $errors = "";
+        $connected = "false";
+        if(isset($_POST['username']) && isset($_POST['password'])) {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+
+            $mcrypt = new MCrypt();
+            $password = $mcrypt->decrypt($password);
+
+            $user_model = new User_Model();
+            try {
+                if(!preg_match('#^[a-z0-9-]+$#', $username))
+                    $errors = 'Invalid username';
+                if($user_model->authenticate($username, $password)){
+                    $connected = "true";
+                    $is_logged = isset(User_Model::$auth_data);
+                    $is_student = $is_logged && isset(User_Model::$auth_data['student_number']);
+                    $is_admin = $is_logged && User_Model::$auth_data['admin']=='1';
+
+                    try {
+
+                        $student = $this->model->getInfo($params['username']);
+
+                        $this->set(array(
+                            'student'		=> $student,
+                            'groups'		=> isset($student['id']) ? Group_Model::getAuth((int) $student['id']) : array(),
+                            'is_owner'		=> User_Model::$auth_data['username'] == $student['username'],
+                            'is_logged'		=> true,
+                            'is_student'	=> $is_student,
+                            'is_admin'		=> $is_admin,
+                            'username'		=> User_Model::$auth_data['username']
+                        ));
+
+                    }catch(Exception $e){
+                        throw new ActionException('Page', 'error404');
+                    }
+                }else{
+                    $errors = 'Bad username or password';
+                }
+
+            }catch(Exception $e){
+                $errors = 'An exception occurred while logging in';
+            }
+        } else {
+            $errors = 'Please enter an username and a password';
+        }
+
+        $this->set(array(
+            "errors" => $errors,
+            "connected" => $connected
+        ));
+    }
 	
 	
 	/**

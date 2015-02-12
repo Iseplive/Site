@@ -368,6 +368,30 @@ final class Routes extends RoutesAbstract {
             'url'		=> 'api/media'
         ),
 
+        'api_student'	=> array(
+            'regexp'	=> '^api/student/([a-z0-9-]+)(?=\?|$)',
+            'vars'		=> 'controller=Student&action=viewApi&username=$1&mode=json',
+            'url'		=> 'api/student/{username}'
+        ),
+
+        'api_students'	=> array(
+            'regexp'	=> '^api/students(?=\?|$)',
+            'vars'		=> 'controller=Student&action=listApi&mode=json',
+            'url'		=> 'api/students'
+        ),
+
+        'api_group'	=> array(
+            'regexp'	=> '^api/association/([a-z0-9-]+)(?=\?|$)',
+            'vars'		=> 'controller=Group&action=viewApi&group=$1&mode=json',
+            'url'		=> 'api/association/{group}'
+        ),
+
+        'api_groups'	=> array(
+            'regexp'	=> '^api/associations(?=\?|$)',
+            'vars'		=> 'controller=Group&action=listApi&mode=json',
+            'url'		=> 'api/associations'
+        ),
+
 		// Search and Auto completion
 		'search'	=> array(
 			'regexp'	=> '^search(?=\?|$)',
