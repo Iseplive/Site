@@ -392,6 +392,18 @@ final class Routes extends RoutesAbstract {
             'url'		=> 'api/associations'
         ),
 
+        'api_register'	=> array(
+            'regexp'	=> '^api/register(?=\?|$)',
+            'vars'		=> 'controller=Api&action=register&mode=json',
+            'url'		=> 'api/register'
+        ),
+
+        'test_gcm'      => array(
+            'regexp'	=> '^test/gcm(?=\?|$)',
+            'vars'		=> 'controller=Api&action=testGCM',
+            'url'		=> 'test/gcm'
+        ),
+
 		// Search and Auto completion
 		'search'	=> array(
 			'regexp'	=> '^search(?=\?|$)',

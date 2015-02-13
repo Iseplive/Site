@@ -33,4 +33,39 @@ class Api_Controller extends Controller {
         echo json_encode(array('errors' => $errors, 'connected' => $connected));
     }
 
+    public function testGCM($params) {
+        $this->setView('sendTest.php');
+
+        $deviceModel = new Devices_Model();
+        echo json_encode($deviceModel->listRegisredDevices());
+
+        if (isset($_POST["message"])) {
+            $apiKey = "AIzaSyBfcJCOBIwjY-7Mnzoh3hPTRurD7_2CgsE";
+
+            $devices = array('YOUR REGISTERED DEVICE ID');
+
+            $gcpm = new GCMPushMessage($apiKey);
+            $gcpm->setDevices($devices);
+            $response = $gcpm->send($_POST["message"], array('title' => $_POST["title"]));
+            echo "sent !";
+        }
+
+    }
+
+    public function register($params) {
+        $this->setView('baseApi.php');
+
+        $deviceModel = new Devices_Model();
+        $result = "error";
+
+        if (isset($_POST["regid"])) {
+            $deviceModel->register($_POST["regid"]);
+            $result = "ok";
+        }
+
+        $arr = array("result"=> $result);
+
+        echo json_encode($arr);
+    }
+
 }
