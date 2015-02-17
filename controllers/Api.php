@@ -37,12 +37,11 @@ class Api_Controller extends Controller {
         $this->setView('sendTest.php');
 
         $deviceModel = new Devices_Model();
-        echo json_encode($deviceModel->listRegisredDevices());
 
         if (isset($_POST["message"])) {
             $apiKey = "AIzaSyBfcJCOBIwjY-7Mnzoh3hPTRurD7_2CgsE";
 
-            $devices = array('YOUR REGISTERED DEVICE ID');
+            $devices = $deviceModel->listRegisredDevices();
 
             $gcpm = new GCMPushMessage($apiKey);
             $gcpm->setDevices($devices);
