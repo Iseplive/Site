@@ -19,4 +19,9 @@ class Devices_Model extends Model {
         return $devices;
     }
 
+    public function exist($registerid) {
+        $devices = DB::select('SELECT d.registerid FROM devices d WHERE d.registerid = "'.$registerid.'"');
+        return count($devices) > 0;
+    }
+
 } 

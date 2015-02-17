@@ -59,11 +59,19 @@ class Api_Controller extends Controller {
         $result = "error";
 
         if (isset($_POST["regid"])) {
-            $deviceModel->register($_POST["regid"]);
-            $result = "ok";
+            if (!$deviceModel->exist($_POST["regid"])) {
+                $deviceModel->register($_POST["regid"]);
+                $result = "ok";
+            } else {
+                $result = "ok";
+                $alreadyExist = true;
+            }
         }
 
         $arr = array("result"=> $result);
+        if (isset($alreadyExist)&&$alreadyExist) {
+            $arr['alreadyexist'] = "true";
+        }
 
         echo json_encode($arr);
     }
