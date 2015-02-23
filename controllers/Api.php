@@ -49,6 +49,10 @@ class Api_Controller extends Controller {
                 $realDevices[] = $device;
             }
 
+
+            print_r($realDevices);
+            echo "<br>";
+
             $gcpm = new GCMPushMessage($apiKey);
             $gcpm->setDevices($realDevices);
             $response = $gcpm->send($_POST["message"], array('title' => $_POST["title"]));
