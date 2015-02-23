@@ -46,7 +46,7 @@ class Api_Controller extends Controller {
             $realDevices = array();
 
             foreach ($devices as $device) {
-                $realDevices[] = $device;
+                $realDevices[] = $device["registerid"];
             }
 
 
