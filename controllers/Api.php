@@ -38,14 +38,19 @@ class Api_Controller extends Controller {
 
         $deviceModel = new Devices_Model();
 
-        print_r($devices = $deviceModel->listRegisredDevices());
+
         if (isset($_POST["message"])) {
             $apiKey = "AIzaSyBfcJCOBIwjY-7Mnzoh3hPTRurD7_2CgsE";
 
             $devices = $deviceModel->listRegisredDevices();
+            $realDevices = array();
+
+            foreach ($devices as $device) {
+                $realDevices[] = $device;
+            }
 
             $gcpm = new GCMPushMessage($apiKey);
-            $gcpm->setDevices($devices);
+            $gcpm->setDevices($realDevices);
             $response = $gcpm->send($_POST["message"], array('title' => $_POST["title"]));
             echo "sent !";
         }
