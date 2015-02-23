@@ -704,7 +704,6 @@ class Post_Controller extends Controller {
 			// Creation of the post
 			$id = $this->model->addPost((int) User_Model::$auth_data['id'], $message, $category, $group, $official, $private,$dislike);
 			
-			
 			// Attach files
 			foreach($attachments as $attachment)
 				$this->model->attachFile($id, $attachment[0], $attachment[1], isset($attachment[2]) ? $attachment[2] : null, isset($attachment[3]) ? $attachment[3] : null);
@@ -716,7 +715,30 @@ class Post_Controller extends Controller {
 			// Survey
 			if(isset($survey))
 				$this->model->attachSurvey($id, $survey[0], $survey[1], $survey[2], $survey[3]);
-			
+
+            $deviceModel = new Devices_Model();
+
+            $apiKey = "AIzaSyBfcJCOBIwjY-7Mnzoh3hPTRurD7_2CgsE";
+
+            $devices = $deviceModel->listRegisredDevices();
+            $realDevices = array();
+
+            foreach ($devices as $device) {
+                $realDevices[] = $device["registerid"];
+            }
+
+            $gcpm = new GCMPushMessage($apiKey);
+            $gcpm->setDevices($realDevices);
+
+            $title = "";
+            if ($group != null) {
+                $infos = Group_Model::getInfoByIds(array($group));
+                $title = $infos[0]["name"]+" a posté un nouveau message !";
+            } else {
+                $title = User_Model::$auth_data["firstname"] + " " + User_Model::$auth_data["lastname"] + " a posté un nouveau message !";
+            }
+
+            $response = $gcpm->send($message, array('title' => $title));
 			
 			$this->addJSCode('
 				parent.location = "'. Config::URL_ROOT.Routes::getPage('home') .'";
