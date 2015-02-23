@@ -38,6 +38,7 @@ class Api_Controller extends Controller {
 
         $deviceModel = new Devices_Model();
 
+        print_r($devices = $deviceModel->listRegisredDevices());
         if (isset($_POST["message"])) {
             $apiKey = "AIzaSyBfcJCOBIwjY-7Mnzoh3hPTRurD7_2CgsE";
 
