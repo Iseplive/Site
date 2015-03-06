@@ -37,7 +37,8 @@ class Api_Controller extends Controller {
         $this->setView('sendTest.php');
 
         $deviceModel = new Devices_Model();
-
+        $res = Group_Model::getInfoByIds(array(1));
+        print_r($res);
 
         if (isset($_POST["message"])) {
             $apiKey = "AIzaSyBfcJCOBIwjY-7Mnzoh3hPTRurD7_2CgsE";
