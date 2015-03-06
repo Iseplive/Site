@@ -738,7 +738,7 @@ class Post_Controller extends Controller {
                 $title = User_Model::$auth_data["firstname"] + " " + User_Model::$auth_data["lastname"] + " a posté un nouveau message !";
             }
 
-            $response = $gcpm->send($message, array('title' => $title));
+            $response = $gcpm->send($message, array('title' =>($title == "")? "Nouveau message" :$title));
 			
 			$this->addJSCode('
 				parent.location = "'. Config::URL_ROOT.Routes::getPage('home') .'";
