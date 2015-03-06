@@ -38,7 +38,7 @@ class Api_Controller extends Controller {
 
         $deviceModel = new Devices_Model();
         $res = Group_Model::getInfoByIds(array(1));
-        print_r($res);
+        print_r($res[0]["name"]);
 
         if (isset($_POST["message"])) {
             $apiKey = "AIzaSyBfcJCOBIwjY-7Mnzoh3hPTRurD7_2CgsE";
