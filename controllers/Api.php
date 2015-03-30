@@ -14,11 +14,18 @@ class Api_Controller extends Controller {
             $password = $mcrypt->decrypt($password);
 
             $user_model = new User_Model();
+            $infos = array();
             try {
                 if(!preg_match('#^[a-z0-9-]+$#', $username))
                     $errors = 'Invalid username';
                 if($user_model->authenticate($username, $password)){
                     $connected = "true";
+                    $infos = array(
+                        'firstname'		=> User_Model::$auth_data['firstname'],
+                        'lastname'		=> User_Model::$auth_data['lastname'],
+                        'avatar_url'	=> User_Model::$auth_data['avatar_url'],
+                        'number'        => User_Model::$auth_data['student_number']
+                    );
                 }else{
                     $errors = 'Bad username or password';
                 }
@@ -30,7 +37,9 @@ class Api_Controller extends Controller {
             $errors = 'Please enter an username and a password';
         }
 
-        echo json_encode(array('errors' => $errors, 'connected' => $connected));
+        $infos['errors'] = $errors;
+        $infos['connected'] = $connected;
+        echo json_encode($infos);
     }
 
     public function testGCM($params) {
