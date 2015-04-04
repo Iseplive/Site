@@ -368,6 +368,24 @@ final class Routes extends RoutesAbstract {
             'url'		=> 'api/media'
         ),
 
+        'api_comment'	=> array(
+            'regexp'	=> '^api/postcomment(?=\?|$)',
+            'vars'		=> 'controller=PostComment&action=addApi&mode=json',
+            'url'		=> 'api/postcomment'
+        ),
+
+        'api_like'	=> array(
+            'regexp'	=> '^api/postlike(?=\?|$)',
+            'vars'		=> 'controller=PostLike&action=addApi&mode=json',
+            'url'		=> 'api/postlike'
+        ),
+
+        'api_dislike'	=> array(
+            'regexp'	=> '^api/postdislike(?=\?|$)',
+            'vars'		=> 'controller=PostDislike&action=addApi&mode=json',
+            'url'		=> 'api/postdislike'
+        ),
+
         'api_student'	=> array(
             'regexp'	=> '^api/student/([a-z0-9-]+)(?=\?|$)',
             'vars'		=> 'controller=Student&action=viewApi&username=$1&mode=json',

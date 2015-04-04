@@ -23,6 +23,43 @@ class PostLike_Controller extends Controller {
         return true;
     }
 
+    public function addApi($params){
+        $this->setView('baseApi.php');
+        $errors = "";
+        $connected = "false";
+        if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['post_id'])) {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+
+            $mcrypt = new MCrypt();
+            $password = $mcrypt->decrypt($password);
+
+            $user_model = new User_Model();
+            $infos = array();
+            try {
+                if(!preg_match('#^[a-z0-9-]+$#', $username))
+                    $errors = 'Invalid username';
+                if($user_model->authenticate($username, $password)){
+
+                    $id = $this->model->add((int) trim($_POST['post_id']), (int) User_Model::$auth_data['id'], null);
+                    if (is_numeric($id) && !is_null($id))
+                        $errors = 'success';
+                    else
+                        $errors = 'error';
+                }else{
+                    $errors = 'Bad username or password';
+                }
+
+            }catch(Exception $e){
+                $errors = 'An exception occurred while logging in';
+            }
+        } else {
+            $errors = 'Please enter an username and a password';
+        }
+
+        echo json_encode(array("result" => $errors));
+    }
+
     public function delete($params) {
 
         $attachment_id = isset($_POST['attachment']) && ctype_digit($_POST['attachment']) && ($_POST['attachment'] > 0) ? 'attachment_id = '.(int) $_POST['attachment'] : 'attachment_id IS NULL';
