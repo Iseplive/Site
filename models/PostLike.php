@@ -27,7 +27,7 @@ class PostLike_Model extends Model {
                         'attachment_id' => $attachment_id
                     ))->select();
         
-        if(!empty($already)) {
+        if(!empty($already)||count($already)>0) {
             throw new Exception('Already Liked !');
             return null;
         } else {
