@@ -117,7 +117,7 @@ final class Config extends ConfigAbstract {
 	const GALLERY_ROWS = 8;
 
 	// Debug mode
-	const DEBUG			= false;
+	const DEBUG			= true;
 
 }
 
