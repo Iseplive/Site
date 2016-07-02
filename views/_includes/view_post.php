@@ -1,6 +1,6 @@
 
 <div id="post-<?php echo $post['id']; ?>" class="post">
-    
+
     <?php
     if (isset($post['group_id']) && $post['official'] == '1') {
         $post_user_url = Config::URL_ROOT . Routes::getPage('group', array('group' => $post['group_url']));
@@ -30,7 +30,7 @@
 
     <div class="post-message">
         <a href="<?php echo $post_user_url; ?>" class="post-username"><?php echo htmlspecialchars($post_user_name); ?></a>
-        <?php echo Text::inHTML($post['message']); ?>
+        <?php echo $post['message'];// ENTRE TEMPS echo Text::inHTML($post['message']); ?>
 
         <?php
 // Event
@@ -153,7 +153,7 @@
         if (!isset($post['attachments']))
             $post['attachments'] = array();
         $nb_photos = 0;
-		
+
         foreach ($post['attachments'] as $attachment) {
             switch ($attachment['ext']) {
                 // Photo
@@ -163,7 +163,7 @@
                 case 'png':
                     if ($nb_photos == 0) {
 						if ($is_admin && $post["category_id"]==1 && isset($one_post) && $post['attachments_nb_photos'] != 0 ){
-							?>	
+							?>
 								<div id="addAdmin" style="display:none">
 									<form id="publish-form" action="<?php echo Config::URL_ROOT.Routes::getPage('attachment_add',array('id'=>$post['id'])); ?>" method="post" enctype="multipart/form-data" target="publish_iframe" onsubmit="return Post.submitForm();">
 										<fieldset id="publish-stock-attachment-photo" class="publish-attachment">
@@ -189,7 +189,7 @@
 									<span id="link<?php echo $attachment['id'];?>" href="<?php echo Config::URL_ROOT . Routes::getPage('attachment_delete', array('id' => $attachment['id'],'post_id'=>$post['id'])); ?>" style="cursor:pointer" class="photo-delete">.</span>
 								<?php } ?>
 							<?php if($classhidden==""){?></a><?php }?>
-						   
+
 							<?php
 							$nb_photos++;
 							if (!isset($one_post) && $nb_photos == Config::PHOTOS_PER_POST && Config::PHOTOS_PER_POST < $post['attachments_nb_photos']) {
@@ -238,12 +238,12 @@
 					<video	width="<?php if(isset($one_post)){ echo '800';}else{ echo'400';} ?>" height="<?php if(isset($one_post)){echo '450' ;}else{ echo '250' ;}?>" poster="<?php echo $attachment['thumb']; ?>" controls="controls" preload="none"  >
 						<source src="<?php echo $attachment['url']; ?>" type="video/mp4" />
 						<!-- Fallback flash player for no-HTML5 browsers with JavaScript turned off -->
-						<object class="video" width="800" height="600"  type="application/x-shockwave-flash" data="<?php echo Config::URL_STATIC; ?>players/flashmediaelement.swf"> 		
-							<param name="movie" value="<?php echo Config::URL_STATIC; ?>players/flashmediaelement.swf" /> 
+						<object class="video" width="800" height="600"  type="application/x-shockwave-flash" data="<?php echo Config::URL_STATIC; ?>players/flashmediaelement.swf">
+							<param name="movie" value="<?php echo Config::URL_STATIC; ?>players/flashmediaelement.swf" />
 							<param name="allowfullscreen" value="true" />
-							<param name="flashvars" value="controls=true&amp;file=<?php echo urlencode($attachment['url']); ?>" /> 		
+							<param name="flashvars" value="controls=true&amp;file=<?php echo urlencode($attachment['url']); ?>" />
 							<img src="<?php echo $attachment['thumb']; ?>" width="100%" height="100%" />
-						</object> 	
+						</object>
 					</video>
 				</div>
 				<br/>
@@ -312,7 +312,7 @@
                 <?php
             }
             if ($dislikeEnable == "1") {
-                
+
                 if (!$has_disliked) {
                     ?>
                     &#183; <a href="javascript:;" onclick="Dislike.initPostDislike(<?php echo $post['id'] ?>)" class="dislike-link" id="post-dislike-link-<?php echo $post['id'] ?>" ><?php echo __('POST_DISLIKE_LINK'); ?></a>
@@ -330,13 +330,13 @@
         }
         ?>
     </div>
-<?php if (isset($post['likes'])) { 
+<?php if (isset($post['likes'])) {
     // Affichage en mode Single Post.
     foreach ($post['likes']['data'] as $key => $like) {
         $modifier = ($key == 0) ? '' : ' hidden'; ?>
         <div id="post-like-<?php echo $post['id'] ?>-<?php echo $key ?>" class="post-like post-like-attachment-<?php echo $key.$modifier; ?>" style="min-height: 16px;  width: 370px;">
-     
-   <?php 
+
+   <?php
             $name = array();
             $has_liked = false;
             // On Range des utilisateur pour pouvoir mieux les afficher.
@@ -353,7 +353,7 @@
             // On compte combient ils sont
             $last = count($name);
             echo '<span id="like-last-'.$post['id'].'-'.$key.'" class="hidden">'.$last.'</span>';
-            
+
             $separator = '';
             if($last == 1)
                 $separator = ' '.__('POST_LIKE_LASTSEP');
@@ -392,13 +392,13 @@
                 default: ?>
                     <span id="like-show-short-<?php echo $post['id'] ?>-<?php echo $key ?>"><?php echo implode(' ', array_slice($name, 0, ($has_liked) ? Config::LIKE_DISPLAYED : Config::LIKE_DISPLAYED +1)) . ' ' . __('POST_LIKE_LASTSEP') ?>
                         <a href="javascript:;"  onclick="Like.showAll(<?php echo $post['id']; ?>)"><?php echo (($last > Config::LIKE_DISPLAYED) ? ($last-Config::LIKE_DISPLAYED+1).' ': '').__('POST_LIKE_OTHER_'.(($last > 1)?'PLURAL':'SING')) ; ?></a> <?php echo $modificateur?></span>
-                    <span class="hidden" id="like-show-all-<?php echo $post['id']; ?>-<?php echo $key ?>"><?php echo implode(' ', $name) . ' ' . $modificateur; ?></span>       
+                    <span class="hidden" id="like-show-all-<?php echo $post['id']; ?>-<?php echo $key ?>"><?php echo implode(' ', $name) . ' ' . $modificateur; ?></span>
               <?php break;
             endswitch;
             unset($name);
         ?>
         </div>
-    <?php }  ?>      
+    <?php }  ?>
 <?php }?>
     <?php $conj = __('POST_LIKE_CONJ'); ?>
     <div id="post-like-<?php echo $post['id'] ?>-all"class="post-like hidden" style="min-height: 16px; width: 370px;">
@@ -406,13 +406,13 @@
         <?php echo __('POST_LIKE_USER') ?> <?php echo __('POST_LIKE_END_LIKE').$conj[0].' '.__('POST_LIKE_END_THIS'); ?>
     </div>
         <!-- Dislike -->
-        <?php if (isset($post['dislikes'])) { 
+        <?php if (isset($post['dislikes'])) {
     // Affichage en mode Single Post.
     foreach ($post['dislikes']['data'] as $key => $dislike) {
         $modifier = ($key == 0) ? '' : ' hidden'; ?>
         <div id="post-dislike-<?php echo $post['id'] ?>-<?php echo $key ?>" class="post-dislike post-dislike-attachment-<?php echo $key.$modifier; ?>" style="min-height: 16px;  width: 370px;">
-     
-   <?php 
+
+   <?php
             $name = array();
             $has_disliked = false;
             // On Range des utilisateur pour pouvoir mieux les afficher.
@@ -429,7 +429,7 @@
             // On compte combient ils sont
             $last = count($name);
             echo '<span id="dislike-last-'.$post['id'].'-'.$key.'" class="hidden">'.$last.'</span>';
-            
+
             $separator = '';
             if($last == 1)
                 $separator = ' '.__('POST_DISLIKE_LASTSEP');
@@ -468,25 +468,25 @@
                 default: ?>
                     <span id="dislike-show-short-<?php echo $post['id'] ?>-<?php echo $key ?>"><?php echo implode(' ', array_slice($name, 0, ($has_disliked) ? Config::DISLIKE_DISPLAYED : Config::DISLIKE_DISPLAYED +1)) . ' ' . __('POST_DISLIKE_LASTSEP') ?>
                         <a href="javascript:;"  onclick="Dislike.showAll(<?php echo $post['id']; ?>)"><?php echo (($last > Config::DISLIKE_DISPLAYED) ? ($last-Config::DISLIKE_DISPLAYED+1).' ': '').__('POST_DISLIKE_OTHER_'.(($last > 1)?'PLURAL':'SING')) ; ?></a> <?php echo $modificateur?></span>
-                    <span class="hidden" id="dislike-show-all-<?php echo $post['id']; ?>-<?php echo $key ?>"><?php echo implode(' ', $name) . ' ' . $modificateur; ?></span>       
+                    <span class="hidden" id="dislike-show-all-<?php echo $post['id']; ?>-<?php echo $key ?>"><?php echo implode(' ', $name) . ' ' . $modificateur; ?></span>
               <?php break;
             endswitch;
             unset($name);
         ?>
         </div>
-    <?php }  ?>      
+    <?php }  ?>
 <?php }?>
 
-        
+
     <?php $conj = __('POST_DISLIKE_CONJ'); ?>
     <div id="post-dislike-<?php echo $post['id'] ?>-all" class="post-dislike hidden" style="min-height: 16px; width: 370px;">
         <span class="hidden dislike-last">0</span>
         <?php echo __('POST_DISLIKE_USER') ?> <?php echo __('POST_DISLIKE_END_DISLIKE').$conj[0].' '.__('POST_DISLIKE_END_THIS'); ?>
     </div>
-        
-        
-        
-        
+
+
+
+
         <!-- fin dislike -->
     <!--  COMMENTS  -->
     <div class="post-comments">
@@ -520,7 +520,7 @@
         if (isset($one_post))
             echo ' post-comment-attachment' . (isset($comment['attachment_id']) ? $comment['attachment_id'] . ' hidden' : '0');
             ?>">
-                     <?php $comment_user_url = Config::URL_ROOT . Routes::getPage('student', array('username' => $comment['username'])); ?>     
+                     <?php $comment_user_url = Config::URL_ROOT . Routes::getPage('student', array('username' => $comment['username'])); ?>
                 <a href="<?php echo $comment_user_url; ?>" class="avatar"><img src="<?php echo $comment['avatar_url']; ?>" alt="" /></a>
                 <?php
                 // Post delete button
@@ -554,9 +554,9 @@
                             <div id="post-com-like-all-<?php echo $comment['id']; ?>" class="hidden-like-box hidden">Vous</div>
                   <?php } else {
                             $nb = count(array_unique($comment['user_liked'], SORT_NUMERIC));
-                            // On compte le nombre personne qui Aime ce comment. 
+                            // On compte le nombre personne qui Aime ce comment.
                             $string = ($nb < 2) ? 'hidden' : ''; ?>
-                            <?php 
+                            <?php
                             $name = array();
                             foreach ($comment['like'] as $key => $comment_like) {
                                 if($comment['like'][$key]['username'] ==  User_Model::$auth_data['username'])
