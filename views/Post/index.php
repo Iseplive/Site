@@ -70,9 +70,9 @@ foreach($categories as $category){
 		</div>
 		<br /><br />
 		
-		<h2><?php echo __('POST_SPONSOR_TITLE'); ?></h2>
+		<!--<h2><?php echo __('POST_SPONSOR_TITLE'); ?></h2>
 		<a href="http://www.st.com/"><img src="<?php echo Config::URL_STATIC; ?>images/logo_axway.png" alt="Axway" /></a>
-		<br /><br />
+		<br /><br />-->
 		
 		<h2><?php echo __('POST_USEFUL_LINKS'); ?></h2>
 		<ul>

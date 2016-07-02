@@ -109,6 +109,9 @@
 				<?php echo __('USER_EDIT_ERROR_BIRTHDAY'); ?>
 			</p>
 			<?php } ?>
+
+            <label for="user_edit_quote"><?php echo __('USER_EDIT_FORM_QUOTE'); ?></label>
+            <input type="text" name="quote" id="user_edit_quote" value="<?php echo htmlspecialchars($student['quote']); ?>" /><br />
 			
 			<br />
 			<input type="submit" value="<?php echo __('USER_EDIT_FORM_SUBMIT'); ?>" />

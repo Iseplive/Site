@@ -66,6 +66,76 @@ class Post_Controller extends Controller {
 		));
 		
 	}
+
+    public function lastsPostsApi() {
+        $this->setView('baseApi.php');
+
+
+        $errors = "";
+        $connected = "false";
+        if(isset($_POST['username']) && isset($_POST['password'])) {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+
+            $mcrypt = new MCrypt();
+            $password = $mcrypt->decrypt($password);
+
+            $user_model = new User_Model();
+            try {
+                if(!preg_match('#^[a-z0-9-]+$#', $username))
+                    $errors = 'Invalid username';
+                if($user_model->authenticate($username, $password)){
+                    $connected = "true";
+
+                    $this->set(array(
+                        'username'		=> User_Model::$auth_data['username'],
+                        'groups_auth'	=> Group_Model::getAuth(),
+                        // Non-official posts
+                        'posts'			=> $this->model->getPosts(array(
+                            'restricted'	=> true,
+                            'official'		=> false,
+                            'category_name'	=> null,
+                            'show_private'	=> true
+                        ), Config::POST_DISPLAYED)
+                    ));
+
+
+                    // Official posts
+                    $this->set('official_posts', $this->model->getPosts(array(
+                        'restricted'	=> true,
+                        'official'		=> true,
+                        'category_name'	=> null,
+                        'show_private'	=> true
+                    ), Config::POST_DISPLAYED));
+
+                    // Events
+                    $event_model = new Event_Model();
+                    $this->set(array(
+                        'events' 			=> $event_model->getByMonth((int) date('Y'), (int) date('n'), array(
+                            'official'			=> true,
+                            'show_private'		=> true
+                        )),
+                        'calendar_month'	=> (int) date('n'),
+                        'calendar_year'		=> (int) date('Y')
+                    ));
+
+                }else{
+                    $errors = 'Bad username or password';
+                }
+
+            }catch(Exception $e){
+                $errors = 'An exception occurred while logging in';
+            }
+        } else {
+            $errors = 'Please enter an username and a password';
+        }
+
+        $this->set(array(
+            "errors" => $errors,
+            "connected" => $connected
+        ));
+
+    }
 	
 	
 	/*
@@ -203,6 +273,87 @@ class Post_Controller extends Controller {
 		}
 		
 	}
+
+    public function viewApi($params){
+        $this->setView('viewApi.php');
+
+        $errors = "";
+        $connected = "false";
+        if(isset($_POST['username']) && isset($_POST['password'])) {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+
+            $mcrypt = new MCrypt();
+            $password = $mcrypt->decrypt($password);
+
+            $user_model = new User_Model();
+            try {
+                if(!preg_match('#^[a-z0-9-]+$#', $username))
+                    $errors = 'Invalid username';
+                if($user_model->authenticate($username, $password)){
+                    $connected = "true";
+
+                    $is_logged = isset(User_Model::$auth_data);
+                    $is_student = $is_logged && isset(User_Model::$auth_data['student_number']);
+                    $is_admin = $is_logged && User_Model::$auth_data['admin']=='1';
+
+                    try {
+                        $post = $this->model->getPost((int) $params['id']);
+
+                    }catch(Exception $e){
+                        throw new ActionException('Page', 'error404');
+                    }
+
+                    $this->set(array(
+                        'is_logged'		=> $is_logged,
+                        'is_student'	=> $is_student,
+                        'is_admin'		=> $is_admin,
+                        'groups_auth'	=> $is_logged ? Group_Model::getAuth() : array(),
+                        'post'			=> $post,
+                        'one_post'		=> true
+                    ));
+
+                }else{
+                    $errors = 'Bad username or password';
+                }
+
+            }catch(Exception $e){
+                $errors = 'An exception occurred while logging in';
+            }
+        } else {
+            $errors = 'Please enter an username and a password';
+        }
+
+        $this->set(array(
+            "errors" => $errors,
+            "connected" => $connected
+        ));
+
+        /*
+        if($post['attachments_nb_photos'] != 0){
+            $photos = array();
+            foreach($post['attachments'] as $attachment){
+                if(in_array($attachment['ext'], array('jpg', 'png', 'gif')))
+                    $photos[] = array(
+                        'id'	=> (int) $attachment['id'],
+                        'url'	=> $attachment['url']
+                    );
+                if($post['category_id']==1){
+                    $galleria[] = array(
+                        'thumb'	=> $attachment['thumb'],
+                        'image'	=> $attachment['url'],
+                        'id'	=> (int) $attachment['id'],
+                    );
+                }
+            }
+            $this->addJSCode('Post.photos = '.json_encode($photos).';Post.photoDelete();');
+
+            if($post['category_id']==1){
+                $this->addJSCode('Post.initGalleria('.json_encode($galleria).');');
+            }
+        }*/
+
+    }
 	
 	
 	/*
@@ -392,7 +543,7 @@ class Post_Controller extends Controller {
 				}
 			}
 			
-			// Vidéos
+			// Vidï¿½os
 			/* @uses PHPVideoToolkit : http://code.google.com/p/phpvideotoolkit/
 			 * @requires ffmpeg, php5-ffmpeg
 			 */
@@ -431,7 +582,7 @@ class Post_Controller extends Controller {
 							$command=PHPVIDEOTOOLKIT_FFMPEG_BINARY.' -i '.escapeshellarg($filepath).' -vcodec libx264 -profile high -preset ultrafast -r 25 -vb 1500k -maxrate 1500k -bufsize 1500k -vf scale="min(1280\, iw):-1" -threads 0 -acodec libfaac -ab 128k -y '.escapeshellarg($tempfilepath);
 							exec($command);
 							unlink($filepath);
-							//permet de déplacer les infos au début pour les players flash
+							//permet de dï¿½placer les infos au dï¿½but pour les players flash
 							exec('qt-faststart '.escapeshellarg($tempfilepath).' '.DATA_DIR.Config::DIR_DATA_TMP.'tempvideo.mp4');
 							if(!is_file($tempfilepath)){
 								unlink($thumbpath);
@@ -553,7 +704,6 @@ class Post_Controller extends Controller {
 			// Creation of the post
 			$id = $this->model->addPost((int) User_Model::$auth_data['id'], $message, $category, $group, $official, $private,$dislike);
 			
-			
 			// Attach files
 			foreach($attachments as $attachment)
 				$this->model->attachFile($id, $attachment[0], $attachment[1], isset($attachment[2]) ? $attachment[2] : null, isset($attachment[3]) ? $attachment[3] : null);
@@ -565,7 +715,30 @@ class Post_Controller extends Controller {
 			// Survey
 			if(isset($survey))
 				$this->model->attachSurvey($id, $survey[0], $survey[1], $survey[2], $survey[3]);
-			
+
+            $deviceModel = new Devices_Model();
+
+            $apiKey = "AIzaSyBfcJCOBIwjY-7Mnzoh3hPTRurD7_2CgsE";
+
+            $devices = $deviceModel->listRegisredDevices();
+            $realDevices = array();
+
+            foreach ($devices as $device) {
+                $realDevices[] = $device["registerid"];
+            }
+
+            $gcpm = new GCMPushMessage($apiKey);
+            $gcpm->setDevices($realDevices);
+
+            $title = "";
+            if ($group != null) {
+                $infos = Group_Model::getInfoByIds(array($group));
+                $title = $infos[0]["name"]+" a postÃ© un nouveau message !";
+            } else {
+                $title = User_Model::$auth_data["firstname"] + " " + User_Model::$auth_data["lastname"] + " a postÃ© un nouveau message !";
+            }
+
+            $response = $gcpm->send($message, array('title' =>($title == "")? "Nouveau message" :$title));
 			
 			$this->addJSCode('
 				parent.location = "'. Config::URL_ROOT.Routes::getPage('home') .'";

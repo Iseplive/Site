@@ -27,17 +27,19 @@ class PostDislike_Model extends Model {
                         'attachment_id' => $attachment_id
                     ))->select();
         
-        if(!empty($already))
+        if(!empty($already)||count($already)>0) {
             throw new Exception('Already Liked !');
-        
-        $id = $this->createQuery()
+            return null;
+        } else {
+            $id = $this->createQuery()
                 ->set(array(
                     'post_id' => $post_id,
                     'user_id' => $user_id,
                     'attachment_id' => $attachment_id
                 ))->insert();
-        self::clearCache();
-        return $id;
+            self::clearCache();
+            return $id;
+        }
     }
 
     public function delete($post_id, $user_id, $attachment_id) {

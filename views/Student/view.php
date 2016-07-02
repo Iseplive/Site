@@ -51,6 +51,10 @@
 		<?php if(isset($student['birthday']) && $student['birthday'] != '0000-00-00'){ ?>
 		<strong><?php echo __('PROFILE_BIRTHDAY'); ?></strong> <?php echo date(__('PROFILE_BIRTHDAY_FORMAT'), strtotime($student['birthday'])); ?><br />
 		<?php } ?>
+
+        <?php if(isset($student['quote']) && $student['quote'] != ''){ ?>
+            <strong><?php echo __('USER_EDIT_FORM_QUOTE'); ?></strong> <?php echo htmlspecialchars($student['quote']); ?><br />
+        <?php } ?>
 		
 		<?php if(count($groups) != 0){ ?>
 		<br />

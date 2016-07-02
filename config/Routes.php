@@ -343,7 +343,85 @@ final class Routes extends RoutesAbstract {
 			'vars'		=> 'controller=User&action=logout&redirect=$1',
 			'url'		=> 'logout{redirect}'
 		),
-		
+
+        'api_login' => array(
+            'regexp'    => '^api/login(?=\?|$)',
+            'vars'		=> 'controller=Api&action=login&mode=json',
+            'url'       => 'api/login'
+        ),
+
+        'api_posts'	=> array(
+            'regexp'	=> '^api/posts(?=\?|$)',
+            'vars'		=> 'controller=Post&action=lastsPostsApi&mode=json',
+            'url'		=> 'api/posts'
+        ),
+
+        'api_post'	=> array(
+            'regexp'	=> '^api/post/([0-9]+)(?=\?|$)',
+            'vars'		=> 'controller=Post&action=viewApi&id=$1&mode=json',
+            'url'		=> 'api/post/{id}'
+        ),
+
+        'api_media'	=> array(
+            'regexp'	=> '^api/media(?=\?|$)',
+            'vars'		=> 'controller=Media&action=api&mode=json',
+            'url'		=> 'api/media'
+        ),
+
+        'api_comment'	=> array(
+            'regexp'	=> '^api/postcomment(?=\?|$)',
+            'vars'		=> 'controller=PostComment&action=addApi&mode=json',
+            'url'		=> 'api/postcomment'
+        ),
+
+        'api_like'	=> array(
+            'regexp'	=> '^api/postlike(?=\?|$)',
+            'vars'		=> 'controller=PostLike&action=addApi&mode=json',
+            'url'		=> 'api/postlike'
+        ),
+
+        'api_dislike'	=> array(
+            'regexp'	=> '^api/postdislike(?=\?|$)',
+            'vars'		=> 'controller=PostDislike&action=addApi&mode=json',
+            'url'		=> 'api/postdislike'
+        ),
+
+        'api_student'	=> array(
+            'regexp'	=> '^api/student/([a-z0-9-]+)(?=\?|$)',
+            'vars'		=> 'controller=Student&action=viewApi&username=$1&mode=json',
+            'url'		=> 'api/student/{username}'
+        ),
+
+        'api_students'	=> array(
+            'regexp'	=> '^api/students(?=\?|$)',
+            'vars'		=> 'controller=Student&action=listApi&mode=json',
+            'url'		=> 'api/students'
+        ),
+
+        'api_group'	=> array(
+            'regexp'	=> '^api/association/([a-z0-9-]+)(?=\?|$)',
+            'vars'		=> 'controller=Group&action=viewApi&group=$1&mode=json',
+            'url'		=> 'api/association/{group}'
+        ),
+
+        'api_groups'	=> array(
+            'regexp'	=> '^api/associations(?=\?|$)',
+            'vars'		=> 'controller=Group&action=listApi&mode=json',
+            'url'		=> 'api/associations'
+        ),
+
+        'api_register'	=> array(
+            'regexp'	=> '^api/register(?=\?|$)',
+            'vars'		=> 'controller=Api&action=register&mode=json',
+            'url'		=> 'api/register'
+        ),
+
+        /*'test_gcm'      => array(
+            'regexp'	=> '^test/gcm(?=\?|$)',
+            'vars'		=> 'controller=Api&action=testGCM',
+            'url'		=> 'test/gcm'
+        ),*/
+
 		// Search and Auto completion
 		'search'	=> array(
 			'regexp'	=> '^search(?=\?|$)',

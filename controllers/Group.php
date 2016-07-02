@@ -49,6 +49,26 @@ class Group_Controller extends Controller {
 
 		');
 	}
+
+    public function listApi($params) {
+        $this->setView('listApi.php');
+        $groups = $this->model->getAll();
+        $this->set(array(
+            'groups'	=> $groups
+        ));
+    }
+
+    public function viewApi($params)
+    {
+        $this->setView('viewApi.php');
+        try {
+            $group = $this->model->getInfoByName($params['group']);
+            $this->set('group', $group);
+
+        }catch(Exception $e){
+            throw new ActionException('Page', 'error404');
+        }
+    }
 	
 	
 	/**

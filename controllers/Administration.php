@@ -572,8 +572,9 @@ class Administration_Controller extends Controller {
 				for($i=0;$i<count($questions);$i++){
 					for($j=0;$j<count($finalList[$questions[$i]['id']]);$j++){
 						File::copy($template, DATA_DIR.Config::DIR_DATA_TMP."diplome".$i.$j.".png");
+						chmod(DATA_DIR.Config::DIR_DATA_TMP."diplome".$i.$j.".png", 0777);
 						array_push($files,DATA_DIR.Config::DIR_DATA_TMP."diplome".$i.$j.".png");
-						$im = ImageCreateFromPng(DATA_DIR.Config::DIR_DATA_TMP."diplome".$i.$j.".png"); // Path Images 
+						$im = @imageCreateFromPng(DATA_DIR.Config::DIR_DATA_TMP."diplome".$i.$j.".png"); // Path Images 
 						$color = ImageColorAllocate($im, 0, 0, 0); // Text Color 
 						$champs[0]=$questions[$i]['questions'];
 						$champs[1]=$finalList[$questions[$i]['id']][$j]["name"];
